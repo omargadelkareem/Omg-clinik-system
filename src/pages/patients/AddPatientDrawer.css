@@ -1,0 +1,636 @@
+
+
+.patient-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-start;
+
+  background: rgba(15, 31, 46, 0.46);
+  backdrop-filter: blur(2px);
+
+  animation: patientOverlayIn 0.18s ease;
+}
+
+/* =========================================================
+   DRAWER
+   ========================================================= */
+
+.patient-drawer {
+  width: min(590px, 100%);
+  height: 100dvh;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  background: #ffffff;
+
+  border-left: 1px solid #dce3e8;
+
+  box-shadow:
+    18px 0 55px rgba(15, 32, 48, 0.13);
+
+  animation: patientDrawerIn 0.24s ease;
+}
+
+@keyframes patientOverlayIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes patientDrawerIn {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.patient-drawer-header {
+  flex: 0 0 auto;
+
+  min-height: 92px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  padding: 18px 22px;
+
+  border-bottom: 1px solid #e1e7eb;
+
+  background: #ffffff;
+}
+
+.patient-drawer-header > div:first-child {
+  min-width: 0;
+}
+
+.patient-drawer-header > div:first-child > span {
+  display: block;
+
+  margin-bottom: 4px;
+
+  color: #7690a5;
+
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.9px;
+}
+
+.patient-drawer-header h2 {
+  margin: 0;
+
+  color: #1c3951;
+
+  font-size: 20px;
+  font-weight: 850;
+  line-height: 1.4;
+}
+
+.patient-drawer-header p {
+  margin: 3px 0 0;
+
+  color: #84929e;
+
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.drawer-close {
+  flex: 0 0 auto;
+
+  width: 38px;
+  height: 38px;
+
+  display: grid;
+  place-items: center;
+
+  padding: 0;
+
+  border: 1px solid #dce3e8;
+  border-radius: 5px;
+
+  background: #ffffff;
+
+  color: #697d8e;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.drawer-close:hover {
+  border-color: #d5dde3;
+
+  background: #f5f7f9;
+
+  color: #b64e56;
+}
+
+.drawer-close:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   FORM
+   ========================================================= */
+
+.patient-drawer-form {
+  min-height: 0;
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow-y: auto;
+
+  scrollbar-width: thin;
+  scrollbar-color: #ccd7df transparent;
+}
+
+/* =========================================================
+   SECTIONS
+   ========================================================= */
+
+.patient-form-section {
+  padding: 24px 22px;
+
+  border-bottom: 1px solid #e7ecef;
+}
+
+.patient-section-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+
+  margin-bottom: 19px;
+}
+
+.patient-section-heading > svg {
+  flex: 0 0 auto;
+
+  margin-top: 1px;
+
+  color: #467b9f;
+}
+
+.patient-section-heading > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.patient-section-heading strong {
+  color: #334f65;
+
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.patient-section-heading span {
+  margin-top: 2px;
+
+  color: #8a98a4;
+
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.section-line {
+  width: 18px;
+  height: 2px;
+
+  flex: 0 0 auto;
+
+  margin-top: 9px;
+
+  background: #6489a3;
+}
+
+/* =========================================================
+   GRID
+   ========================================================= */
+
+.patient-form-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 14px;
+}
+
+/* =========================================================
+   FIELD
+   ========================================================= */
+
+.patient-field {
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+
+  margin-bottom: 16px;
+}
+
+.patient-field > span {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+
+  margin-bottom: 7px;
+
+  color: #53697b;
+
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.patient-field > span b {
+  color: #bd4f57;
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+/* =========================================================
+   INPUTS
+   ========================================================= */
+
+.patient-field > input,
+.patient-field > select,
+.patient-field > textarea {
+  width: 100%;
+
+  border: 1px solid #d7e0e6;
+  border-radius: 5px;
+
+  outline: none;
+
+  background: #ffffff;
+
+  color: #314b61;
+
+  font-family: inherit;
+  font-size: 13px;
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
+}
+
+.patient-field > input,
+.patient-field > select {
+  height: 43px;
+
+  padding: 0 11px;
+}
+
+.patient-field > textarea {
+  min-height: 88px;
+
+  padding: 10px 11px;
+
+  resize: vertical;
+
+  line-height: 1.7;
+}
+
+.patient-field > input::placeholder,
+.patient-field > textarea::placeholder {
+  color: #a0abb4;
+}
+
+.patient-field > input:hover,
+.patient-field > select:hover,
+.patient-field > textarea:hover {
+  border-color: #c5d0d8;
+}
+
+.patient-field > input:focus,
+.patient-field > select:focus,
+.patient-field > textarea:focus {
+  border-color: #7299b5;
+
+  box-shadow:
+    0 0 0 3px rgba(72, 124, 161, 0.07);
+
+  background: #ffffff;
+}
+
+/* =========================================================
+   INPUT WITH ICON
+   ========================================================= */
+
+.patient-input-with-icon {
+  height: 43px;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 0 11px;
+
+  border: 1px solid #d7e0e6;
+  border-radius: 5px;
+
+  background: #ffffff;
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.patient-input-with-icon:hover {
+  border-color: #c5d0d8;
+}
+
+.patient-input-with-icon:focus-within {
+  border-color: #7299b5;
+
+  box-shadow:
+    0 0 0 3px rgba(72, 124, 161, 0.07);
+}
+
+.patient-input-with-icon > svg {
+  flex: 0 0 auto;
+
+  color: #8597a5;
+}
+
+.patient-input-with-icon input {
+  flex: 1;
+
+  min-width: 0;
+  height: 100%;
+
+  padding: 0;
+
+  border: 0;
+  outline: 0;
+
+  background: transparent;
+
+  color: #314b61;
+
+  font-family: inherit;
+  font-size: 13px;
+}
+
+.patient-input-with-icon input::placeholder {
+  color: #a0abb4;
+}
+
+/* DATE */
+
+.patient-input-with-icon input[type="date"] {
+  color: #52687a;
+}
+
+/* SELECT */
+
+.patient-field select {
+  cursor: pointer;
+}
+
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+.patient-form-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+
+  margin: 0 22px 17px;
+
+  padding: 11px 12px;
+
+  border: 1px solid #e9c7ca;
+  border-right: 3px solid #bd555e;
+  border-radius: 4px;
+
+  background: #fff8f8;
+
+  color: #a34850;
+
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.7;
+}
+
+.patient-form-error > svg {
+  flex: 0 0 auto;
+
+  margin-top: 2px;
+}
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.patient-drawer-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+
+  min-height: 73px;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 9px;
+
+  margin-top: auto;
+
+  padding: 14px 22px;
+
+  border-top: 1px solid #dfe6ea;
+
+  background: rgba(255, 255, 255, 0.97);
+
+  backdrop-filter: blur(8px);
+}
+
+.patient-cancel-button,
+.patient-save-button {
+  height: 41px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  padding: 0 16px;
+
+  border-radius: 5px;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.patient-cancel-button {
+  border: 1px solid #d5dee5;
+
+  background: #ffffff;
+
+  color: #667a8a;
+}
+
+.patient-cancel-button:hover {
+  background: #f5f7f8;
+}
+
+.patient-save-button {
+  min-width: 150px;
+
+  border: 1px solid #123653;
+
+  background: #123653;
+
+  color: #ffffff;
+}
+
+.patient-save-button:hover {
+  background: #0d2d48;
+}
+
+.patient-cancel-button:disabled,
+.patient-save-button:disabled {
+  opacity: 0.55;
+
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   LOADING
+   ========================================================= */
+
+.patient-loading-icon {
+  animation: patientDrawerSpin 0.75s linear infinite;
+}
+
+@keyframes patientDrawerSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+.patient-drawer-form::-webkit-scrollbar {
+  width: 6px;
+}
+
+.patient-drawer-form::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.patient-drawer-form::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+
+  background: #ccd6dd;
+}
+
+.patient-drawer-form::-webkit-scrollbar-thumb:hover {
+  background: #aebcc6;
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 650px) {
+  .patient-drawer {
+    width: 100%;
+  }
+
+  .patient-drawer-header {
+    min-height: 84px;
+
+    padding: 15px 16px;
+  }
+
+  .patient-drawer-header h2 {
+    font-size: 18px;
+  }
+
+  .patient-form-section {
+    padding: 21px 16px;
+  }
+
+  .patient-form-grid {
+    grid-template-columns: 1fr;
+
+    gap: 0;
+  }
+
+  .patient-form-error {
+    margin-right: 16px;
+    margin-left: 16px;
+  }
+
+  .patient-drawer-footer {
+    padding: 12px 16px;
+  }
+
+  .patient-cancel-button,
+  .patient-save-button {
+    flex: 1;
+  }
+}
+
+/* =========================================================
+   VERY SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 380px) {
+  .patient-drawer-header p {
+    display: none;
+  }
+
+  .patient-drawer-header h2 {
+    font-size: 17px;
+  }
+
+  .patient-form-section {
+    padding-right: 13px;
+    padding-left: 13px;
+  }
+
+  .patient-drawer-footer {
+    padding-right: 13px;
+    padding-left: 13px;
+  }
+}

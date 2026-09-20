@@ -1,0 +1,63 @@
+@import url("https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;600;700;800&display=swap");
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  min-width: 100%;
+  min-height: 100%;
+}
+
+body {
+  font-family: "Tajawal", sans-serif;
+  background: #f6f8fc;
+  color: #0f172a;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+.auth-loading-screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  background: #f7f9fb;
+  color: #173552;
+}
+
+.auth-loading-logo {
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 7px;
+  border-radius: 18px;
+  background: #123454;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.auth-loading-screen strong {
+  font-size: 17px;
+}
+
+.auth-loading-screen span {
+  color: #8492a1;
+  font-size: 12px;
+}
+
+button {
+  cursor: pointer;
+}

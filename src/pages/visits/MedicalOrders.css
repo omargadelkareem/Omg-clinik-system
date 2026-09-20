@@ -1,0 +1,329 @@
+/* =========================================================
+   OMG CLINIC - MEDICAL ORDERS INSIDE VISIT
+   This file is imported after NewVisitPage.css
+========================================================= */
+
+.investigation-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.investigation-head > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.investigation-head strong {
+  color: #304f65;
+  font-size: 12px;
+}
+
+.investigation-head span {
+  color: #8797a3;
+  font-size: 10px;
+}
+
+.add-investigation-button {
+  min-height: 35px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 12px;
+  border: 1px solid #c9d7e0;
+  border-radius: 4px;
+  background: #f9fbfc;
+  color: #315d79;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.add-investigation-button:hover {
+  background: #f0f6f9;
+  border-color: #aec2cf;
+}
+
+.investigation-empty {
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+  border: 1px dashed #d5dfe5;
+  color: #8a99a4;
+  font-size: 11px;
+}
+
+.investigation-list {
+  margin-top: 12px;
+  border: 1px solid #dfe6ea;
+  background: #fff;
+}
+
+.investigation-row {
+  min-height: 54px;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto 30px;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 9px;
+  border-bottom: 1px solid #e8edef;
+}
+
+.investigation-row:last-child {
+  border-bottom: 0;
+}
+
+.investigation-type {
+  width: 31px;
+  height: 31px;
+  display: grid;
+  place-items: center;
+  border-radius: 4px;
+  background: #edf4f8;
+  color: #47728e;
+}
+
+.investigation-type.imaging {
+  background: #f1f0f8;
+  color: #625d8c;
+}
+
+.investigation-main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.investigation-main strong {
+  overflow: hidden;
+  color: #36566c;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.investigation-main span {
+  margin-top: 2px;
+  overflow: hidden;
+  color: #8796a1;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.investigation-priority {
+  padding: 3px 7px;
+  border-radius: 3px;
+  background: #f0f3f5;
+  color: #667b8a;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.investigation-priority.urgent {
+  background: #fff0f0;
+  color: #b24a4a;
+}
+
+.investigation-remove {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: #9b6d6d;
+  cursor: pointer;
+}
+
+.investigation-remove:hover {
+  background: #fff4f4;
+  color: #b14646;
+}
+
+.investigation-modal {
+  position: relative;
+  width: min(650px, 100%);
+  max-height: min(760px, calc(100vh - 40px));
+  overflow: hidden;
+  border: 1px solid #d6dfe5;
+  background: #fff;
+  box-shadow: 0 20px 60px rgba(18, 35, 48, 0.2);
+}
+
+.investigation-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid #e2e8ec;
+}
+
+.investigation-tabs button {
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 0;
+  background: #fff;
+  color: #708492;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.investigation-tabs button + button {
+  border-right: 1px solid #e6ebee;
+}
+
+.investigation-tabs button.active {
+  background: #f5f9fb;
+  color: #244f6c;
+  box-shadow: inset 0 -2px #315f7e;
+}
+
+.investigation-modal-body {
+  max-height: 530px;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.investigation-search {
+  height: 39px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  border: 1px solid #d8e1e7;
+  border-radius: 4px;
+  color: #8797a2;
+}
+
+.investigation-search input {
+  flex: 1;
+  height: 100%;
+  padding: 0 8px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #304f65;
+  font-family: inherit;
+  font-size: 11px;
+}
+
+.common-tests {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 12px 0 16px;
+}
+
+.common-tests button {
+  min-height: 31px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 9px;
+  border: 1px solid #d6e0e6;
+  border-radius: 3px;
+  background: #fff;
+  color: #526e81;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.common-tests button:hover {
+  background: #f8fafb;
+}
+
+.common-tests button.selected {
+  border-color: #5c829b;
+  background: #eef5f8;
+  color: #244f6c;
+}
+
+.investigation-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.investigation-field > span {
+  color: #758b9b;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.investigation-field input,
+.investigation-field select {
+  height: 39px;
+  padding: 0 9px;
+  border: 1px solid #d8e1e7;
+  border-radius: 4px;
+  outline: 0;
+  background: #fff;
+  color: #304f65;
+  font-family: inherit;
+  font-size: 11px;
+}
+
+.investigation-field input:focus,
+.investigation-field select:focus,
+.investigation-search:focus-within {
+  border-color: #8eacbe;
+}
+
+.investigation-options {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.selected-count {
+  margin-left: auto;
+  color: #7d8f9b;
+  font-size: 10px;
+}
+
+.simple-modal-actions .modal-primary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+@media (max-width: 760px) {
+  .investigation-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .add-investigation-button {
+    width: 100%;
+  }
+
+  .investigation-options {
+    grid-template-columns: 1fr;
+  }
+
+  .investigation-row {
+    grid-template-columns: 32px minmax(0, 1fr) 28px;
+  }
+
+  .investigation-priority {
+    grid-column: 2;
+    width: max-content;
+  }
+
+  .investigation-remove {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+  }
+}

@@ -1,0 +1,1328 @@
+/* =========================================================
+   OMG CLINIC — PRESCRIPTIONS
+========================================================= */
+
+.rx-page {
+  min-height: 100vh;
+  direction: rtl;
+  background: #f2f4f7;
+  color: #1d3048;
+  font-family: inherit;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.rx-page-header {
+  min-height: 92px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 16px 26px;
+  border-bottom: 1px solid #dde3e9;
+  background: #fff;
+}
+
+.rx-eyebrow {
+  display: block;
+  margin-bottom: 3px;
+  color: #2671bb;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 1.1px;
+}
+
+.rx-page-header h1 {
+  margin: 0;
+  color: #152b45;
+  font-size: 27px;
+  font-weight: 800;
+}
+
+.rx-page-header p {
+  margin: 4px 0 0;
+  color: #8794a3;
+  font-size: 12px;
+}
+
+.rx-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rx-header-stat {
+  min-width: 110px;
+  height: 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 13px;
+  border-left: 1px solid #e1e6eb;
+}
+
+.rx-header-stat span {
+  color: #8d98a6;
+  font-size: 9px;
+}
+
+.rx-header-stat strong {
+  margin-top: 2px;
+  color: #1b3c60;
+  font-size: 18px;
+}
+
+.rx-settings-button {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 13px;
+  border: 1px solid #d8dfe6;
+  border-radius: 5px;
+  background: #fff;
+  color: #52677e;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.rx-settings-button:hover {
+  background: #f8fafc;
+}
+
+.rx-error {
+  margin: 12px 20px 0;
+  padding: 10px 13px;
+  border: 1px solid #f0caca;
+  border-radius: 5px;
+  background: #fff7f7;
+  color: #a44545;
+  font-size: 12px;
+}
+
+/* =========================================================
+   WORKSPACE
+========================================================= */
+
+.rx-workspace {
+  height: calc(100vh - 92px);
+  min-height: 650px;
+  display: grid;
+  grid-template-columns: 285px minmax(0, 1fr);
+  direction: ltr;
+}
+
+/* =========================================================
+   ARCHIVE
+========================================================= */
+
+.rx-archive {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  direction: rtl;
+  border-right: 1px solid #dce2e8;
+  background: #fafbfc;
+}
+
+.rx-archive-top {
+  min-height: 62px;
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  border-bottom: 1px solid #e2e6ea;
+}
+
+.rx-archive-top > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.rx-archive-top strong {
+  color: #31475f;
+  font-size: 14px;
+}
+
+.rx-archive-top span {
+  margin-top: 2px;
+  color: #96a0ad;
+  font-size: 10px;
+}
+
+.rx-search {
+  height: 39px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 12px 13px 8px;
+  padding: 0 9px;
+  border: 1px solid #dce2e7;
+  border-radius: 5px;
+  background: #fff;
+  color: #8290a1;
+}
+
+.rx-search:focus-within {
+  border-color: #8eafd0;
+}
+
+.rx-search input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #42566d;
+  font-family: inherit;
+  font-size: 11px;
+}
+
+.rx-search button {
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #8492a2;
+  cursor: pointer;
+}
+
+.rx-filters {
+  display: flex;
+  gap: 3px;
+  padding: 0 13px 11px;
+  border-bottom: 1px solid #e3e7eb;
+}
+
+.rx-filters button {
+  flex: 1;
+  height: 29px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: #7c8999;
+  font-family: inherit;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.rx-filters button.active {
+  background: #e9f1f9;
+  color: #1f66aa;
+  font-weight: 800;
+}
+
+.rx-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.rx-row {
+  position: relative;
+  width: 100%;
+  min-height: 84px;
+  display: grid;
+  grid-template-columns: 40px 1fr 17px;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 13px;
+  border: 0;
+  border-bottom: 1px solid #e7eaee;
+  background: transparent;
+  color: inherit;
+  text-align: right;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.rx-row:hover {
+  background: #fff;
+}
+
+.rx-row.active {
+  background: #fff;
+}
+
+.rx-row.active::before {
+  content: "";
+  position: absolute;
+  top: 12px;
+  right: 0;
+  bottom: 12px;
+  width: 3px;
+  background: #246db3;
+}
+
+.rx-row-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-left: 8px;
+  border-left: 1px solid #e1e6ea;
+}
+
+.rx-row-date strong {
+  color: #354b63;
+  font-size: 18px;
+}
+
+.rx-row-date span {
+  color: #929dab;
+  font-size: 9px;
+}
+
+.rx-row-content {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.rx-row-content strong {
+  overflow: hidden;
+  color: #3d5066;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rx-row-content span {
+  overflow: hidden;
+  margin-top: 3px;
+  color: #758396;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rx-row-content small {
+  margin-top: 4px;
+  color: #9ba5b1;
+  font-size: 9px;
+}
+
+.rx-empty-list {
+  min-height: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #a2abb6;
+  text-align: center;
+}
+
+.rx-empty-list strong {
+  margin-top: 9px;
+  color: #596a7d;
+  font-size: 13px;
+}
+
+.rx-empty-list span {
+  margin-top: 4px;
+  font-size: 10px;
+}
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.rx-main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  direction: rtl;
+  background: #e9edf1;
+}
+
+.rx-main-toolbar {
+  min-height: 62px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 9px 18px;
+  border-bottom: 1px solid #d7dde3;
+  background: #f9fafb;
+}
+
+.rx-current-patient {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.rx-patient-avatar,
+.rx-small-avatar {
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-weight: 800;
+}
+
+.rx-patient-avatar {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+  background: #16395f;
+  color: #fff;
+  font-size: 13px;
+}
+
+.rx-current-patient > div:last-child {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.rx-current-patient span {
+  color: #8d98a5;
+  font-size: 9px;
+}
+
+.rx-current-patient strong {
+  margin-top: 1px;
+  color: #3b4f66;
+  font-size: 12px;
+}
+
+.rx-current-patient small {
+  margin-top: 2px;
+  color: #96a0ac;
+  font-size: 9px;
+}
+
+.rx-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.rx-toolbar-actions button {
+  height: 34px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 10px;
+  border: 1px solid #d6dde4;
+  border-radius: 4px;
+  background: #fff;
+  color: #5b6d81;
+  font-family: inherit;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.rx-toolbar-actions button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.rx-toolbar-actions button.primary {
+  border-color: #173b61;
+  background: #173b61;
+  color: #fff;
+}
+
+.rx-content {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(500px, 1fr) 250px;
+  direction: ltr;
+}
+
+/* =========================================================
+   PAPER AREA
+========================================================= */
+
+.rx-paper-area {
+  min-width: 0;
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+  padding: 24px 25px 50px;
+  direction: rtl;
+}
+
+.rx-real-paper {
+  position: relative;
+  width: min(100%, 500px);
+  aspect-ratio: 210 / 297;
+  flex: 0 0 auto;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 29px 33px 0;
+  background: #fff;
+  color: #273a4f;
+  direction: rtl;
+  box-shadow:
+    0 2px 5px rgba(25, 39, 55, 0.08),
+    0 18px 40px rgba(25, 39, 55, 0.14);
+}
+
+.rx-paper-top-line {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 7px;
+  height: 90px;
+  background: #173b61;
+}
+
+.rx-paper-header {
+  min-height: 91px;
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.rx-paper-doctor {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.rx-paper-doctor > span {
+  color: #2770af;
+  font-size: 7px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+}
+
+.rx-paper-doctor h2 {
+  margin: 4px 0 2px;
+  color: #173b61;
+  font-size: 15px;
+}
+
+.rx-paper-doctor strong {
+  color: #506981;
+  font-size: 8px;
+}
+
+.rx-paper-doctor small {
+  margin-top: 3px;
+  color: #8995a2;
+  font-size: 7px;
+}
+
+.rx-paper-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.rx-paper-logo {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  color: #173b61;
+  font-size: 17px;
+  font-weight: 900;
+  letter-spacing: -1px;
+}
+
+.rx-paper-brand h1 {
+  margin: 1px 0 0;
+  color: #173b61;
+  font-size: 10px;
+}
+
+.rx-paper-brand > span {
+  margin-top: 2px;
+  color: #8894a1;
+  font-size: 5px;
+  letter-spacing: 1px;
+}
+
+.rx-paper-rule {
+  position: relative;
+  height: 5px;
+  margin: 6px 0 12px;
+  border-top: 1px solid #173b61;
+}
+
+.rx-paper-rule span {
+  position: absolute;
+  top: -1px;
+  right: 0;
+  width: 72px;
+  height: 4px;
+  background: #2775b8;
+}
+
+.rx-paper-patient {
+  display: grid;
+  grid-template-columns: 1.7fr 0.65fr 1fr;
+  gap: 9px;
+  padding: 8px 0 10px;
+  border-bottom: 1px solid #dbe1e6;
+}
+
+.rx-paper-patient > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.rx-paper-patient span {
+  color: #8b96a3;
+  font-size: 6px;
+}
+
+.rx-paper-patient strong {
+  margin-top: 3px;
+  color: #344a61;
+  font-size: 9px;
+}
+
+.rx-paper-diagnosis {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid #e2e6ea;
+}
+
+.rx-paper-diagnosis span {
+  color: #2871ae;
+  font-size: 7px;
+  font-weight: 800;
+}
+
+.rx-paper-diagnosis strong {
+  color: #586b7e;
+  font-size: 8px;
+  font-weight: 600;
+}
+
+.rx-paper-body {
+  flex: 1;
+  min-height: 250px;
+  padding-top: 12px;
+}
+
+.rx-rx-symbol {
+  color: #183d64;
+  font-family: Georgia, serif;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.rx-paper-medicines {
+  padding: 2px 14px 0 3px;
+}
+
+.rx-paper-medicine {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  gap: 9px;
+  padding: 9px 0;
+  border-bottom: 1px dashed #dce2e7;
+}
+
+.rx-paper-number {
+  color: #9ca6b1;
+  font-size: 7px;
+  font-weight: 800;
+}
+
+.rx-paper-medicine h3 {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  margin: 0;
+  color: #243b54;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 11px;
+  font-weight: 600;
+  direction: ltr;
+  text-align: left;
+}
+
+.rx-paper-medicine h3 b {
+  color: #63768a;
+  font-size: 8px;
+}
+
+.rx-paper-medicine p {
+  margin: 4px 0 0;
+  color: #4f6073;
+  font-size: 7px;
+}
+
+.rx-paper-medicine small {
+  display: block;
+  margin-top: 3px;
+  color: #8a96a3;
+  font-size: 7px;
+}
+
+.rx-paper-empty {
+  padding: 30px 0;
+  color: #9aa5b1;
+  font-size: 9px;
+  text-align: center;
+}
+
+.rx-paper-notes {
+  padding: 9px 0;
+  border-top: 1px solid #d9e0e6;
+}
+
+.rx-paper-notes > div {
+  margin-bottom: 5px;
+}
+
+.rx-paper-notes span {
+  color: #2a6da8;
+  font-size: 6px;
+  font-weight: 800;
+}
+
+.rx-paper-notes p {
+  margin: 3px 0 0;
+  color: #5d6e80;
+  font-size: 7px;
+  line-height: 1.6;
+}
+
+.rx-paper-followup {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #2a6da8;
+}
+
+.rx-paper-followup strong {
+  color: #4c6074;
+  font-size: 7px;
+}
+
+.rx-paper-signature {
+  width: 130px;
+  margin-right: auto;
+  margin-bottom: 10px;
+  padding-top: 7px;
+  border-top: 1px solid #d9dfe5;
+  text-align: center;
+}
+
+.rx-paper-signature span {
+  display: block;
+  color: #a0a9b3;
+  font-size: 5px;
+}
+
+.rx-paper-signature strong {
+  display: block;
+  margin-top: 4px;
+  color: #506276;
+  font-size: 8px;
+}
+
+.rx-paper-footer {
+  min-height: 45px;
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  align-items: center;
+  gap: 5px 11px;
+  margin: 0 -33px;
+  padding: 7px 33px;
+  background: #173b61;
+  color: #fff;
+}
+
+.rx-paper-footer > div {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 6px;
+}
+
+.rx-paper-footer small {
+  grid-column: 1 / -1;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 5px;
+  text-align: center;
+}
+
+/* =========================================================
+   DETAILS
+========================================================= */
+
+.rx-details {
+  min-width: 0;
+  overflow-y: auto;
+  padding: 17px;
+  direction: rtl;
+  border-left: 1px solid #dce2e7;
+  background: #fafbfc;
+}
+
+.rx-details-header {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 13px;
+  border-bottom: 1px solid #e1e5e9;
+}
+
+.rx-details-header span {
+  color: #2871bf;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.7px;
+}
+
+.rx-details-header strong {
+  margin-top: 3px;
+  color: #3e5269;
+  font-size: 14px;
+}
+
+.rx-detail-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid #e4e8ec;
+}
+
+.rx-detail-row span {
+  color: #929dab;
+  font-size: 9px;
+}
+
+.rx-detail-row strong {
+  overflow: hidden;
+  color: #5a6a7d;
+  font-size: 9px;
+  text-overflow: ellipsis;
+}
+
+.rx-patient-link {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 34px 1fr 15px;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 0;
+  border: 0;
+  border-bottom: 1px solid #e4e8ec;
+  background: transparent;
+  text-align: right;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.rx-small-avatar {
+  width: 33px;
+  height: 33px;
+  background: #eaf1f8;
+  color: #35628f;
+  font-size: 11px;
+}
+
+.rx-patient-link > span {
+  display: flex;
+  flex-direction: column;
+}
+
+.rx-patient-link small {
+  color: #929dab;
+  font-size: 8px;
+}
+
+.rx-patient-link strong {
+  margin-top: 2px;
+  color: #45586e;
+  font-size: 11px;
+}
+
+.rx-patient-link em {
+  margin-top: 2px;
+  color: #939eab;
+  font-size: 9px;
+  font-style: normal;
+}
+
+.rx-icon-row {
+  display: grid;
+  grid-template-columns: 31px 1fr;
+  gap: 8px;
+  padding: 12px 0;
+  border-bottom: 1px solid #e4e8ec;
+}
+
+.rx-icon-row > div {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #eef3f7;
+  color: #66809c;
+}
+
+.rx-icon-row > span {
+  display: flex;
+  flex-direction: column;
+}
+
+.rx-icon-row small {
+  color: #939eab;
+  font-size: 8px;
+}
+
+.rx-icon-row strong {
+  margin-top: 2px;
+  color: #4b5d72;
+  font-size: 10px;
+}
+
+.rx-icon-row em {
+  margin-top: 2px;
+  color: #96a0ad;
+  font-size: 8px;
+  font-style: normal;
+}
+
+.rx-detail-section {
+  padding: 14px 0;
+  border-bottom: 1px solid #e4e8ec;
+}
+
+.rx-detail-section > span {
+  display: block;
+  margin-bottom: 7px;
+  color: #8d98a6;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.rx-detail-section > strong {
+  color: #4d6075;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.rx-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.rx-section-heading span {
+  color: #8d98a6;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.rx-section-heading b {
+  min-width: 21px;
+  height: 21px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #eaf2fb;
+  color: #286eb5;
+  font-size: 9px;
+}
+
+.rx-side-medicine {
+  display: grid;
+  grid-template-columns: 21px 1fr;
+  gap: 7px;
+  padding: 8px 0;
+  border-bottom: 1px dashed #dfe4e8;
+}
+
+.rx-side-medicine > span {
+  color: #9aa4b0;
+  font-size: 8px;
+}
+
+.rx-side-medicine > div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.rx-side-medicine strong {
+  overflow: hidden;
+  color: #45586e;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rx-side-medicine small {
+  margin-top: 2px;
+  color: #929daa;
+  font-size: 8px;
+}
+
+.rx-open-visit {
+  width: 100%;
+  height: 38px;
+  display: grid;
+  grid-template-columns: 18px 1fr 16px;
+  align-items: center;
+  gap: 6px;
+  margin-top: 15px;
+  padding: 0 10px;
+  border: 1px solid #d7dee5;
+  border-radius: 4px;
+  background: #fff;
+  color: #53677e;
+  text-align: right;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* =========================================================
+   EMPTY / LOADING
+========================================================= */
+
+.rx-no-selection,
+.rx-state {
+  min-height: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #9aa5b2;
+}
+
+.rx-no-selection strong,
+.rx-state strong {
+  margin-top: 10px;
+  color: #52657a;
+  font-size: 14px;
+}
+
+.rx-no-selection span,
+.rx-state span {
+  margin-top: 4px;
+  font-size: 10px;
+}
+
+.rx-loader {
+  width: 27px;
+  height: 27px;
+  border: 3px solid #dbe3eb;
+  border-top-color: #1f659f;
+  border-radius: 50%;
+  animation: rx-spin 0.75s linear infinite;
+}
+
+@keyframes rx-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================
+   SETTINGS MODAL
+========================================================= */
+
+.rx-modal-layer {
+  position: fixed;
+  z-index: 2000;
+  inset: 0;
+}
+
+.rx-modal-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  border: 0;
+  background: rgba(9, 23, 40, 0.55);
+  backdrop-filter: blur(3px);
+}
+
+.rx-settings-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(420px, 100%);
+  display: flex;
+  flex-direction: column;
+  direction: rtl;
+  background: #fff;
+  box-shadow: -20px 0 60px rgba(10, 26, 45, 0.18);
+}
+
+.rx-settings-panel header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 21px;
+  border-bottom: 1px solid #e0e5ea;
+}
+
+.rx-settings-panel header span {
+  color: #2871bf;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+}
+
+.rx-settings-panel header h2 {
+  margin: 3px 0;
+  color: #233950;
+  font-size: 20px;
+}
+
+.rx-settings-panel header p {
+  margin: 0;
+  color: #8a96a5;
+  font-size: 10px;
+}
+
+.rx-close {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border: 1px solid #dce2e7;
+  border-radius: 50%;
+  background: #fff;
+  color: #718095;
+  cursor: pointer;
+}
+
+.rx-settings-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.rx-settings-field {
+  display: block;
+  margin-bottom: 14px;
+}
+
+.rx-settings-field > span {
+  display: block;
+  margin-bottom: 6px;
+  color: #65758a;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.rx-settings-field input,
+.rx-settings-field textarea {
+  width: 100%;
+  border: 1px solid #dce2e7;
+  border-radius: 4px;
+  outline: 0;
+  background: #fbfcfd;
+  color: #41546a;
+  font-family: inherit;
+  font-size: 11px;
+}
+
+.rx-settings-field input {
+  height: 39px;
+  padding: 0 10px;
+}
+
+.rx-settings-field textarea {
+  min-height: 70px;
+  padding: 9px 10px;
+  resize: vertical;
+}
+
+.rx-settings-field input:focus,
+.rx-settings-field textarea:focus {
+  border-color: #7ba7d2;
+  background: #fff;
+}
+
+.rx-settings-panel footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 7px;
+  padding: 13px 20px;
+  border-top: 1px solid #e0e5ea;
+  background: #fafbfc;
+}
+
+.rx-settings-panel footer button {
+  height: 38px;
+  padding: 0 15px;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.rx-cancel {
+  border: 1px solid #d8dfe5;
+  background: #fff;
+  color: #67778b;
+}
+
+.rx-save {
+  border: 1px solid #14385e;
+  background: #14385e;
+  color: #fff;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1150px) {
+  .rx-content {
+    grid-template-columns: minmax(480px, 1fr);
+  }
+
+  .rx-details {
+    display: none;
+  }
+}
+
+@media (max-width: 850px) {
+  .rx-page-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .rx-header-actions {
+    width: 100%;
+  }
+
+  .rx-workspace {
+    height: auto;
+    display: block;
+  }
+
+  .rx-archive {
+    height: 340px;
+    border-right: 0;
+    border-bottom: 1px solid #dce2e8;
+  }
+
+  .rx-main {
+    min-height: 760px;
+  }
+}
+
+@media (max-width: 620px) {
+  .rx-page-header {
+    padding: 15px;
+  }
+
+  .rx-page-header h1 {
+    font-size: 23px;
+  }
+
+  .rx-header-stat {
+    display: none;
+  }
+
+  .rx-settings-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .rx-main-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .rx-toolbar-actions {
+    width: 100%;
+  }
+
+  .rx-toolbar-actions button {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .rx-paper-area {
+    justify-content: flex-start;
+    padding: 15px;
+  }
+
+  .rx-real-paper {
+    min-width: 475px;
+  }
+}
+
+/* =========================================================
+   PRINT
+========================================================= */
+
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  html,
+  body {
+    width: 210mm;
+    height: 297mm;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+  }
+
+  body * {
+    visibility: hidden !important;
+  }
+
+  #prescription-paper,
+  #prescription-paper * {
+    visibility: visible !important;
+  }
+
+  #prescription-paper {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+
+    width: 210mm !important;
+    height: 297mm !important;
+    min-width: 210mm !important;
+
+    margin: 0 !important;
+    padding: 15mm 16mm 0 !important;
+
+    aspect-ratio: auto !important;
+    box-shadow: none !important;
+  }
+
+  #prescription-paper
+    .rx-paper-footer {
+    margin-right: -16mm !important;
+    margin-left: -16mm !important;
+
+    padding-right: 16mm !important;
+    padding-left: 16mm !important;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}

@@ -1,0 +1,1729 @@
+/* =========================================================
+   OMG CLINIC - WHATSAPP INBOX
+========================================================= */
+
+.wa-page {
+  --wa-primary: #0f766e;
+  --wa-primary-dark: #0b5f59;
+  --wa-primary-soft: #ecfdf8;
+
+  --wa-navy: #132238;
+  --wa-text: #172033;
+  --wa-muted: #6b778c;
+
+  --wa-border: #e5eaf0;
+  --wa-border-strong: #d9e0e8;
+
+  --wa-bg: #f5f7fa;
+  --wa-white: #ffffff;
+
+  width: 100%;
+  min-width: 0;
+  color: var(--wa-text);
+  direction: rtl;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.wa-page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+.wa-page-header h1 {
+  margin: 5px 0 4px;
+  color: var(--wa-navy);
+  font-size: 27px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.wa-page-header p {
+  margin: 0;
+  color: var(--wa-muted);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.wa-page-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--wa-primary);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.wa-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.wa-live-badge {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 38px;
+  padding: 0 13px;
+  border: 1px solid #dce9e6;
+  border-radius: 9px;
+  background: #fff;
+  color: #52616f;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.wa-live-badge > span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #19a974;
+  box-shadow: 0 0 0 4px rgba(25, 169, 116, 0.1);
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.wa-primary-button,
+.wa-secondary-button {
+  min-height: 40px;
+  border: 0;
+  border-radius: 9px;
+  padding: 0 15px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.wa-primary-button {
+  background: var(--wa-primary);
+  color: #fff;
+}
+
+.wa-primary-button:hover:not(:disabled) {
+  background: var(--wa-primary-dark);
+}
+
+.wa-primary-button:active:not(:disabled),
+.wa-secondary-button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.wa-primary-button:disabled,
+.wa-secondary-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.wa-secondary-button {
+  background: #fff;
+  border: 1px solid var(--wa-border);
+  color: #4e5b6b;
+}
+
+.wa-secondary-button:hover {
+  background: #f8fafc;
+  border-color: #cfd7e1;
+}
+
+/* =========================================================
+   ALERTS
+========================================================= */
+
+.wa-alert {
+  min-height: 43px;
+  margin-bottom: 14px;
+  padding: 0 14px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.wa-alert button {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.wa-alert-error {
+  background: #fff2f2;
+  border: 1px solid #ffd8d8;
+  color: #b42318;
+}
+
+.wa-alert-success {
+  background: #effbf6;
+  border: 1px solid #ccefe0;
+  color: #087a55;
+}
+
+/* =========================================================
+   MAIN WORKSPACE
+========================================================= */
+
+.wa-workspace {
+  height: calc(100vh - 195px);
+  min-height: 610px;
+  display: grid;
+  grid-template-columns: 310px minmax(390px, 1fr) 250px;
+  overflow: hidden;
+  border: 1px solid var(--wa-border);
+  border-radius: 12px;
+  background: var(--wa-white);
+  box-shadow: 0 3px 15px rgba(16, 32, 52, 0.045);
+}
+
+/* =========================================================
+   CONVERSATIONS COLUMN
+========================================================= */
+
+.wa-conversations {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid var(--wa-border);
+  background: #fff;
+}
+
+.wa-conversations-head {
+  padding: 17px 15px 13px;
+  border-bottom: 1px solid var(--wa-border);
+}
+
+.wa-conversations-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 13px;
+}
+
+.wa-conversations-title > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--wa-navy);
+}
+
+.wa-conversations-title strong {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.wa-conversations-title > span {
+  min-width: 25px;
+  height: 23px;
+  padding: 0 7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: #f0f3f6;
+  color: #637083;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.wa-search,
+.wa-input-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.wa-search > svg,
+.wa-input-icon > svg {
+  position: absolute;
+  right: 11px;
+  z-index: 1;
+  color: #8793a3;
+  pointer-events: none;
+}
+
+.wa-search input {
+  width: 100%;
+  height: 38px;
+  border: 1px solid var(--wa-border);
+  border-radius: 8px;
+  outline: none;
+  background: #f8fafc;
+  padding: 0 35px 0 10px;
+  color: var(--wa-text);
+  font-family: inherit;
+  font-size: 12px;
+  transition:
+    border-color 0.18s ease,
+    background 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.wa-search input:focus {
+  background: #fff;
+  border-color: #a7cec8;
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.07);
+}
+
+/* =========================================================
+   FILTER TABS
+========================================================= */
+
+.wa-filter-tabs {
+  display: flex;
+  gap: 3px;
+  margin-top: 10px;
+  padding: 3px;
+  border-radius: 8px;
+  background: #f4f6f8;
+}
+
+.wa-filter-tabs button {
+  flex: 1;
+  min-width: 0;
+  height: 29px;
+  padding: 0 5px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #768295;
+  font-family: inherit;
+  font-size: 10.5px;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.wa-filter-tabs button.active {
+  background: #fff;
+  color: var(--wa-primary);
+  box-shadow: 0 1px 4px rgba(24, 38, 56, 0.07);
+}
+
+.wa-filter-tabs button b {
+  margin-right: 4px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--wa-primary);
+  color: #fff;
+  font-size: 9px;
+}
+
+/* =========================================================
+   CONVERSATION LIST
+========================================================= */
+
+.wa-conversation-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.wa-conversation-list::-webkit-scrollbar,
+.wa-messages::-webkit-scrollbar,
+.wa-patient-select-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+.wa-conversation-list::-webkit-scrollbar-thumb,
+.wa-messages::-webkit-scrollbar-thumb,
+.wa-patient-select-list::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: #dce2e8;
+}
+
+.wa-conversation-item {
+  position: relative;
+  width: 100%;
+  min-height: 72px;
+  padding: 11px 13px;
+  border: 0;
+  border-bottom: 1px solid #f0f2f5;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: right;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.wa-conversation-item:hover {
+  background: #f9fbfc;
+}
+
+.wa-conversation-item.active {
+  background: #f0faf8;
+}
+
+.wa-conversation-item.active::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 3px;
+  border-radius: 0 4px 4px 0;
+  background: var(--wa-primary);
+}
+
+.wa-conversation-avatar,
+.wa-chat-avatar,
+.wa-small-avatar,
+.wa-patient-big-avatar {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #e8f3f2;
+  color: var(--wa-primary-dark);
+  font-weight: 800;
+}
+
+.wa-conversation-avatar {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  font-size: 15px;
+}
+
+.wa-conversation-avatar > span {
+  position: absolute;
+  left: 0;
+  bottom: 1px;
+  width: 10px;
+  height: 10px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: #23b27e;
+}
+
+.wa-conversation-body {
+  min-width: 0;
+  flex: 1;
+}
+
+.wa-conversation-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.wa-conversation-row strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #263247;
+  font-size: 12.5px;
+  font-weight: 800;
+}
+
+.wa-conversation-row time {
+  flex: 0 0 auto;
+  color: #9aa4b1;
+  font-size: 9.5px;
+}
+
+.wa-conversation-preview {
+  margin-top: 5px;
+}
+
+.wa-conversation-preview > span {
+  min-width: 0;
+  max-width: 190px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #8993a1;
+  font-size: 10.5px;
+}
+
+.wa-conversation-item.unread .wa-conversation-preview > span {
+  color: #596677;
+  font-weight: 700;
+}
+
+.wa-conversation-preview > b {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--wa-primary);
+  color: #fff;
+  font-size: 9px;
+}
+
+/* =========================================================
+   LIST EMPTY / LOADING
+========================================================= */
+
+.wa-list-state {
+  min-height: 240px;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+  color: #9aa4b1;
+}
+
+.wa-list-state strong {
+  color: #667386;
+  font-size: 13px;
+}
+
+.wa-list-state span {
+  max-width: 180px;
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+/* =========================================================
+   CHAT
+========================================================= */
+
+.wa-chat {
+  position: relative;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: #f6f8fa;
+}
+
+.wa-chat-header {
+  height: 68px;
+  flex: 0 0 68px;
+  padding: 0 17px;
+  border-bottom: 1px solid var(--wa-border);
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.wa-chat-contact {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.wa-chat-avatar {
+  width: 39px;
+  height: 39px;
+  font-size: 14px;
+}
+
+.wa-chat-contact > div:last-child {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.wa-chat-contact strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--wa-navy);
+  font-size: 13px;
+}
+
+.wa-chat-contact span {
+  direction: ltr;
+  text-align: right;
+  color: #8a96a6;
+  font-size: 10px;
+}
+
+.wa-chat-actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.wa-chat-actions button {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid var(--wa-border);
+  border-radius: 8px;
+  background: #fff;
+  color: #647286;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: 0.15s ease;
+}
+
+.wa-chat-actions button:hover {
+  border-color: #bdd8d4;
+  background: var(--wa-primary-soft);
+  color: var(--wa-primary);
+}
+
+/* =========================================================
+   UNLINKED PATIENT
+========================================================= */
+
+.wa-unlinked-patient {
+  min-height: 46px;
+  padding: 7px 14px;
+  border-bottom: 1px solid #f1dfb6;
+  background: #fffaf0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.wa-unlinked-patient > div {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.wa-unlinked-patient > div:first-child {
+  color: #9a6b17;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.wa-unlinked-patient button {
+  height: 29px;
+  padding: 0 10px;
+  border: 1px solid #e5d4ad;
+  border-radius: 6px;
+  background: #fff;
+  color: #77571e;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.wa-unlinked-patient button.primary {
+  border-color: var(--wa-primary);
+  background: var(--wa-primary);
+  color: #fff;
+}
+
+/* =========================================================
+   MESSAGES
+========================================================= */
+
+.wa-messages {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 24px 24px 18px;
+  background:
+    radial-gradient(
+      circle at 15% 10%,
+      rgba(15, 118, 110, 0.025),
+      transparent 25%
+    ),
+    #f6f8fa;
+}
+
+.wa-message-row {
+  width: 100%;
+  margin-bottom: 9px;
+  display: flex;
+}
+
+.wa-message-row.outbound {
+  justify-content: flex-start;
+}
+
+.wa-message-row.inbound {
+  justify-content: flex-end;
+}
+
+.wa-message-bubble {
+  max-width: min(72%, 540px);
+  padding: 9px 11px 6px;
+  border-radius: 11px;
+  box-shadow: 0 1px 2px rgba(23, 32, 51, 0.06);
+}
+
+.wa-message-row.outbound .wa-message-bubble {
+  border-bottom-right-radius: 3px;
+  background: #dff5ef;
+  color: #1d3d38;
+}
+
+.wa-message-row.inbound .wa-message-bubble {
+  border: 1px solid #edf0f3;
+  border-bottom-left-radius: 3px;
+  background: #fff;
+  color: #283448;
+}
+
+.wa-message-bubble p {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+  line-height: 1.75;
+}
+
+.wa-message-meta {
+  min-height: 15px;
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 3px;
+  color: #81908e;
+}
+
+.wa-message-meta time {
+  font-size: 8.5px;
+}
+
+.wa-message-row.outbound .wa-message-meta svg {
+  color: #1d8b7d;
+}
+
+.wa-message-loading,
+.wa-chat-start {
+  min-height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #8995a5;
+  font-size: 11px;
+}
+
+.wa-chat-start {
+  flex-direction: column;
+}
+
+.wa-chat-start strong {
+  margin-top: 2px;
+  color: #617083;
+  font-size: 13px;
+}
+
+/* =========================================================
+   APPOINTMENT EVENT
+========================================================= */
+
+.wa-system-event {
+  width: fit-content;
+  max-width: 390px;
+  margin: 14px auto;
+  padding: 10px 13px;
+  border: 1px solid #d9e6e3;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.92);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  box-shadow: 0 2px 7px rgba(31, 48, 67, 0.04);
+}
+
+.wa-system-event-icon {
+  width: 31px;
+  height: 31px;
+  border-radius: 7px;
+  background: var(--wa-primary-soft);
+  color: var(--wa-primary);
+  display: grid;
+  place-items: center;
+}
+
+.wa-system-event > div:nth-child(2) {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.wa-system-event span {
+  color: #768395;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.wa-system-event strong {
+  color: #344256;
+  font-size: 11px;
+}
+
+.wa-system-event small {
+  color: #8793a2;
+  font-size: 9px;
+}
+
+.wa-system-event > svg {
+  margin-right: 7px;
+  color: var(--wa-primary);
+}
+
+/* =========================================================
+   COMPOSER
+========================================================= */
+
+.wa-composer {
+  position: relative;
+  min-height: 65px;
+  padding: 10px 13px;
+  border-top: 1px solid var(--wa-border);
+  background: #fff;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.wa-composer textarea {
+  flex: 1;
+  min-width: 0;
+  min-height: 42px;
+  max-height: 110px;
+  resize: none;
+  outline: none;
+  border: 1px solid var(--wa-border);
+  border-radius: 9px;
+  background: #f8fafb;
+  padding: 10px 12px;
+  color: var(--wa-text);
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.wa-composer textarea:focus {
+  border-color: #acd0cb;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.055);
+}
+
+.wa-template-trigger,
+.wa-send-button {
+  flex: 0 0 auto;
+  width: 42px;
+  height: 42px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.wa-template-trigger {
+  border: 1px solid var(--wa-border);
+  background: #fff;
+  color: #657387;
+}
+
+.wa-template-trigger:hover {
+  background: #f7f9fb;
+  color: var(--wa-primary);
+}
+
+.wa-send-button {
+  border: 0;
+  background: var(--wa-primary);
+  color: #fff;
+}
+
+.wa-send-button:hover:not(:disabled) {
+  background: var(--wa-primary-dark);
+}
+
+.wa-send-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   TEMPLATE MENU
+========================================================= */
+
+.wa-template-menu {
+  position: absolute;
+  right: 12px;
+  bottom: 61px;
+  z-index: 20;
+  width: 330px;
+  max-height: 360px;
+  overflow-y: auto;
+  border: 1px solid var(--wa-border);
+  border-radius: 11px;
+  background: #fff;
+  box-shadow: 0 15px 40px rgba(18, 32, 50, 0.13);
+}
+
+.wa-template-menu-head {
+  height: 45px;
+  padding: 0 12px;
+  border-bottom: 1px solid var(--wa-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.wa-template-menu-head strong {
+  color: var(--wa-navy);
+  font-size: 12px;
+}
+
+.wa-template-menu-head button {
+  border: 0;
+  background: transparent;
+  color: #8994a3;
+  cursor: pointer;
+}
+
+.wa-template-menu > button {
+  width: 100%;
+  padding: 11px 13px;
+  border: 0;
+  border-bottom: 1px solid #f0f2f4;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: right;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.wa-template-menu > button:hover {
+  background: #f8fbfa;
+}
+
+.wa-template-menu > button strong {
+  color: #354256;
+  font-size: 11px;
+}
+
+.wa-template-menu > button span {
+  color: #7e8998;
+  font-size: 9.5px;
+  line-height: 1.6;
+}
+
+/* =========================================================
+   EMPTY CHAT
+========================================================= */
+
+.wa-empty-chat {
+  flex: 1;
+  padding: 35px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.wa-empty-chat-icon {
+  width: 68px;
+  height: 68px;
+  margin-bottom: 16px;
+  border: 1px solid #d8e9e6;
+  border-radius: 20px;
+  background: var(--wa-primary-soft);
+  color: var(--wa-primary);
+  display: grid;
+  place-items: center;
+}
+
+.wa-empty-chat h2 {
+  margin: 0 0 7px;
+  color: var(--wa-navy);
+  font-size: 18px;
+}
+
+.wa-empty-chat p {
+  max-width: 320px;
+  margin: 0 0 18px;
+  color: #8390a0;
+  font-size: 11.5px;
+  line-height: 1.8;
+}
+
+/* =========================================================
+   PATIENT PANEL
+========================================================= */
+
+.wa-patient-panel {
+  min-width: 0;
+  overflow-y: auto;
+  border-right: 1px solid var(--wa-border);
+  background: #fff;
+}
+
+.wa-patient-profile {
+  padding: 24px 15px 20px;
+  border-bottom: 1px solid var(--wa-border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.wa-patient-big-avatar {
+  width: 57px;
+  height: 57px;
+  margin-bottom: 10px;
+  font-size: 19px;
+}
+
+.wa-patient-profile > strong {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--wa-navy);
+  font-size: 13px;
+}
+
+.wa-patient-profile > span {
+  margin-top: 4px;
+  direction: ltr;
+  color: #8793a2;
+  font-size: 10px;
+}
+
+.wa-patient-profile > b {
+  margin-top: 7px;
+  padding: 4px 7px;
+  border-radius: 5px;
+  background: #f2f5f7;
+  color: #657286;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.wa-patient-panel-section {
+  padding: 15px;
+  border-bottom: 1px solid var(--wa-border);
+}
+
+.wa-panel-label {
+  display: block;
+  margin-bottom: 11px;
+  color: #9aa4b1;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.wa-info-row {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wa-info-icon {
+  width: 29px;
+  height: 29px;
+  flex: 0 0 auto;
+  border-radius: 7px;
+  background: #f4f7f9;
+  color: #708093;
+  display: grid;
+  place-items: center;
+}
+
+.wa-info-row > div:last-child {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.wa-info-row span {
+  color: #9aa4b1;
+  font-size: 8.5px;
+}
+
+.wa-info-row strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #475568;
+  font-size: 10.5px;
+}
+
+.wa-panel-action {
+  width: 100%;
+  height: 35px;
+  margin-top: 4px;
+  padding: 0 10px;
+  border: 1px solid var(--wa-border);
+  border-radius: 7px;
+  background: #fff;
+  color: #58677a;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.wa-panel-action:hover {
+  background: #f8fafb;
+  color: var(--wa-primary);
+}
+
+.wa-quick-action {
+  width: 100%;
+  height: 37px;
+  margin-bottom: 7px;
+  padding: 0 10px;
+  border: 1px solid var(--wa-border);
+  border-radius: 7px;
+  background: #fff;
+  color: #59687b;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: inherit;
+  font-size: 10.5px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.wa-quick-action:hover {
+  background: #f8fafb;
+}
+
+.wa-quick-action.primary {
+  border-color: #cfe5e1;
+  background: var(--wa-primary-soft);
+  color: var(--wa-primary-dark);
+}
+
+.wa-no-patient {
+  padding: 10px;
+  border-radius: 8px;
+  background: #f8fafb;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.wa-no-patient span {
+  color: #8390a0;
+  font-size: 10px;
+  line-height: 1.7;
+}
+
+.wa-no-patient button {
+  height: 31px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--wa-primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.wa-status-box {
+  height: 35px;
+  padding: 0 10px;
+  border: 1px solid #d7ece5;
+  border-radius: 7px;
+  background: #f3fbf8;
+  color: #177b5c;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.wa-status-box > span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #20aa77;
+}
+
+.wa-status-box.closed {
+  border-color: #e1e5e9;
+  background: #f7f8f9;
+  color: #7d8795;
+}
+
+.wa-status-box.closed > span {
+  background: #929aa5;
+}
+
+/* =========================================================
+   DIALOG
+========================================================= */
+
+.wa-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  padding: 20px;
+  background: rgba(14, 24, 38, 0.47);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wa-dialog {
+  width: 100%;
+  max-height: calc(100vh - 40px);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 13px;
+  background: #fff;
+  box-shadow: 0 24px 70px rgba(13, 27, 44, 0.22);
+  animation: wa-dialog-in 0.18s ease;
+}
+
+@keyframes wa-dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(7px) scale(0.99);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.wa-dialog-header {
+  min-height: 70px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--wa-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.wa-dialog-header h2 {
+  margin: 0;
+  color: var(--wa-navy);
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.wa-dialog-header p {
+  margin: 4px 0 0;
+  color: #8994a3;
+  font-size: 10.5px;
+}
+
+.wa-dialog-header > button {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--wa-border);
+  border-radius: 7px;
+  background: #fff;
+  color: #7a8797;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.wa-dialog-header > button:hover {
+  background: #f7f9fb;
+}
+
+.wa-dialog-body {
+  max-height: calc(100vh - 150px);
+  overflow-y: auto;
+  padding: 18px;
+}
+
+.wa-dialog-tabs {
+  margin: 15px 18px 0;
+  padding: 3px;
+  border-radius: 8px;
+  background: #f3f5f7;
+  display: flex;
+}
+
+.wa-dialog-tabs button {
+  flex: 1;
+  height: 34px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #7b8797;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.wa-dialog-tabs button.active {
+  background: #fff;
+  color: var(--wa-primary);
+  box-shadow: 0 1px 5px rgba(18, 31, 48, 0.07);
+}
+
+.wa-dialog-error {
+  margin-bottom: 13px;
+  padding: 10px 12px;
+  border: 1px solid #ffd5d5;
+  border-radius: 7px;
+  background: #fff3f3;
+  color: #b42318;
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.wa-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 13px;
+}
+
+.wa-field {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.wa-field-full {
+  grid-column: 1 / -1;
+}
+
+.wa-field > span {
+  color: #5f6d80;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.wa-field input,
+.wa-field select,
+.wa-field textarea {
+  width: 100%;
+  outline: none;
+  border: 1px solid var(--wa-border-strong);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--wa-text);
+  font-family: inherit;
+  font-size: 11.5px;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.wa-field input,
+.wa-field select {
+  height: 40px;
+  padding: 0 11px;
+}
+
+.wa-field textarea {
+  resize: vertical;
+  min-height: 78px;
+  padding: 10px 11px;
+}
+
+.wa-field input:focus,
+.wa-field select:focus,
+.wa-field textarea:focus {
+  border-color: #9bc7c1;
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.06);
+}
+
+.wa-input-icon input {
+  padding-right: 36px;
+}
+
+.wa-dialog-footer {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--wa-border);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* =========================================================
+   PATIENT SELECT
+========================================================= */
+
+.wa-patient-select-list {
+  max-height: 340px;
+  margin-top: 12px;
+  overflow-y: auto;
+  border: 1px solid var(--wa-border);
+  border-radius: 9px;
+}
+
+.wa-patient-select-list > button {
+  width: 100%;
+  min-height: 55px;
+  padding: 8px 10px;
+  border: 0;
+  border-bottom: 1px solid #eef1f4;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  text-align: right;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.wa-patient-select-list > button:last-child {
+  border-bottom: 0;
+}
+
+.wa-patient-select-list > button:hover {
+  background: #f8fbfa;
+}
+
+.wa-small-avatar {
+  width: 34px;
+  height: 34px;
+  font-size: 11px;
+}
+
+.wa-patient-select-list > button > div:nth-child(2) {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.wa-patient-select-list strong {
+  color: #3d4a5d;
+  font-size: 11px;
+}
+
+.wa-patient-select-list span {
+  direction: ltr;
+  text-align: right;
+  color: #8a96a5;
+  font-size: 9.5px;
+}
+
+.wa-patient-select-list svg {
+  color: #9aa4b0;
+}
+
+/* =========================================================
+   BOOKING DIALOG
+========================================================= */
+
+.wa-booking-patient {
+  margin-bottom: 16px;
+  padding: 10px 12px;
+  border: 1px solid #dceae7;
+  border-radius: 9px;
+  background: #f7fbfa;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.wa-booking-patient > div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.wa-booking-patient span {
+  color: #8c98a6;
+  font-size: 8.5px;
+}
+
+.wa-booking-patient strong {
+  color: #344256;
+  font-size: 11.5px;
+}
+
+.wa-booking-patient small {
+  color: #8a96a5;
+  font-size: 9px;
+}
+
+.wa-appointment-no-patient {
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  text-align: center;
+}
+
+.wa-appointment-no-patient > svg {
+  margin-bottom: 5px;
+  color: var(--wa-primary);
+}
+
+.wa-appointment-no-patient strong {
+  color: var(--wa-navy);
+  font-size: 14px;
+}
+
+.wa-appointment-no-patient span {
+  max-width: 300px;
+  margin-bottom: 10px;
+  color: #8793a2;
+  font-size: 10.5px;
+  line-height: 1.7;
+}
+
+/* =========================================================
+   SPINNER
+========================================================= */
+
+.wa-spin {
+  animation: wa-spin 0.8s linear infinite;
+}
+
+@keyframes wa-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1250px) {
+  .wa-workspace {
+    grid-template-columns: 285px minmax(380px, 1fr);
+  }
+
+  .wa-patient-panel {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .wa-page-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .wa-header-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .wa-workspace {
+    height: calc(100vh - 245px);
+    min-height: 570px;
+    grid-template-columns: 250px minmax(340px, 1fr);
+  }
+
+  .wa-conversation-preview > span {
+    max-width: 130px;
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+  .wa-page-header h1 {
+    font-size: 22px;
+  }
+
+  .wa-live-badge {
+    display: none;
+  }
+
+  .wa-primary-button {
+    min-height: 38px;
+  }
+
+  .wa-workspace {
+    height: calc(100vh - 205px);
+    min-height: 520px;
+    display: block;
+    position: relative;
+  }
+
+  .wa-conversations {
+    width: 100%;
+    height: 100%;
+    border-left: 0;
+  }
+
+  .wa-chat {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: none;
+  }
+
+  .wa-conversations:has(
+      + .wa-chat .wa-chat-header
+    ) {
+    display: none;
+  }
+
+  .wa-conversations:has(
+      + .wa-chat .wa-chat-header
+    )
+    + .wa-chat {
+    display: flex;
+  }
+
+  .wa-chat-header {
+    height: 61px;
+    flex-basis: 61px;
+    padding: 0 10px;
+  }
+
+  .wa-chat-actions button {
+    width: 31px;
+    height: 31px;
+  }
+
+  .wa-messages {
+    padding: 17px 11px;
+  }
+
+  .wa-message-bubble {
+    max-width: 87%;
+  }
+
+  .wa-unlinked-patient {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .wa-composer {
+    padding: 8px;
+  }
+
+  .wa-template-menu {
+    right: 8px;
+    left: 8px;
+    width: auto;
+  }
+
+  .wa-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .wa-field-full {
+    grid-column: auto;
+  }
+
+  .wa-dialog-backdrop {
+    padding: 10px;
+  }
+
+  .wa-dialog {
+    max-height: calc(100vh - 20px);
+  }
+
+  .wa-dialog-body {
+    max-height: calc(100vh - 115px);
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+  .wa-page-header {
+    margin-bottom: 13px;
+  }
+
+  .wa-page-header p {
+    font-size: 11px;
+  }
+
+  .wa-header-actions .wa-primary-button {
+    width: 100%;
+  }
+
+  .wa-workspace {
+    border-radius: 9px;
+  }
+
+  .wa-filter-tabs button {
+    font-size: 9.5px;
+  }
+
+  .wa-conversation-item {
+    min-height: 68px;
+  }
+
+  .wa-dialog-header {
+    padding: 12px 14px;
+  }
+
+  .wa-dialog-body {
+    padding: 14px;
+  }
+
+  .wa-dialog-footer {
+    flex-direction: column-reverse;
+  }
+
+  .wa-dialog-footer button {
+    width: 100%;
+  }
+}

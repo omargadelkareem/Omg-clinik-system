@@ -1,0 +1,984 @@
+.ops-dashboard {
+  --ink: #19344d;
+  --muted: #718292;
+  --line: #dce3e8;
+  --soft-line: #e8edf1;
+  --surface: #ffffff;
+  --canvas: #f5f7f8;
+  --navy: #123653;
+  --blue: #2874ae;
+
+  min-height: 100%;
+  padding: 28px 30px 42px;
+  background: var(--canvas);
+  color: var(--ink);
+}
+
+/* HEADER */
+
+.ops-header {
+  min-height: 84px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid #d7dee4;
+}
+
+.ops-eyebrow {
+  display: block;
+  margin-bottom: 5px;
+  color: #7190aa;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1.1px;
+}
+
+.ops-header h1 {
+  margin: 0;
+  color: #193750;
+  font-size: 27px;
+  font-weight: 800;
+  letter-spacing: -.4px;
+}
+
+.ops-header p {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 7px 0 0;
+  color: #7d8b98;
+  font-size: 13px;
+}
+
+.ops-header p span {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #a4afb8;
+}
+
+.ops-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.clinic-live-state {
+  height: 39px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 12px;
+  border: 1px solid #d8e1e6;
+  background: #fff;
+  color: #607485;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.clinic-live-state i,
+.live-panel-heading i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #3f9c70;
+  box-shadow: 0 0 0 4px rgba(63,156,112,.1);
+}
+
+.primary-operation {
+  height: 39px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 15px;
+  border: 0;
+  border-radius: 4px;
+  background: var(--navy);
+  color: #fff;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* METRICS - ONE CONTINUOUS STRIP */
+
+.command-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin-top: 21px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.command-metric {
+  min-height: 105px;
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+  padding: 20px;
+  border-left: 1px solid var(--soft-line);
+}
+
+.command-metric:last-child {
+  border-left: 0;
+}
+
+.command-metric > svg {
+  margin-top: 3px;
+  color: #7190aa;
+}
+
+.command-metric > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.command-metric span {
+  color: #718292;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.command-metric strong {
+  margin: 3px 0 1px;
+  color: #183750;
+  font-size: 25px;
+  line-height: 1.2;
+  font-weight: 850;
+}
+
+.command-metric strong small {
+  color: #617487;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.command-metric > div > small {
+  color: #96a2ad;
+  font-size: 11px;
+}
+
+.command-attention {
+  box-shadow: inset 0 -2px 0 #d29a4c;
+}
+
+/* MAIN */
+
+.operations-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 310px;
+  margin-top: 20px;
+  border: 1px solid var(--line);
+  background: #fff;
+}
+
+.schedule-workspace {
+  min-width: 0;
+  border-left: 1px solid var(--line);
+}
+
+.workspace-heading,
+.lower-heading {
+  min-height: 69px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--soft-line);
+}
+
+.workspace-heading > div,
+.lower-heading > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.workspace-heading span,
+.lower-heading span,
+.live-panel-heading > div > span {
+  color: #8a98a4;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.workspace-heading h2,
+.lower-heading h2,
+.live-panel-heading h2 {
+  margin: 2px 0 0;
+  color: #29445c;
+  font-size: 16px;
+}
+
+.workspace-heading button,
+.lower-heading button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  background: transparent;
+  color: #47728f;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* APPOINTMENT LINES */
+
+.schedule-list {
+  min-height: 322px;
+}
+
+.schedule-line {
+  width: 100%;
+  min-height: 65px;
+  display: grid;
+  grid-template-columns:
+    42px
+    92px
+    minmax(190px, 1.5fr)
+    minmax(120px, .8fr)
+    105px
+    24px;
+  align-items: center;
+  gap: 12px;
+  padding: 0 17px;
+  border: 0;
+  border-bottom: 1px solid #edf0f2;
+  background: #fff;
+  text-align: right;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background .15s ease;
+}
+
+.schedule-line:hover {
+  background: #f9fbfc;
+}
+
+.schedule-sequence {
+  color: #a0acb6;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.schedule-time {
+  display: flex;
+  flex-direction: column;
+  padding-left: 14px;
+  border-left: 1px solid #e5e9ec;
+}
+
+.schedule-time strong {
+  color: #294860;
+  font-size: 13px;
+}
+
+.schedule-time span {
+  margin-top: 2px;
+  color: #9aa5ae;
+  font-size: 11px;
+}
+
+.schedule-patient {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.patient-mark {
+  flex: 0 0 35px;
+  width: 35px;
+  height: 35px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #edf3f7;
+  color: #315b79;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.schedule-patient > div,
+.schedule-service {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.schedule-patient strong {
+  overflow: hidden;
+  color: #314b62;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.schedule-patient span,
+.schedule-service small {
+  margin-top: 2px;
+  overflow: hidden;
+  color: #8d9aa5;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.schedule-service > span {
+  color: #5e7284;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.ops-status {
+  width: fit-content;
+  padding: 4px 7px;
+  border: 1px solid #d9e1e6;
+  background: #f8fafb;
+  color: #637787;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.ops-status-confirmed,
+.ops-status-completed {
+  border-color: #cce5d8;
+  background: #f4faf7;
+  color: #438063;
+}
+
+.ops-status-arrived,
+.ops-status-waiting {
+  border-color: #ead9b9;
+  background: #fdf9f1;
+  color: #946d30;
+}
+
+.ops-status-in_progress {
+  border-color: #cbddea;
+  background: #f2f7fb;
+  color: #356f99;
+}
+
+.ops-status-cancelled {
+  border-color: #ead0d2;
+  background: #fff6f6;
+  color: #a45b61;
+}
+
+.schedule-arrow {
+  color: #a1adb6;
+}
+
+.schedule-add-line {
+  width: 100%;
+  min-height: 49px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 0;
+  border-top: 1px solid #e7ebee;
+  background: #fbfcfd;
+  color: #49718e;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* EMPTY */
+
+.empty-schedule {
+  min-height: 322px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #8293a1;
+}
+
+.empty-schedule > svg {
+  margin-bottom: 11px;
+  color: #7c9ab1;
+}
+
+.empty-schedule strong {
+  color: #526b80;
+  font-size: 14px;
+}
+
+.empty-schedule span {
+  margin-top: 4px;
+  font-size: 12px;
+}
+
+.empty-schedule button {
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 15px;
+  padding: 0 12px;
+  border: 1px solid #d2dce3;
+  background: #fff;
+  color: #426b89;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* LIVE FLOOR */
+
+.clinic-live-panel {
+  min-width: 0;
+  background: #fbfcfd;
+}
+
+.live-panel-heading {
+  min-height: 69px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  border-bottom: 1px solid #e5eaed;
+}
+
+.live-panel-heading > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.exam-room {
+  margin: 15px;
+  padding: 15px;
+  border-right: 3px solid #3c83b5;
+  background: #f1f6f9;
+}
+
+.exam-room-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #52758f;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.exam-patient {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 13px;
+}
+
+.exam-patient > span {
+  width: 37px;
+  height: 37px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #dce9f1;
+  color: #275b7f;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.exam-patient > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.exam-patient strong {
+  color: #294860;
+  font-size: 13px;
+}
+
+.exam-patient small {
+  margin-top: 2px;
+  color: #80909d;
+  font-size: 11px;
+}
+
+.exam-room-empty {
+  min-height: 112px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-right-color: #b9c6cf;
+  text-align: center;
+}
+
+.exam-room-empty svg {
+  color: #879ba9;
+}
+
+.exam-room-empty strong {
+  margin-top: 6px;
+  color: #607687;
+  font-size: 12px;
+}
+
+.exam-room-empty span {
+  margin-top: 3px;
+  color: #95a1aa;
+  font-size: 11px;
+}
+
+.waiting-head {
+  min-height: 43px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  border-top: 1px solid #e7ebee;
+  border-bottom: 1px solid #e7ebee;
+}
+
+.waiting-head span {
+  color: #778895;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.waiting-head strong {
+  min-width: 25px;
+  height: 23px;
+  display: grid;
+  place-items: center;
+  background: #eaf0f4;
+  color: #4c697e;
+  font-size: 11px;
+}
+
+.live-queue-line {
+  width: 100%;
+  min-height: 52px;
+  display: grid;
+  grid-template-columns: 32px 1fr 18px;
+  align-items: center;
+  gap: 9px;
+  padding: 0 15px;
+  border: 0;
+  border-bottom: 1px solid #e9edf0;
+  background: transparent;
+  text-align: right;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.live-queue-number {
+  color: #8a9aa7;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.live-queue-line > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.live-queue-line strong {
+  color: #3b556b;
+  font-size: 12px;
+}
+
+.live-queue-line small {
+  margin-top: 2px;
+  color: #939fa8;
+  font-size: 11px;
+}
+
+.live-queue-line svg {
+  color: #a2adb5;
+}
+
+.empty-queue {
+  min-height: 115px;
+  display: grid;
+  place-items: center;
+  color: #909da7;
+  font-size: 12px;
+}
+
+.manage-floor {
+  width: calc(100% - 30px);
+  min-height: 39px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 15px;
+  padding: 0 12px;
+  border: 1px solid #d7e0e6;
+  background: #fff;
+  color: #4c718c;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* LOWER */
+
+.lower-operations {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 310px;
+  margin-top: 20px;
+  border: 1px solid var(--line);
+  background: #fff;
+}
+
+.cash-workspace {
+  min-width: 0;
+  border-left: 1px solid var(--line);
+}
+
+.cash-ledger {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-bottom: 1px solid #e7ebee;
+}
+
+.cash-ledger > div {
+  min-height: 91px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 20px;
+  border-left: 1px solid #e7ebee;
+}
+
+.cash-ledger > div:last-child {
+  border-left: 0;
+}
+
+.cash-ledger span {
+  color: #85939f;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.cash-ledger strong {
+  margin-top: 4px;
+  color: #29475f;
+  font-size: 20px;
+}
+
+.cash-ledger strong small {
+  color: #758795;
+  font-size: 10px;
+}
+
+.net-cell {
+  background: #f8fafb;
+}
+
+.revenue-graph {
+  padding: 19px 20px 15px;
+}
+
+.revenue-graph-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.revenue-graph-head span {
+  color: #778895;
+  font-size: 11px;
+}
+
+.revenue-graph-head strong {
+  color: #38566d;
+  font-size: 12px;
+}
+
+.revenue-bars {
+  height: 145px;
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  margin-top: 17px;
+}
+
+.revenue-day {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.revenue-track {
+  position: relative;
+  width: 100%;
+  height: 116px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  border-bottom: 1px solid #e0e5e8;
+  background:
+    repeating-linear-gradient(
+      to top,
+      transparent,
+      transparent 28px,
+      #f0f2f4 29px
+    );
+}
+
+.revenue-fill {
+  position: relative;
+  width: min(26px, 65%);
+  min-height: 2px;
+  background: #517e9e;
+  transition: height .3s ease;
+}
+
+.revenue-fill span {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  color: #6e8291;
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+.revenue-day > small {
+  margin-top: 7px;
+  color: #8795a0;
+  font-size: 10px;
+}
+
+/* QUICK COMMANDS */
+
+.quick-command-panel {
+  background: #fbfcfd;
+}
+
+.quick-command-list {
+  padding: 8px 0;
+}
+
+.quick-command-list button {
+  width: 100%;
+  min-height: 51px;
+  display: grid;
+  grid-template-columns: 28px 1fr 20px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  border: 0;
+  border-bottom: 1px solid #e9edf0;
+  background: transparent;
+  color: #4c667b;
+  text-align: right;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.quick-command-list button:hover {
+  background: #f4f7f9;
+}
+
+.quick-command-list button > svg:first-child {
+  color: #668aa4;
+}
+
+.quick-command-list span {
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.quick-command-list button > svg:last-child {
+  color: #a1acb4;
+}
+
+.system-note {
+  display: flex;
+  gap: 9px;
+  margin: 13px;
+  padding: 12px;
+  border: 1px solid #dfe6ea;
+  background: #fff;
+  color: #6d8190;
+}
+
+.system-note > svg {
+  flex: 0 0 auto;
+  color: #4b8b70;
+}
+
+.system-note > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.system-note strong {
+  color: #536d80;
+  font-size: 11px;
+}
+
+.system-note span {
+  margin-top: 2px;
+  color: #8b99a4;
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+/* LOADING / ERROR */
+
+.dashboard-state {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #6f8291;
+}
+
+.dashboard-state strong {
+  margin-top: 10px;
+  color: #405c72;
+  font-size: 14px;
+}
+
+.dashboard-state span {
+  margin-top: 4px;
+  font-size: 12px;
+}
+
+.dashboard-loader {
+  color: #3f7297;
+  animation: dashboardSpin .8s linear infinite;
+}
+
+.dashboard-error-state button {
+  margin-top: 13px;
+  padding: 8px 12px;
+  border: 1px solid #d5dfe5;
+  background: #fff;
+  color: #416b89;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+@keyframes dashboardSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 1180px) {
+  .operations-layout,
+  .lower-operations {
+    grid-template-columns: 1fr;
+  }
+
+  .schedule-workspace,
+  .cash-workspace {
+    border-left: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .clinic-live-panel,
+  .quick-command-panel {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .ops-dashboard {
+    padding: 20px;
+  }
+
+  .command-strip {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .command-metric:nth-child(2) {
+    border-left: 0;
+  }
+
+  .command-metric:nth-child(-n + 2) {
+    border-bottom: 1px solid var(--soft-line);
+  }
+
+  .schedule-line {
+    grid-template-columns:
+      34px
+      80px
+      minmax(160px, 1fr)
+      100px;
+  }
+
+  .schedule-service,
+  .schedule-arrow {
+    display: none;
+  }
+}
+
+@media (max-width: 650px) {
+  .ops-dashboard {
+    padding: 16px 13px 30px;
+  }
+
+  .ops-header {
+    flex-direction: column;
+  }
+
+  .ops-header-actions {
+    width: 100%;
+  }
+
+  .primary-operation {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .command-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .command-metric {
+    min-height: 85px;
+    border-left: 0;
+    border-bottom: 1px solid var(--soft-line);
+  }
+
+  .schedule-line {
+    grid-template-columns: 30px 75px 1fr;
+    padding: 0 11px;
+  }
+
+  .ops-status {
+    display: none;
+  }
+
+  .cash-ledger {
+    grid-template-columns: 1fr;
+  }
+
+  .cash-ledger > div {
+    min-height: 70px;
+    border-left: 0;
+    border-bottom: 1px solid #e7ebee;
+  }
+
+  .revenue-bars {
+    gap: 5px;
+  }
+
+  .revenue-fill span {
+    display: none;
+  }
+}
