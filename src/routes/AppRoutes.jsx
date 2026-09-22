@@ -23,6 +23,7 @@ import SetupClinicPage from "../pages/setup/SetupClinicPage";
 import VisitsPage from "../pages/visits/VisitsPage";
 import MedicalFilesPage from "../pages/medical-files/MedicalFilesPage";
 import WhatsAppPage from "../pages/whatsapp/WhatsappPage";
+import RepresentativeVisitsPage from "../pages/representatives/RepresentativeVisitsPage";
 
 
 export default function AppRoutes() {
@@ -64,6 +65,13 @@ export default function AppRoutes() {
           <Route
             path="patients/:patientId"
             element={<PatientProfilePage />}
+          />
+
+            <Route
+            path="representatives"
+            element={
+              <RepresentativeVisitsPage />
+            }
           />
 
           <Route

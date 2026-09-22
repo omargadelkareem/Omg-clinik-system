@@ -59,6 +59,7 @@ const initialVisit = {
   temperature: "",
   spo2: "",
   weight: "",
+  height: "",
 
   examination: "",
   diagnosis: "",
@@ -69,6 +70,12 @@ const initialVisit = {
 
   medicines: [],
   investigations: [],
+
+  specialty: {
+    id: "",
+    workspace: "general",
+    data: {},
+  },
 };
 
 /* =========================================================
@@ -174,6 +181,127 @@ const COMMON_TESTS = {
   ],
 };
 
+const SPECIALTY_INVESTIGATION_GROUPS = {
+  obstetrics_gynecology: {
+    lab: ["CBC", "Blood Group & Rh", "Urine Analysis", "Urine Culture", "Beta-hCG", "Fasting Blood Sugar", "Random Blood Sugar", "HbA1c", "TSH", "Free T4", "Ferritin", "HBsAg", "HIV Screening", "Syphilis Screening (VDRL/RPR)", "Rubella IgG", "Toxoplasma IgG/IgM", "Coagulation Profile", "Vaginal/Cervical Swab", "Pap Smear"],
+    imaging: ["Pelvic Ultrasound", "Transvaginal Ultrasound", "Obstetric Ultrasound", "Fetal Anomaly Scan", "Fetal Growth Scan", "Fetal Doppler", "NT Scan", "Cervical Length Ultrasound", "Follicular Tracking Ultrasound", "Hysterosalpingography (HSG)", "Mammography"],
+  },
+  pediatrics: {
+    lab: ["CBC", "CRP", "ESR", "Ferritin", "Iron Profile", "Vitamin D", "Calcium", "Random Blood Sugar", "Urine Analysis", "Urine Culture", "Stool Analysis", "Stool Culture", "Liver Function Tests", "Kidney Function Tests", "TSH", "Free T4"],
+    imaging: ["X-Ray Chest", "Abdominal Ultrasound", "Pelvic Ultrasound", "Cranial Ultrasound", "Echocardiography", "Hip Ultrasound", "CT Brain", "MRI Brain"],
+  },
+  internal: {
+    lab: ["CBC", "HbA1c", "Fasting Blood Sugar", "Random Blood Sugar", "Lipid Profile", "Liver Function Tests", "Kidney Function Tests", "TSH", "Free T4", "CRP", "ESR", "Ferritin", "Vitamin B12", "Vitamin D", "Urine Analysis", "Uric Acid", "Electrolytes (Na/K)"],
+    imaging: ["X-Ray Chest", "Abdominal Ultrasound", "Pelvic Ultrasound", "CT Chest", "CT Abdomen", "Echocardiography", "Doppler"],
+  },
+  cardiology: {
+    lab: ["CBC", "Troponin", "CK-MB", "Lipid Profile", "HbA1c", "Fasting Blood Sugar", "Kidney Function Tests", "Electrolytes (Na/K/Mg)", "TSH", "BNP / NT-proBNP", "Coagulation Profile"],
+    imaging: ["ECG", "Echocardiography", "Holter ECG", "Ambulatory Blood Pressure Monitoring", "Exercise Stress Test", "Coronary CT Angiography", "Cardiac MRI", "Carotid Doppler"],
+  },
+  dental: {
+    lab: ["CBC", "Fasting Blood Sugar", "HbA1c", "Coagulation Profile", "INR"],
+    imaging: ["Periapical X-Ray", "Bitewing X-Ray", "Panoramic X-Ray (OPG)", "Cephalometric X-Ray", "Dental CBCT", "TMJ Imaging"],
+  },
+  surgery: {
+    lab: ["CBC", "Fasting Blood Sugar", "Random Blood Sugar", "Kidney Function Tests", "Liver Function Tests", "Coagulation Profile", "INR", "Blood Group & Rh", "Crossmatch", "Electrolytes (Na/K)"],
+    imaging: ["X-Ray Chest", "Abdominal Ultrasound", "CT Abdomen", "CT Chest", "MRI", "Doppler", "ECG"],
+  },
+  neurology: {
+    lab: ["CBC", "Random Blood Sugar", "HbA1c", "Electrolytes (Na/K/Ca/Mg)", "TSH", "Vitamin B12", "Folate", "Liver Function Tests", "Kidney Function Tests", "ESR", "CRP"],
+    imaging: ["CT Brain", "MRI Brain", "MRI Spine", "EEG", "EMG / Nerve Conduction Study", "Carotid Doppler"],
+  },
+  orthopedics: {
+    lab: ["CBC", "ESR", "CRP", "Vitamin D", "Calcium", "Uric Acid", "Rheumatoid Factor", "Anti-CCP"],
+    imaging: ["X-Ray", "MRI Joint", "MRI Spine", "CT Bone", "Musculoskeletal Ultrasound", "DEXA Scan"],
+  },
+  urology: {
+    lab: ["Urine Analysis", "Urine Culture", "Kidney Function Tests", "PSA", "CBC", "Uric Acid", "Semen Analysis"],
+    imaging: ["Renal & Bladder Ultrasound", "Pelvic Ultrasound", "Scrotal Ultrasound", "CT KUB", "CT Urography", "Doppler"],
+  },
+  ent: {
+    lab: ["CBC", "CRP", "ESR", "Throat Swab / Culture", "Allergy Testing"],
+    imaging: ["Audiometry", "Tympanometry", "CT Paranasal Sinuses", "CT Temporal Bone", "Neck Ultrasound", "MRI IAC"],
+  },
+  ophthalmology: {
+    lab: ["Fasting Blood Sugar", "HbA1c", "CBC", "ESR", "CRP"],
+    imaging: ["OCT", "Fundus Photography", "Visual Field Test", "Corneal Topography", "Pachymetry", "B-Scan Ultrasound", "Fluorescein Angiography"],
+  },
+  dermatology: {
+    lab: ["CBC", "Liver Function Tests", "Kidney Function Tests", "TSH", "Ferritin", "Vitamin D", "IgE", "Fungal Examination (KOH)", "Skin Scraping"],
+    imaging: ["Dermatoscopy", "Skin Ultrasound"],
+  },
+  psychiatry: {
+    lab: ["CBC", "TSH", "Free T4", "Vitamin B12", "Folate", "Vitamin D", "Liver Function Tests", "Kidney Function Tests", "Electrolytes (Na/K)", "Toxicology Screen"],
+    imaging: ["CT Brain", "MRI Brain", "EEG"],
+  },
+  rehab: {
+    lab: ["CBC", "ESR", "CRP", "Vitamin D", "Calcium", "CK", "Rheumatoid Factor"],
+    imaging: ["X-Ray", "MRI Joint", "MRI Spine", "Musculoskeletal Ultrasound", "EMG / Nerve Conduction Study"],
+  },
+};
+
+function uniqueTests(items = []) {
+  return [...new Set(items.filter(Boolean))];
+}
+
+function getInvestigationGroup(specialtyId) {
+  if (["obstetrics_gynecology", "fertility_ivf", "maternal_fetal_medicine"].includes(specialtyId)) return "obstetrics_gynecology";
+  if (["pediatrics", "neonatology", "pediatric_cardiology", "pediatric_neurology", "pediatric_gastroenterology", "pediatric_surgery"].includes(specialtyId)) return "pediatrics";
+  if (["cardiology", "cardiothoracic_surgery"].includes(specialtyId)) return "cardiology";
+  if (["dentistry", "orthodontics", "endodontics", "periodontics", "prosthodontics", "pediatric_dentistry", "oral_maxillofacial_surgery"].includes(specialtyId)) return "dental";
+  if (["general_surgery", "vascular_surgery", "neurosurgery", "plastic_surgery", "bariatric_surgery", "colorectal_surgery"].includes(specialtyId)) return "surgery";
+  if (["neurology", "neurosurgery"].includes(specialtyId)) return "neurology";
+  if (["orthopedics", "spine_surgery", "sports_medicine", "rheumatology"].includes(specialtyId)) return "orthopedics";
+  if (["urology", "andrology"].includes(specialtyId)) return "urology";
+  if (["ent", "audiology"].includes(specialtyId)) return "ent";
+  if (["ophthalmology"].includes(specialtyId)) return "ophthalmology";
+  if (["dermatology", "dermatology_cosmetology", "allergy_immunology"].includes(specialtyId)) return "dermatology";
+  if (["psychiatry", "child_psychiatry"].includes(specialtyId)) return "psychiatry";
+  if (["physical_medicine_rehabilitation", "physiotherapy", "pain_management"].includes(specialtyId)) return "rehab";
+  if (["internal_medicine", "gastroenterology", "endocrinology", "pulmonology", "nephrology", "hematology", "oncology", "infectious_diseases", "geriatrics", "clinical_nutrition", "general_practice", "family_medicine", "emergency_medicine"].includes(specialtyId)) return "internal";
+  return null;
+}
+
+function getObgynScenarioInvestigations(data = {}) {
+  const scenario = data.obgynScenario || "general_gynecology";
+
+  if (scenario === "pregnancy") {
+    const firstPregnancy = data.firstPregnancy === "yes";
+    return {
+      lab: uniqueTests([
+        "CBC", "Blood Group & Rh", "Urine Analysis", "Urine Culture", "Fasting Blood Sugar", "HbA1c", "TSH", "Free T4", "HBsAg", "HIV Screening", "Syphilis Screening (VDRL/RPR)", "Rubella IgG", "Toxoplasma IgG/IgM", "Coagulation Profile",
+        !firstPregnancy && "Indirect Coombs Test",
+      ]),
+      imaging: uniqueTests(["Obstetric Ultrasound", "NT Scan", "Fetal Anomaly Scan", "Fetal Growth Scan", "Fetal Doppler", "Cervical Length Ultrasound"]),
+    };
+  }
+
+  if (scenario === "fertility") {
+    return {
+      lab: ["CBC", "TSH", "Free T4", "Prolactin", "FSH", "LH", "AMH", "Estradiol (E2)", "Progesterone", "HbA1c", "Fasting Blood Sugar", "Semen Analysis"],
+      imaging: ["Transvaginal Ultrasound", "Pelvic Ultrasound", "Follicular Tracking Ultrasound", "Hysterosalpingography (HSG)"],
+    };
+  }
+
+  if (scenario === "postpartum") {
+    return {
+      lab: ["CBC", "Ferritin", "CRP", "Urine Analysis", "Urine Culture", "Fasting Blood Sugar", "HbA1c", "TSH", "Free T4"],
+      imaging: ["Pelvic Ultrasound", "Transvaginal Ultrasound", "Breast Ultrasound"],
+    };
+  }
+
+  return SPECIALTY_INVESTIGATION_GROUPS.obstetrics_gynecology;
+}
+
+function getSpecialtyInvestigations(specialtyId, specialtyData = {}) {
+  if (["obstetrics_gynecology", "fertility_ivf", "maternal_fetal_medicine"].includes(specialtyId)) {
+    return getObgynScenarioInvestigations(specialtyData);
+  }
+
+  const group = getInvestigationGroup(specialtyId);
+  return group ? SPECIALTY_INVESTIGATION_GROUPS[group] : COMMON_TESTS;
+}
+
 const emptyInvestigation = {
   type: "lab",
   name: "",
@@ -213,10 +341,13 @@ export default function NewVisitPage() {
         : "direct");
 
   const {
-  clinicId,
-  profile,
-  staffId,
-} = useAuth();
+    clinicId,
+    profile,
+    staffId,
+    activeSpecialty,
+    activeSpecialtyData,
+    specialtyConfig,
+  } = useAuth();
 
 const doctor = useMemo(
   () => ({
@@ -374,6 +505,58 @@ const doctor = useMemo(
     setVisit((current) => ({
       ...current,
       [field]: value,
+    }));
+
+    setSaved(false);
+  };
+
+  const resolvedSpecialty =
+    activeSpecialty ||
+    "general_practice";
+
+  const resolvedWorkspace =
+    specialtyConfig?.workspace ||
+    "general";
+
+  useEffect(() => {
+    setVisit((current) => {
+      if (current.specialty?.id) {
+        return current;
+      }
+
+      return {
+        ...current,
+        specialty: {
+          ...current.specialty,
+          id: resolvedSpecialty,
+          workspace: resolvedWorkspace,
+          data: {
+            ...(current.specialty?.data || {}),
+          },
+        },
+      };
+    });
+  }, [resolvedSpecialty, resolvedWorkspace]);
+
+  const updateSpecialtyField = (
+    field,
+    value
+  ) => {
+    setVisit((current) => ({
+      ...current,
+      specialty: {
+        ...current.specialty,
+        id:
+          current.specialty?.id ||
+          resolvedSpecialty,
+        workspace:
+          current.specialty?.workspace ||
+          resolvedWorkspace,
+        data: {
+          ...(current.specialty?.data || {}),
+          [field]: value,
+        },
+      },
     }));
 
     setSaved(false);
@@ -553,15 +736,32 @@ const doctor = useMemo(
     setNewDrugOpen(false);
   };
 
+  const specialtyInvestigations = useMemo(
+    () =>
+      getSpecialtyInvestigations(
+        resolvedSpecialty,
+        visit.specialty?.data || {}
+      ),
+    [
+      resolvedSpecialty,
+      visit.specialty?.data,
+    ]
+  );
+
   const availableTests = useMemo(() => {
     const query =
       investigationSearch
         .trim()
         .toLowerCase();
 
-    return COMMON_TESTS[
-      investigationDraft.type
-    ].filter((name) =>
+    const specialtyTests =
+      specialtyInvestigations[
+        investigationDraft.type
+      ] || [];
+
+    // الاقتراحات المعروضة تتبع تخصص الطبيب والحالة السريرية.
+    // يظل حقل "فحص آخر" متاحًا لأي تحليل/أشعة خارج القائمة.
+    return specialtyTests.filter((name) =>
       !query ||
       name
         .toLowerCase()
@@ -570,6 +770,7 @@ const doctor = useMemo(
   }, [
     investigationDraft.type,
     investigationSearch,
+    specialtyInvestigations,
   ]);
 
   const toggleSelectedTest = (name) => {
@@ -1159,96 +1360,21 @@ const doctor = useMemo(
             />
           </VisitSection>
 
-          {/* VITALS */}
+          {/* SPECIALTY WORKSPACE */}
 
-          <VisitSection title="العلامات الحيوية">
-            <div className="simple-vitals">
-              <VitalField
-                label="الضغط"
-                value={
-                  visit.pressure
-                }
-                placeholder="120/80"
-                unit="mmHg"
-                onChange={(
-                  value
-                ) =>
-                  updateField(
-                    "pressure",
-                    value
-                  )
-                }
-              />
-
-              <VitalField
-                label="النبض"
-                value={
-                  visit.pulse
-                }
-                placeholder="76"
-                unit="bpm"
-                onChange={(
-                  value
-                ) =>
-                  updateField(
-                    "pulse",
-                    value
-                  )
-                }
-              />
-
-              <VitalField
-                label="الحرارة"
-                value={
-                  visit.temperature
-                }
-                placeholder="37"
-                unit="°C"
-                onChange={(
-                  value
-                ) =>
-                  updateField(
-                    "temperature",
-                    value
-                  )
-                }
-              />
-
-              <VitalField
-                label="الأكسجين"
-                value={
-                  visit.spo2
-                }
-                placeholder="98"
-                unit="%"
-                onChange={(
-                  value
-                ) =>
-                  updateField(
-                    "spo2",
-                    value
-                  )
-                }
-              />
-
-              <VitalField
-                label="الوزن"
-                value={
-                  visit.weight
-                }
-                placeholder="78"
-                unit="kg"
-                onChange={(
-                  value
-                ) =>
-                  updateField(
-                    "weight",
-                    value
-                  )
-                }
-              />
-            </div>
-          </VisitSection>
+          <SpecialtyWorkspace
+            specialtyId={resolvedSpecialty}
+            specialtyName={
+              activeSpecialtyData?.nameAr ||
+              "طب عام"
+            }
+            config={specialtyConfig}
+            visit={visit}
+            updateField={updateField}
+            updateSpecialtyField={
+              updateSpecialtyField
+            }
+          />
 
           {/* EXAM + DIAGNOSIS */}
 
@@ -1715,8 +1841,7 @@ const doctor = useMemo(
                 </h3>
 
                 <p>
-                  اختر الفحوصات المطلوبة
-                  بدون الخروج من الكشف
+                  اقتراحات سريعة حسب تخصص الطبيب والحالة الحالية، ويمكن إضافة أي فحص يدويًا
                 </p>
               </div>
 
@@ -1803,7 +1928,7 @@ const doctor = useMemo(
                         .value
                     )
                   }
-                  placeholder="ابحث في الفحوصات الشائعة..."
+                  placeholder="ابحث في الفحوصات المقترحة للتخصص..."
                 />
               </div>
 
@@ -2283,6 +2408,372 @@ const doctor = useMemo(
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+/* =========================================================
+   SPECIALTY WORKSPACE
+   ========================================================= */
+
+function SpecialtyWorkspace({
+  specialtyId,
+  specialtyName,
+  config,
+  visit,
+  updateField,
+  updateSpecialtyField,
+}) {
+  const data =
+    visit.specialty?.data || {};
+
+  return (
+    <>
+      <div className="specialty-workspace-banner">
+        <div>
+          <Stethoscope size={17} />
+          <span>مساحة الكشف</span>
+          <strong>{specialtyName}</strong>
+        </div>
+
+        <small>
+          {config?.workspace || "general"}
+        </small>
+      </div>
+
+      {specialtyId === "pediatrics" ? (
+        <PediatricsWorkspace
+          visit={visit}
+          data={data}
+          updateField={updateField}
+          updateSpecialtyField={updateSpecialtyField}
+        />
+      ) : specialtyId === "obstetrics_gynecology" ? (
+        <ObgynWorkspace
+          data={data}
+          updateSpecialtyField={updateSpecialtyField}
+        />
+      ) : specialtyId === "dentistry" ? (
+        <DentistryWorkspace
+          data={data}
+          updateSpecialtyField={updateSpecialtyField}
+        />
+      ) : specialtyId === "general_surgery" ? (
+        <SurgeryWorkspace
+          data={data}
+          updateSpecialtyField={updateSpecialtyField}
+        />
+      ) : specialtyId === "internal_medicine" ? (
+        <InternalMedicineWorkspace
+          visit={visit}
+          data={data}
+          updateField={updateField}
+          updateSpecialtyField={updateSpecialtyField}
+        />
+      ) : (
+        <GeneralWorkspace
+          visit={visit}
+          updateField={updateField}
+        />
+      )}
+    </>
+  );
+}
+
+function GeneralWorkspace({ visit, updateField }) {
+  return (
+    <VisitSection title="العلامات الحيوية">
+      <div className="simple-vitals">
+        <VitalField label="الضغط" value={visit.pressure} placeholder="120/80" unit="mmHg" onChange={(value) => updateField("pressure", value)} />
+        <VitalField label="النبض" value={visit.pulse} placeholder="76" unit="bpm" onChange={(value) => updateField("pulse", value)} />
+        <VitalField label="الحرارة" value={visit.temperature} placeholder="37" unit="°C" onChange={(value) => updateField("temperature", value)} />
+        <VitalField label="الأكسجين" value={visit.spo2} placeholder="98" unit="%" onChange={(value) => updateField("spo2", value)} />
+        <VitalField label="الوزن" value={visit.weight} placeholder="78" unit="kg" onChange={(value) => updateField("weight", value)} />
+      </div>
+    </VisitSection>
+  );
+}
+
+function InternalMedicineWorkspace({
+  visit,
+  data,
+  updateField,
+  updateSpecialtyField,
+}) {
+  return (
+    <>
+      <GeneralWorkspace visit={visit} updateField={updateField} />
+      <VisitSection title="تقييم الباطنة">
+        <SpecialtyGrid>
+          <SpecialtyTextarea label="مراجعة الأجهزة" value={data.systemReview || ""} placeholder="القلب، الجهاز التنفسي، الجهاز الهضمي..." onChange={(value) => updateSpecialtyField("systemReview", value)} />
+          <SpecialtyTextarea label="تقييم الأمراض المزمنة" value={data.chronicDiseaseAssessment || ""} placeholder="السكري، الضغط، القلب، الكلى..." onChange={(value) => updateSpecialtyField("chronicDiseaseAssessment", value)} />
+          <SpecialtyInput label="سكر الدم" value={data.bloodSugar || ""} placeholder="110 mg/dL" onChange={(value) => updateSpecialtyField("bloodSugar", value)} />
+        </SpecialtyGrid>
+      </VisitSection>
+    </>
+  );
+}
+
+function PediatricsWorkspace({
+  visit,
+  data,
+  updateField,
+  updateSpecialtyField,
+}) {
+  return (
+    <>
+      <VisitSection title="قياسات الطفل">
+        <div className="simple-vitals">
+          <VitalField label="الوزن" value={visit.weight} placeholder="12" unit="kg" onChange={(value) => updateField("weight", value)} />
+          <VitalField label="الطول" value={visit.height} placeholder="90" unit="cm" onChange={(value) => updateField("height", value)} />
+          <VitalField label="الحرارة" value={visit.temperature} placeholder="37" unit="°C" onChange={(value) => updateField("temperature", value)} />
+          <VitalField label="الأكسجين" value={visit.spo2} placeholder="98" unit="%" onChange={(value) => updateField("spo2", value)} />
+          <VitalField label="محيط الرأس" value={data.headCircumference || ""} placeholder="48" unit="cm" onChange={(value) => updateSpecialtyField("headCircumference", value)} />
+          <VitalField label="معدل التنفس" value={data.respiratoryRate || ""} placeholder="24" unit="/min" onChange={(value) => updateSpecialtyField("respiratoryRate", value)} />
+        </div>
+      </VisitSection>
+
+      <VisitSection title="التاريخ الطبي للطفل">
+        <SpecialtyGrid>
+          <SpecialtyTextarea label="تاريخ الولادة" value={data.birthHistory || ""} placeholder="نوع الولادة، عمر الحمل، وزن الولادة..." onChange={(value) => updateSpecialtyField("birthHistory", value)} />
+          <SpecialtyTextarea label="التغذية" value={data.feedingHistory || ""} placeholder="رضاعة طبيعية أو صناعية والتغذية الحالية..." onChange={(value) => updateSpecialtyField("feedingHistory", value)} />
+          <SpecialtyTextarea label="النمو والتطور" value={data.developmentHistory || ""} placeholder="ملاحظات النمو والتطور..." onChange={(value) => updateSpecialtyField("developmentHistory", value)} />
+          <SpecialtyTextarea label="التطعيمات" value={data.vaccinationHistory || ""} placeholder="حالة التطعيمات والملاحظات..." onChange={(value) => updateSpecialtyField("vaccinationHistory", value)} />
+        </SpecialtyGrid>
+      </VisitSection>
+    </>
+  );
+}
+
+function ObgynWorkspace({ data, updateSpecialtyField }) {
+  const scenario = data.obgynScenario || "general_gynecology";
+  const isPregnancy = scenario === "pregnancy";
+  const isFirstPregnancy = data.firstPregnancy === "yes";
+
+  const setScenario = (value) => {
+    updateSpecialtyField("obgynScenario", value);
+
+    if (value !== "pregnancy") {
+      updateSpecialtyField("firstPregnancy", "");
+    }
+  };
+
+  return (
+    <>
+      <VisitSection title="نوع الزيارة">
+        <div className="obgyn-scenario-grid">
+          {[
+            ["general_gynecology", "كشف نساء", "الدورة، الأعراض والتاريخ النسائي"],
+            ["pregnancy", "متابعة حمل", "بيانات الحمل والمتابعة الحالية"],
+            ["fertility", "تأخر إنجاب / خصوبة", "التبويض والخصوبة والتاريخ السابق"],
+            ["postpartum", "متابعة بعد الولادة", "النفاس والرضاعة والتعافي"],
+          ].map(([value, label, description]) => (
+            <button
+              key={value}
+              type="button"
+              className={`obgyn-scenario-button ${scenario === value ? "selected" : ""}`}
+              onClick={() => setScenario(value)}
+            >
+              <strong>{label}</strong>
+              <span>{description}</span>
+              {scenario === value && <Check size={15} />}
+            </button>
+          ))}
+        </div>
+      </VisitSection>
+
+      {isPregnancy && (
+        <VisitSection title="بيانات الحمل">
+          <div className="first-pregnancy-box">
+            <div>
+              <strong>هل هذا أول حمل؟</strong>
+              <span>الإجابة تغيّر بيانات التاريخ التوليدي والفحوصات المقترحة.</span>
+            </div>
+
+            <div className="first-pregnancy-actions">
+              <button
+                type="button"
+                className={data.firstPregnancy === "yes" ? "selected" : ""}
+                onClick={() => {
+                  updateSpecialtyField("firstPregnancy", "yes");
+                  updateSpecialtyField("gravida", "1");
+                  updateSpecialtyField("para", "0");
+                  updateSpecialtyField("abortions", "0");
+                }}
+              >
+                نعم، أول حمل
+              </button>
+
+              <button
+                type="button"
+                className={data.firstPregnancy === "no" ? "selected" : ""}
+                onClick={() => updateSpecialtyField("firstPregnancy", "no")}
+              >
+                لا، سبق الحمل
+              </button>
+            </div>
+          </div>
+
+          <div className="specialty-inline-grid">
+            <SpecialtyInput label="آخر دورة LMP" type="date" value={data.lmp || ""} onChange={(value) => updateSpecialtyField("lmp", value)} />
+            <SpecialtyInput label="عمر الحمل" value={data.gestationalAge || ""} placeholder="مثال: 12 أسبوع" onChange={(value) => updateSpecialtyField("gestationalAge", value)} />
+            <SpecialtyInput label="موعد الولادة المتوقع EDD" type="date" value={data.edd || ""} onChange={(value) => updateSpecialtyField("edd", value)} />
+            <SpecialtyInput label="G" value={data.gravida || ""} placeholder="1" onChange={(value) => updateSpecialtyField("gravida", value)} />
+            <SpecialtyInput label="P" value={data.para || ""} placeholder="0" onChange={(value) => updateSpecialtyField("para", value)} />
+            <SpecialtyInput label="الإجهاضات" value={data.abortions || ""} placeholder="0" onChange={(value) => updateSpecialtyField("abortions", value)} />
+          </div>
+        </VisitSection>
+      )}
+
+      {scenario === "general_gynecology" && (
+        <VisitSection title="بيانات النساء">
+          <div className="specialty-inline-grid">
+            <SpecialtyInput label="آخر دورة LMP" type="date" value={data.lmp || ""} onChange={(value) => updateSpecialtyField("lmp", value)} />
+            <SpecialtyInput label="انتظام الدورة" value={data.cycle || ""} placeholder="منتظمة كل 28 يوم" onChange={(value) => updateSpecialtyField("cycle", value)} />
+            <SpecialtyInput label="مدة الدورة" value={data.cycleDuration || ""} placeholder="5 أيام" onChange={(value) => updateSpecialtyField("cycleDuration", value)} />
+            <SpecialtyInput label="وسيلة منع الحمل" value={data.contraception || ""} placeholder="إن وجدت" onChange={(value) => updateSpecialtyField("contraception", value)} />
+          </div>
+        </VisitSection>
+      )}
+
+      {scenario === "fertility" && (
+        <VisitSection title="تقييم الخصوبة">
+          <SpecialtyGrid>
+            <SpecialtyInput label="مدة محاولة الحمل" value={data.tryingDuration || ""} placeholder="مثال: سنتان" onChange={(value) => updateSpecialtyField("tryingDuration", value)} />
+            <SpecialtyInput label="انتظام الدورة" value={data.cycle || ""} placeholder="منتظمة / غير منتظمة" onChange={(value) => updateSpecialtyField("cycle", value)} />
+            <SpecialtyTextarea label="علاجات خصوبة سابقة" value={data.previousFertilityTreatment || ""} placeholder="أدوية تنشيط، حقن، IUI، IVF..." onChange={(value) => updateSpecialtyField("previousFertilityTreatment", value)} />
+            <SpecialtyTextarea label="حمل أو إجهاض سابق" value={data.previousPregnancyHistory || ""} onChange={(value) => updateSpecialtyField("previousPregnancyHistory", value)} />
+          </SpecialtyGrid>
+        </VisitSection>
+      )}
+
+      {scenario === "postpartum" && (
+        <VisitSection title="متابعة ما بعد الولادة">
+          <SpecialtyGrid>
+            <SpecialtyInput label="تاريخ الولادة" type="date" value={data.deliveryDate || ""} onChange={(value) => updateSpecialtyField("deliveryDate", value)} />
+            <SpecialtyInput label="نوع الولادة" value={data.deliveryType || ""} placeholder="طبيعي / قيصري" onChange={(value) => updateSpecialtyField("deliveryType", value)} />
+            <SpecialtyTextarea label="النزيف والنفاس" value={data.postpartumBleeding || ""} onChange={(value) => updateSpecialtyField("postpartumBleeding", value)} />
+            <SpecialtyTextarea label="الرضاعة" value={data.breastfeeding || ""} onChange={(value) => updateSpecialtyField("breastfeeding", value)} />
+            <SpecialtyTextarea label="الجرح / القيصرية" value={data.woundAssessment || ""} onChange={(value) => updateSpecialtyField("woundAssessment", value)} />
+          </SpecialtyGrid>
+        </VisitSection>
+      )}
+
+      <VisitSection title="التاريخ النسائي والتوليدي">
+        <SpecialtyGrid>
+          {!isFirstPregnancy && (
+            <SpecialtyTextarea label="التاريخ التوليدي السابق" value={data.obstetricHistory || ""} placeholder="الحمل والولادات السابقة والمضاعفات..." onChange={(value) => updateSpecialtyField("obstetricHistory", value)} />
+          )}
+          <SpecialtyTextarea label="التاريخ النسائي" value={data.gynecologicalHistory || ""} placeholder="الدورة، العمليات، وسائل منع الحمل، أمراض نسائية سابقة..." onChange={(value) => updateSpecialtyField("gynecologicalHistory", value)} />
+          {isPregnancy && (
+            <SpecialtyTextarea label="تقييم الحمل الحالي" value={data.pregnancyAssessment || ""} placeholder="الأعراض، حركة الجنين، النزيف، الألم، ضغط الدم والملاحظات..." onChange={(value) => updateSpecialtyField("pregnancyAssessment", value)} />
+          )}
+        </SpecialtyGrid>
+      </VisitSection>
+    </>
+  );
+}
+
+function DentistryWorkspace({ data, updateSpecialtyField }) {
+  return (
+    <>
+      <VisitSection title="كشف الأسنان">
+        <SpecialtyGrid>
+          <SpecialtyTextarea label="التاريخ السني" value={data.dentalHistory || ""} placeholder="الخلع، الحشو، التركيبات والعلاجات السابقة..." onChange={(value) => updateSpecialtyField("dentalHistory", value)} />
+          <SpecialtyTextarea label="فحص الفم والأسنان" value={data.oralExamination || ""} placeholder="نتيجة فحص الأسنان واللثة..." onChange={(value) => updateSpecialtyField("oralExamination", value)} />
+          <SpecialtyTextarea label="الإجراءات" value={data.dentalProcedures || ""} placeholder="الإجراء الذي تم أو المطلوب..." onChange={(value) => updateSpecialtyField("dentalProcedures", value)} />
+          <SpecialtyTextarea label="خطة العلاج" value={data.treatmentPlan || ""} placeholder="خطة العلاج والجلسات..." onChange={(value) => updateSpecialtyField("treatmentPlan", value)} />
+        </SpecialtyGrid>
+      </VisitSection>
+
+      <VisitSection title="Dental Chart">
+        <DentalChart value={data.dentalChart || {}} onChange={(chart) => updateSpecialtyField("dentalChart", chart)} />
+      </VisitSection>
+    </>
+  );
+}
+
+function SurgeryWorkspace({ data, updateSpecialtyField }) {
+  return (
+    <VisitSection title="التقييم الجراحي">
+      <SpecialtyGrid>
+        <SpecialtyTextarea label="التاريخ الجراحي" value={data.surgicalHistory || ""} placeholder="العمليات والتدخلات السابقة..." onChange={(value) => updateSpecialtyField("surgicalHistory", value)} />
+        <SpecialtyTextarea label="تاريخ التخدير" value={data.anesthesiaHistory || ""} placeholder="مشاكل أو مضاعفات التخدير السابقة..." onChange={(value) => updateSpecialtyField("anesthesiaHistory", value)} />
+        <SpecialtyTextarea label="تقييم ما قبل العملية" value={data.preoperativeAssessment || ""} onChange={(value) => updateSpecialtyField("preoperativeAssessment", value)} />
+        <SpecialtyTextarea label="خطة الإجراء" value={data.procedurePlan || ""} onChange={(value) => updateSpecialtyField("procedurePlan", value)} />
+        <SpecialtyTextarea label="متابعة ما بعد العملية" value={data.postoperativeFollowUp || ""} onChange={(value) => updateSpecialtyField("postoperativeFollowUp", value)} />
+      </SpecialtyGrid>
+    </VisitSection>
+  );
+}
+
+function SpecialtyGrid({ children }) {
+  return <div className="specialty-fields-grid">{children}</div>;
+}
+
+function SpecialtyTextarea({
+  label,
+  value,
+  placeholder = "",
+  onChange,
+}) {
+  return (
+    <label className="specialty-field specialty-textarea-field">
+      <span>{label}</span>
+      <textarea value={value} placeholder={placeholder} onChange={(event) => onChange(event.target.value)} />
+    </label>
+  );
+}
+
+function SpecialtyInput({
+  label,
+  value,
+  placeholder = "",
+  type = "text",
+  onChange,
+}) {
+  return (
+    <label className="specialty-field">
+      <span>{label}</span>
+      <input type={type} value={value} placeholder={placeholder} onChange={(event) => onChange(event.target.value)} />
+    </label>
+  );
+}
+
+function DentalChart({ value = {}, onChange }) {
+  const teeth = [
+    18, 17, 16, 15, 14, 13, 12, 11,
+    21, 22, 23, 24, 25, 26, 27, 28,
+    48, 47, 46, 45, 44, 43, 42, 41,
+    31, 32, 33, 34, 35, 36, 37, 38,
+  ];
+
+  const toggleTooth = (tooth) => {
+    const key = String(tooth);
+    const next = { ...value };
+
+    if (next[key]) {
+      delete next[key];
+    } else {
+      next[key] = { selected: true };
+    }
+
+    onChange(next);
+  };
+
+  return (
+    <div className="dental-chart">
+      {teeth.map((tooth) => (
+        <button
+          key={tooth}
+          type="button"
+          className={value[String(tooth)] ? "dental-tooth selected" : "dental-tooth"}
+          onClick={() => toggleTooth(tooth)}
+        >
+          <span>🦷</span>
+          <strong>{tooth}</strong>
+        </button>
+      ))}
     </div>
   );
 }

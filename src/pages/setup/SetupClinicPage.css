@@ -8,6 +8,508 @@
   color: #314a63;
 }
 
+
+/* =========================================================
+   OMG CLINIC - FACILITY & SPECIALTY SETUP
+========================================================= */
+
+/* =========================================================
+   FACILITY TYPE
+========================================================= */
+
+.facility-type-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.facility-type-card {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-height: 118px;
+  padding: 16px;
+  border: 1px solid #dce4e8;
+  border-radius: 14px;
+  background: #ffffff;
+  color: #172b3a;
+  text-align: right;
+  cursor: pointer;
+  transition:
+    border-color 0.18s ease,
+    background 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+
+.facility-type-card:hover {
+  border-color: #9fbac8;
+  background: #fbfdfe;
+  transform: translateY(-1px);
+}
+
+.facility-type-card.is-selected {
+  border-color: #256b86;
+  background: #f3f9fb;
+  box-shadow:
+    0 0 0 1px rgba(37, 107, 134, 0.08);
+}
+
+.facility-type-icon {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: #edf3f5;
+  color: #41697b;
+}
+
+.facility-type-card.is-selected
+  .facility-type-icon {
+  background: #dceef4;
+  color: #155b76;
+}
+
+.facility-type-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.facility-type-content strong {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #172b3a;
+}
+
+.facility-type-content span {
+  font-size: 11.5px;
+  line-height: 1.7;
+  color: #71828d;
+}
+
+.facility-type-check {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  border: 1px solid #d9e2e6;
+  border-radius: 50%;
+  color: #ffffff;
+}
+
+.facility-type-card.is-selected
+  .facility-type-check {
+  border-color: #256b86;
+  background: #256b86;
+}
+
+/* =========================================================
+   SPECIALTY SECTION
+========================================================= */
+
+.specialty-setup-section {
+  overflow: visible;
+}
+
+.specialty-intro {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 22px;
+}
+
+.specialty-intro > div {
+  min-width: 0;
+}
+
+.specialty-intro strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 14px;
+  color: #172b3a;
+}
+
+.specialty-intro p {
+  max-width: 650px;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.8;
+  color: #748590;
+}
+
+.multi-specialty-badge {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 10px;
+  border: 1px solid #cde1e9;
+  border-radius: 7px;
+  background: #f4fafc;
+  color: #24627a;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* =========================================================
+   FEATURED SPECIALTIES
+========================================================= */
+
+.featured-specialties {
+  margin-bottom: 20px;
+}
+
+.featured-specialties-label,
+.specialty-selector-label {
+  display: block;
+  margin-bottom: 9px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #7a8992;
+}
+
+.featured-specialties-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.featured-specialty {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1px solid #dce4e8;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #425966;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    border-color 0.18s ease,
+    background 0.18s ease,
+    color 0.18s ease;
+}
+
+.featured-specialty:hover {
+  border-color: #9ebac6;
+  background: #f8fbfc;
+}
+
+.featured-specialty.is-selected {
+  border-color: #256b86;
+  background: #edf7fa;
+  color: #155b76;
+}
+
+/* =========================================================
+   SPECIALTY SELECT
+========================================================= */
+
+.specialty-selector {
+  position: relative;
+}
+
+.specialty-select-box {
+  position: relative;
+}
+
+.specialty-select-control {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 13px;
+  border: 1px solid #d9e3e7;
+  border-radius: 11px;
+  background: #ffffff;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.specialty-select-box.is-open
+  .specialty-select-control {
+  border-color: #43819a;
+  box-shadow:
+    0 0 0 3px rgba(67, 129, 154, 0.08);
+}
+
+.specialty-select-control > svg {
+  flex: 0 0 auto;
+  color: #82929b;
+}
+
+.specialty-select-control input {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  height: 46px;
+  padding: 0 11px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #172b3a;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.specialty-select-control input::placeholder {
+  color: #9aa7ae;
+  font-weight: 500;
+}
+
+.specialty-clear,
+.specialty-toggle {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #7b8d96;
+  cursor: pointer;
+}
+
+.specialty-clear:hover,
+.specialty-toggle:hover {
+  background: #f0f4f6;
+  color: #243f4c;
+}
+
+/* =========================================================
+   SPECIALTY DROPDOWN
+========================================================= */
+
+.specialty-dropdown {
+  position: absolute;
+  z-index: 100;
+  top: calc(100% + 7px);
+  right: 0;
+  left: 0;
+  overflow: hidden;
+  border: 1px solid #d8e2e6;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow:
+    0 18px 45px rgba(29, 51, 62, 0.14);
+}
+
+.specialty-dropdown-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 39px;
+  padding: 0 12px;
+  border-bottom: 1px solid #edf1f3;
+  background: #fafcfd;
+}
+
+.specialty-dropdown-head span {
+  font-size: 10.5px;
+  font-weight: 800;
+  color: #82919a;
+}
+
+.specialty-dropdown-head button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 27px;
+  height: 27px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #84939b;
+  cursor: pointer;
+}
+
+.specialty-dropdown-head button:hover {
+  background: #edf2f4;
+  color: #344f5c;
+}
+
+.specialty-dropdown-list {
+  max-height: 320px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.specialty-dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  width: 100%;
+  min-height: 58px;
+  padding: 9px 13px;
+  border: 0;
+  border-bottom: 1px solid #f0f3f4;
+  background: #ffffff;
+  color: #172b3a;
+  text-align: right;
+  cursor: pointer;
+}
+
+.specialty-dropdown-item:last-child {
+  border-bottom: 0;
+}
+
+.specialty-dropdown-item:hover {
+  background: #f7fafb;
+}
+
+.specialty-dropdown-item.is-selected {
+  background: #eef7fa;
+}
+
+.specialty-dropdown-item > div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.specialty-dropdown-item strong {
+  font-size: 12.5px;
+  color: #203945;
+}
+
+.specialty-dropdown-item span {
+  direction: ltr;
+  text-align: right;
+  font-size: 10.5px;
+  color: #8a989f;
+}
+
+.specialty-dropdown-item > svg {
+  flex: 0 0 auto;
+  color: #21708d;
+}
+
+.specialty-no-results {
+  padding: 30px 16px;
+  text-align: center;
+  font-size: 12px;
+  color: #82919a;
+}
+
+/* =========================================================
+   SELECTED SPECIALTY
+========================================================= */
+
+.selected-specialty-summary {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-top: 15px;
+  padding: 12px 14px;
+  border: 1px solid #cfe2e9;
+  border-radius: 10px;
+  background: #f5fafc;
+}
+
+.selected-specialty-icon {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  background: #dfeff4;
+  color: #226681;
+}
+
+.selected-specialty-summary > div:nth-child(2) {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.selected-specialty-summary span {
+  margin-bottom: 1px;
+  font-size: 9.5px;
+  font-weight: 800;
+  color: #7d8e97;
+}
+
+.selected-specialty-summary strong {
+  font-size: 13.5px;
+  color: #173745;
+}
+
+.selected-specialty-summary small {
+  margin-top: 1px;
+  color: #7c8e97;
+  font-size: 10.5px;
+}
+
+.selected-specialty-summary > svg {
+  flex: 0 0 auto;
+  color: #27805f;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1050px) {
+  .facility-type-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .facility-type-card {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 720px) {
+  .specialty-intro {
+    flex-direction: column;
+  }
+
+  .featured-specialties-grid {
+    display: grid;
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .featured-specialty {
+    justify-content: center;
+  }
+
+  .multi-specialty-badge {
+    align-self: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .featured-specialties-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .setup-side {
   position: relative;
   min-height: 100vh;

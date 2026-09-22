@@ -1663,3 +1663,477 @@
     box-shadow: none;
   }
 }
+
+
+/* =========================================================
+   SPECIALTY ENGINE / DYNAMIC MEDICAL WORKSPACE
+   ========================================================= */
+
+.specialty-workspace-banner {
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 20px;
+  border-bottom: 1px solid #dce5ea;
+  background: #f7fafb;
+}
+
+.specialty-workspace-banner > div {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.specialty-workspace-banner svg {
+  flex: 0 0 auto;
+  color: #315f7f;
+}
+
+.specialty-workspace-banner span {
+  color: #8797a2;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.specialty-workspace-banner strong {
+  min-width: 0;
+  color: #294b63;
+  font-size: 12px;
+  font-weight: 900;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.specialty-workspace-banner small {
+  flex: 0 0 auto;
+  padding: 4px 8px;
+  border: 1px solid #d8e3e9;
+  border-radius: 3px;
+  background: #fff;
+  color: #738895;
+  direction: ltr;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .2px;
+}
+
+/* Specialty fields */
+
+.specialty-fields-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.specialty-inline-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.specialty-field {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.specialty-field > span {
+  color: #708492;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.specialty-field input,
+.specialty-field textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.specialty-field input {
+  height: 40px;
+}
+
+.specialty-field textarea {
+  min-height: 92px;
+}
+
+.specialty-textarea-field {
+  min-width: 0;
+}
+
+/* Give the final odd textarea a natural width instead of stretching badly */
+.specialty-fields-grid > .specialty-field:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+
+/* =========================================================
+   PEDIATRICS
+   ========================================================= */
+
+.visit-section:has(.specialty-fields-grid) .specialty-field textarea {
+  background: #fff;
+}
+
+.visit-section:has(.specialty-fields-grid) .specialty-field textarea::placeholder,
+.visit-section:has(.specialty-inline-grid) .specialty-field input::placeholder {
+  color: #a3afb7;
+}
+
+/* =========================================================
+   DENTAL CHART
+   ========================================================= */
+
+.dental-chart {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(46px, 1fr));
+  gap: 7px;
+}
+
+.dental-tooth {
+  min-width: 0;
+  min-height: 66px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 4px;
+  border: 1px solid #dce4e8;
+  border-radius: 4px;
+  background: #fff;
+  color: #60798b;
+  font-family: inherit;
+  cursor: pointer;
+  transition:
+    border-color .15s ease,
+    background .15s ease,
+    color .15s ease,
+    transform .15s ease;
+}
+
+.dental-tooth:hover {
+  border-color: #9ab0bd;
+  background: #f7fafb;
+}
+
+.dental-tooth:active {
+  transform: translateY(1px);
+}
+
+.dental-tooth > span {
+  display: block;
+  font-size: 20px;
+  line-height: 1;
+  filter: grayscale(.25);
+}
+
+.dental-tooth > strong {
+  color: #6c8291;
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.dental-tooth.selected {
+  border-color: #315f7f;
+  background: #edf4f8;
+  box-shadow: inset 0 0 0 1px rgba(49, 95, 127, .08);
+}
+
+.dental-tooth.selected > strong {
+  color: #214f6e;
+}
+
+.dental-tooth.selected > span {
+  filter: none;
+}
+
+/* Upper/lower jaw visual separation */
+.dental-tooth:nth-child(16) {
+  margin-left: 5px;
+}
+
+.dental-tooth:nth-child(17) {
+  position: relative;
+}
+
+.dental-tooth:nth-child(17)::before {
+  content: "";
+  position: absolute;
+  top: -8px;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: #dce4e8;
+}
+
+/* =========================================================
+   SPECIALTY + EXISTING VITALS INTEGRATION
+   ========================================================= */
+
+.visit-section .simple-vitals {
+  width: 100%;
+}
+
+/* Pediatrics has six measurements, so avoid squeezed inputs */
+.visit-section .simple-vitals:has(.simple-vital:nth-child(6)) {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.visit-section .simple-vitals:has(.simple-vital:nth-child(6)) .simple-vital:nth-child(3n) {
+  border-left: 0;
+}
+
+/* =========================================================
+   ACCESSIBILITY / STATES
+   ========================================================= */
+
+.specialty-field input:disabled,
+.specialty-field textarea:disabled,
+.dental-tooth:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+.specialty-field input:focus,
+.specialty-field textarea:focus {
+  border-color: #6f93aa;
+  box-shadow: 0 0 0 3px rgba(49, 95, 127, .06);
+}
+
+/* =========================================================
+   SPECIALTY RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1200px) {
+  .specialty-inline-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .dental-chart {
+    grid-template-columns: repeat(6, minmax(46px, 1fr));
+  }
+}
+
+@media (max-width: 980px) {
+  .specialty-workspace-banner {
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+
+  .dental-chart {
+    grid-template-columns: repeat(8, minmax(42px, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .specialty-workspace-banner {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 7px;
+    padding: 11px 15px;
+  }
+
+  .specialty-workspace-banner > div {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .specialty-workspace-banner small {
+    margin-right: 25px;
+  }
+
+  .specialty-fields-grid,
+  .specialty-inline-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .specialty-fields-grid > .specialty-field:last-child:nth-child(odd) {
+    grid-column: auto;
+  }
+
+  .visit-section .simple-vitals:has(.simple-vital:nth-child(6)) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .visit-section .simple-vitals:has(.simple-vital:nth-child(6)) .simple-vital:nth-child(3n) {
+    border-left: 1px solid #e2e7ea;
+  }
+
+  .visit-section .simple-vitals:has(.simple-vital:nth-child(6)) .simple-vital:nth-child(2n) {
+    border-left: 0;
+  }
+
+  .dental-chart {
+    grid-template-columns: repeat(4, minmax(48px, 1fr));
+  }
+
+  .dental-tooth {
+    min-height: 62px;
+  }
+}
+
+@media (max-width: 420px) {
+  .dental-chart {
+    grid-template-columns: repeat(4, minmax(42px, 1fr));
+    gap: 5px;
+  }
+
+  .dental-tooth {
+    min-height: 58px;
+  }
+
+  .dental-tooth > span {
+    font-size: 18px;
+  }
+}
+
+/* =========================================================
+   SPECIALTY PRINT SAFETY
+   ========================================================= */
+
+@media print {
+  .specialty-workspace-banner,
+  .dental-chart,
+  .specialty-fields-grid,
+  .specialty-inline-grid {
+    visibility: hidden !important;
+  }
+}
+
+/* =========================================================
+   OB/GYN CLINICAL SCENARIOS
+   ========================================================= */
+
+.obgyn-scenario-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.obgyn-scenario-button {
+  position: relative;
+  min-height: 88px;
+  padding: 14px;
+  border: 1px solid #dfe5ec;
+  border-radius: 12px;
+  background: #fff;
+  text-align: right;
+  cursor: pointer;
+  transition: 0.18s ease;
+}
+
+.obgyn-scenario-button:hover {
+  border-color: #9fb6ca;
+  background: #f8fbfd;
+}
+
+.obgyn-scenario-button.selected {
+  border-color: #315f7d;
+  background: #f3f8fb;
+}
+
+.obgyn-scenario-button strong,
+.obgyn-scenario-button span {
+  display: block;
+}
+
+.obgyn-scenario-button strong {
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: #172b3a;
+}
+
+.obgyn-scenario-button span {
+  font-size: 12px;
+  line-height: 1.65;
+  color: #6a7782;
+}
+
+.obgyn-scenario-button > svg {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  color: #315f7d;
+}
+
+.first-pregnancy-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 14px;
+  padding: 14px 16px;
+  border: 1px solid #dfe5ec;
+  border-radius: 12px;
+  background: #fafcfd;
+}
+
+.first-pregnancy-box > div:first-child strong,
+.first-pregnancy-box > div:first-child span {
+  display: block;
+}
+
+.first-pregnancy-box > div:first-child strong {
+  margin-bottom: 4px;
+  font-size: 14px;
+  color: #172b3a;
+}
+
+.first-pregnancy-box > div:first-child span {
+  font-size: 12px;
+  color: #6a7782;
+}
+
+.first-pregnancy-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.first-pregnancy-actions button {
+  min-height: 38px;
+  padding: 0 13px;
+  border: 1px solid #d5dde5;
+  border-radius: 9px;
+  background: #fff;
+  color: #334956;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.first-pregnancy-actions button.selected {
+  border-color: #315f7d;
+  background: #315f7d;
+  color: #fff;
+}
+
+@media (max-width: 1100px) {
+  .obgyn-scenario-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .obgyn-scenario-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .first-pregnancy-box {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .first-pregnancy-actions {
+    width: 100%;
+  }
+
+  .first-pregnancy-actions button {
+    flex: 1;
+  }
+}

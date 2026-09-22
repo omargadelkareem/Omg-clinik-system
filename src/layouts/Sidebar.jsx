@@ -19,6 +19,7 @@ import {
   PanelRightOpen,
   Pill,
   Settings,
+  BriefcaseBusiness,
   Stethoscope,
   UserRoundCog,
   Users,
@@ -87,6 +88,17 @@ const navigation = [
           "medical_history",
         ],
       },
+
+      {
+  label: "زيارات المندوبين",
+  icon: BriefcaseBusiness,
+  path: "/representatives",
+
+  permissions: [
+    "representatives",
+    "representatives_manage",
+  ],
+},
     ],
   },
 

@@ -27,6 +27,18 @@ import {
   logoutUser,
 } from "../services/authService";
 
+import {
+  getSpecialtyById,
+} from "../config/specialties";
+
+import {
+  getSpecialtyConfig,
+} from "../specialties/specialtyEngine";
+
+/* =========================================================
+   CONTEXT
+========================================================= */
+
 const AuthContext =
   createContext(null);
 
@@ -57,6 +69,40 @@ function normalizePermissions(
   return [];
 }
 
+function normalizeSpecialties(
+  value
+) {
+  if (!value) {
+    return [];
+  }
+
+  if (Array.isArray(value)) {
+    return value.filter(Boolean);
+  }
+
+  if (
+    typeof value === "object"
+  ) {
+    return Object.entries(value)
+      .filter(([, enabled]) =>
+        Boolean(enabled)
+      )
+      .map(([specialty]) =>
+        specialty
+      );
+  }
+
+  if (
+    typeof value === "string"
+  ) {
+    return value
+      ? [value]
+      : [];
+  }
+
+  return [];
+}
+
 function getProfileName(
   profile,
   staff
@@ -68,6 +114,28 @@ function getProfileName(
     profile?.fullName ||
     profile?.displayName ||
     ""
+  );
+}
+
+function resolveSpecialtyId({
+  staff,
+  profile,
+  clinic,
+}) {
+  /*
+   * الأولوية:
+   *
+   * 1. تخصص الموظف/الطبيب
+   * 2. تخصص User Profile
+   * 3. تخصص العيادة
+   * 4. fallback
+   */
+
+  return (
+    staff?.primarySpecialty ||
+    profile?.primarySpecialty ||
+    clinic?.primarySpecialty ||
+    "general_practice"
   );
 }
 
@@ -108,6 +176,10 @@ export function AuthProvider({
     setAuthError,
   ] = useState("");
 
+  /* =======================================================
+     AUTH + REALTIME DATA
+  ======================================================= */
+
   useEffect(() => {
     let unsubscribeProfile =
       null;
@@ -128,6 +200,10 @@ export function AuthProvider({
 
     let signingOut = false;
 
+    /* =====================================================
+       CLEANUP
+    ===================================================== */
+
     const cleanupRealtime =
       () => {
         unsubscribeProfile?.();
@@ -143,6 +219,10 @@ export function AuthProvider({
         unsubscribeStaff =
           null;
       };
+
+    /* =====================================================
+       FORCE LOGOUT
+    ===================================================== */
 
     const forceLogout =
       async (
@@ -176,6 +256,10 @@ export function AuthProvider({
         }
       };
 
+    /* =====================================================
+       CLINIC SUBSCRIPTION
+    ===================================================== */
+
     const subscribeClinic =
       (clinicId) => {
         unsubscribeClinic?.();
@@ -192,6 +276,7 @@ export function AuthProvider({
             (snapshot) => {
               setClinic({
                 id: clinicId,
+
                 ...(snapshot.exists()
                   ? snapshot.val()
                   : {}),
@@ -214,6 +299,10 @@ export function AuthProvider({
             }
           );
       };
+
+    /* =====================================================
+       STAFF SUBSCRIPTION
+    ===================================================== */
 
     const subscribeStaff =
       (
@@ -284,6 +373,10 @@ export function AuthProvider({
           );
       };
 
+    /* =====================================================
+       FIREBASE AUTH
+    ===================================================== */
+
     const unsubscribeAuth =
       onAuthStateChanged(
         auth,
@@ -318,7 +411,7 @@ export function AuthProvider({
             setAuthError("");
 
             /* =====================================
-               INITIAL PROFILE
+               INITIAL USER PROFILE
             ===================================== */
 
             const userRef = ref(
@@ -462,6 +555,7 @@ export function AuthProvider({
                       );
                     } else {
                       unsubscribeStaff?.();
+
                       unsubscribeStaff =
                         null;
 
@@ -520,15 +614,23 @@ export function AuthProvider({
   ======================================================= */
 
   const logout =
-    useCallback(async () => {
-      setAuthError("");
+    useCallback(
+      async () => {
+        setAuthError("");
 
-      await logoutUser();
-    }, []);
+        await logoutUser();
+      },
+      []
+    );
 
   /* =======================================================
      ROLE
   ======================================================= */
+
+  const role =
+    profile?.role ||
+    staff?.role ||
+    null;
 
   const hasRole =
     useCallback(
@@ -538,10 +640,13 @@ export function AuthProvider({
         }
 
         return roles.includes(
-          profile.role
+          role
         );
       },
-      [profile]
+      [
+        profile,
+        role,
+      ]
     );
 
   /* =======================================================
@@ -550,11 +655,6 @@ export function AuthProvider({
 
   const permissions =
     useMemo(() => {
-      /*
-       * Owner لا يحتاج قائمة permissions.
-       * hasPermission سيرجعه true دائماً.
-       */
-
       const source =
         staff?.permissions ??
         profile?.permissions;
@@ -569,14 +669,15 @@ export function AuthProvider({
 
   const hasPermission =
     useCallback(
-      (...requiredPermissions) => {
+      (
+        ...requiredPermissions
+      ) => {
         if (!profile) {
           return false;
         }
 
         if (
-          profile.role ===
-          "owner"
+          role === "owner"
         ) {
           return true;
         }
@@ -597,20 +698,22 @@ export function AuthProvider({
       },
       [
         profile,
+        role,
         permissions,
       ]
     );
 
   const hasAllPermissions =
     useCallback(
-      (...requiredPermissions) => {
+      (
+        ...requiredPermissions
+      ) => {
         if (!profile) {
           return false;
         }
 
         if (
-          profile.role ===
-          "owner"
+          role === "owner"
         ) {
           return true;
         }
@@ -624,6 +727,7 @@ export function AuthProvider({
       },
       [
         profile,
+        role,
         permissions,
       ]
     );
@@ -647,11 +751,6 @@ export function AuthProvider({
         firebaseUser,
       ]
     );
-
-  const role =
-    profile?.role ||
-    staff?.role ||
-    null;
 
   const roleLabel =
     useMemo(() => {
@@ -683,11 +782,193 @@ export function AuthProvider({
     ]);
 
   /* =======================================================
-     CONTEXT
+     FACILITY
+  ======================================================= */
+
+  const facilityType =
+    clinic?.facilityType ||
+    "single_doctor";
+
+  const facilityTypeName =
+    clinic?.facilityTypeName ||
+    "";
+
+  const isMultiSpecialty =
+    Boolean(
+      clinic?.multiSpecialty ||
+        facilityType ===
+          "multi_doctor" ||
+        facilityType ===
+          "medical_center"
+    );
+
+  const setupCompleted =
+    clinic?.setupCompleted !==
+    false;
+
+  /* =======================================================
+     SPECIALTY ENGINE
+  ======================================================= */
+
+  /*
+   * تخصص العيادة الأساسي.
+   *
+   * العيادات القديمة التي لم تسجل تخصصًا بعد
+   * تحصل مؤقتًا على general_practice.
+   */
+
+  const clinicSpecialty =
+    clinic?.primarySpecialty ||
+    "general_practice";
+
+  const clinicSpecialtyData =
+    useMemo(
+      () =>
+        getSpecialtyById(
+          clinicSpecialty
+        ) ||
+        getSpecialtyById(
+          "general_practice"
+        ),
+      [clinicSpecialty]
+    );
+
+  /*
+   * التخصص الفعلي للمستخدم الحالي.
+   *
+   * في مركز متعدد التخصصات:
+   *
+   * دكتور الأطفال -> pediatrics
+   * دكتور القلب -> cardiology
+   *
+   * بينما الريسبشن/الإدارة يمكن أن يعتمد
+   * على التخصص الرئيسي للعيادة.
+   */
+
+  const activeSpecialty =
+    useMemo(
+      () =>
+        resolveSpecialtyId({
+          staff,
+          profile,
+          clinic,
+        }),
+      [
+        staff,
+        profile,
+        clinic,
+      ]
+    );
+
+  const activeSpecialtyData =
+    useMemo(
+      () =>
+        getSpecialtyById(
+          activeSpecialty
+        ) ||
+        getSpecialtyById(
+          "general_practice"
+        ),
+      [activeSpecialty]
+    );
+
+  const specialtyConfig =
+    useMemo(
+      () =>
+        getSpecialtyConfig(
+          activeSpecialty
+        ),
+      [activeSpecialty]
+    );
+
+  /*
+   * تخصصات الطبيب/الموظف المسجلة.
+   */
+
+  const staffSpecialties =
+    useMemo(() => {
+      const specialties =
+        normalizeSpecialties(
+          staff?.specialties
+        );
+
+      if (
+        staff?.primarySpecialty &&
+        !specialties.includes(
+          staff.primarySpecialty
+        )
+      ) {
+        return [
+          staff.primarySpecialty,
+          ...specialties,
+        ];
+      }
+
+      return specialties;
+    }, [staff]);
+
+  const staffSpecialtyData =
+    useMemo(
+      () =>
+        staffSpecialties
+          .map(
+            (specialtyId) =>
+              getSpecialtyById(
+                specialtyId
+              )
+          )
+          .filter(Boolean),
+      [staffSpecialties]
+    );
+
+  /*
+   * Helper سريع:
+   *
+   * hasSpecialtyFeature("dentalChart")
+   * hasSpecialtyFeature("growthCharts")
+   */
+
+  const hasSpecialtyFeature =
+    useCallback(
+      (feature) =>
+        Boolean(
+          specialtyConfig
+            ?.features?.[
+            feature
+          ]
+        ),
+      [specialtyConfig]
+    );
+
+  /*
+   * Helper للموديولات:
+   *
+   * hasSpecialtyModule("labs")
+   * hasSpecialtyModule("radiology")
+   */
+
+  const hasSpecialtyModule =
+    useCallback(
+      (module) =>
+        Boolean(
+          specialtyConfig
+            ?.modules?.[
+            module
+          ]
+        ),
+      [specialtyConfig]
+    );
+
+  /* =======================================================
+     CONTEXT VALUE
   ======================================================= */
 
   const value = useMemo(
     () => ({
+      /* =====================================
+         AUTH
+      ===================================== */
+
       firebaseUser,
 
       profile,
@@ -703,6 +984,10 @@ export function AuthProvider({
       staffId:
         profile?.staffId ||
         null,
+
+      /* =====================================
+         ROLE
+      ===================================== */
 
       role,
 
@@ -736,6 +1021,65 @@ export function AuthProvider({
       isNurse:
         role === "nurse",
 
+      /* =====================================
+         FACILITY
+      ===================================== */
+
+      facilityType,
+
+      facilityTypeName,
+
+      isMultiSpecialty,
+
+      setupCompleted,
+
+      /* =====================================
+         CLINIC SPECIALTY
+      ===================================== */
+
+      clinicSpecialty,
+
+      clinicSpecialtyData,
+
+      /* =====================================
+         ACTIVE SPECIALTY
+      ===================================== */
+
+      activeSpecialty,
+
+      activeSpecialtyData,
+
+      /*
+       * Alias مفيد:
+       *
+       * doctorSpecialty هو نفس activeSpecialty
+       * للطبيب الحالي.
+       */
+
+      doctorSpecialty:
+        activeSpecialty,
+
+      doctorSpecialtyData:
+        activeSpecialtyData,
+
+      /* =====================================
+         SPECIALTY ENGINE
+      ===================================== */
+
+      specialtyConfig,
+
+      staffSpecialties,
+
+      staffSpecialtyData,
+
+      hasSpecialtyFeature,
+
+      hasSpecialtyModule,
+
+      /* =====================================
+         ACTIONS
+      ===================================== */
+
       login,
 
       logout,
@@ -752,19 +1096,46 @@ export function AuthProvider({
       profile,
       clinic,
       staff,
+
       role,
       roleLabel,
       displayName,
       permissions,
+
       loading,
       authError,
+
+      facilityType,
+      facilityTypeName,
+      isMultiSpecialty,
+      setupCompleted,
+
+      clinicSpecialty,
+      clinicSpecialtyData,
+
+      activeSpecialty,
+      activeSpecialtyData,
+
+      specialtyConfig,
+
+      staffSpecialties,
+      staffSpecialtyData,
+
+      hasSpecialtyFeature,
+      hasSpecialtyModule,
+
       login,
       logout,
+
       hasRole,
       hasPermission,
       hasAllPermissions,
     ]
   );
+
+  /* =======================================================
+     PROVIDER
+  ======================================================= */
 
   return (
     <AuthContext.Provider
