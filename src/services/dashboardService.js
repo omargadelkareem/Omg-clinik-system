@@ -5,6 +5,10 @@ import {
 
 import { database } from "../config/firebase";
 
+/* =========================================================
+   HELPERS
+========================================================= */
+
 function objectToArray(value) {
   if (!value) return [];
 
@@ -44,7 +48,10 @@ function parseDate(value) {
     : date;
 }
 
-function isSameLocalDay(value, targetDate) {
+function isSameLocalDay(
+  value,
+  targetDate
+) {
   const date = parseDate(value);
 
   if (!date) return false;
@@ -70,7 +77,18 @@ function appointmentDate(
   );
 }
 
-function transactionDate(transaction) {
+function visitDate(visit) {
+  return (
+    visit.completedAt ||
+    visit.visitDate ||
+    visit.createdAt ||
+    visit.updatedAt
+  );
+}
+
+function transactionDate(
+  transaction
+) {
   return (
     transaction.paidAt ||
     transaction.createdAt ||
@@ -190,14 +208,18 @@ function getDoctorName(
     item.doctorId &&
     staffMap[item.doctorId]
   ) {
-    return staffMap[item.doctorId]
-      .name;
+    return (
+      staffMap[item.doctorId]
+        .name || ""
+    );
   }
 
   return "";
 }
 
-function getPaidAmount(transaction) {
+function getPaidAmount(
+  transaction
+) {
   return Number(
     transaction.paidAmount ??
       transaction.amount ??
@@ -206,7 +228,9 @@ function getPaidAmount(transaction) {
   );
 }
 
-function getExpenseAmount(expense) {
+function getExpenseAmount(
+  expense
+) {
   return Number(
     expense.amount ?? 0
   );
@@ -225,7 +249,8 @@ function getWaitMinutes(item) {
   const timestamp =
     getQueueTimestamp(item);
 
-  const date = parseDate(timestamp);
+  const date =
+    parseDate(timestamp);
 
   if (!date) {
     return 0;
@@ -247,18 +272,26 @@ function getInitials(name = "") {
     .split(/\s+/)
     .filter(Boolean);
 
-  if (!parts.length) return "؟";
+  if (!parts.length) {
+    return "؟";
+  }
 
   return parts
     .slice(0, 2)
-    .map((part) => part[0])
+    .map(
+      (part) => part[0]
+    )
     .join("");
 }
 
 function getLastSevenDays() {
   const days = [];
 
-  for (let i = 6; i >= 0; i--) {
+  for (
+    let i = 6;
+    i >= 0;
+    i--
+  ) {
     const date = new Date();
 
     date.setHours(
@@ -278,6 +311,43 @@ function getLastSevenDays() {
   return days;
 }
 
+/* =========================================================
+   VISIT TYPE
+========================================================= */
+
+function isConsultationVisit(
+  visit
+) {
+  return (
+    visit.visitType ===
+      "consultation" ||
+    visit.visitType === "new" ||
+    visit.visitType ===
+      "new_visit" ||
+    visit.visitTypeLabel ===
+      "كشف جديد" ||
+    visit.visitTypeLabel ===
+      "كشف"
+  );
+}
+
+function isFollowupVisit(visit) {
+  return (
+    visit.visitType ===
+      "followup" ||
+    visit.visitType ===
+      "follow_up" ||
+    visit.visitType ===
+      "follow-up" ||
+    visit.visitTypeLabel ===
+      "إعادة"
+  );
+}
+
+/* =========================================================
+   DASHBOARD SUBSCRIPTION
+========================================================= */
+
 export function subscribeToDashboard(
   clinicId,
   callback,
@@ -294,6 +364,7 @@ export function subscribeToDashboard(
 
   return onValue(
     clinicRef,
+
     (snapshot) => {
       const clinic =
         snapshot.val() || {};
@@ -335,22 +406,33 @@ export function subscribeToDashboard(
           finance.expenses
         );
 
-      const now = new Date();
+      const now =
+        new Date();
+
+      /* =====================================================
+         TODAY APPOINTMENTS
+      ===================================================== */
 
       const todayAppointments =
         appointments
-          .filter((item) =>
-            isSameLocalDay(
-              appointmentDate(item),
-              now
-            )
+          .filter(
+            (item) =>
+              isSameLocalDay(
+                appointmentDate(
+                  item
+                ),
+                now
+              )
           )
-          .sort((a, b) =>
-            getAppointmentTime(
-              a
-            ).localeCompare(
-              getAppointmentTime(b)
-            )
+          .sort(
+            (a, b) =>
+              getAppointmentTime(
+                a
+              ).localeCompare(
+                getAppointmentTime(
+                  b
+                )
+              )
           );
 
       const confirmedToday =
@@ -362,8 +444,42 @@ export function subscribeToDashboard(
               "waiting",
               "in_progress",
               "completed",
-            ].includes(item.status)
+            ].includes(
+              item.status
+            )
         ).length;
+
+      /* =====================================================
+         TODAY COMPLETED VISITS
+      ===================================================== */
+
+      const todayVisits =
+        visits.filter(
+          (item) =>
+            item.status ===
+              "completed" &&
+            isSameLocalDay(
+              visitDate(item),
+              now
+            )
+        );
+
+      const consultationsToday =
+        todayVisits.filter(
+          isConsultationVisit
+        ).length;
+
+      const followupsToday =
+        todayVisits.filter(
+          isFollowupVisit
+        ).length;
+
+      const completedVisitsToday =
+        todayVisits.length;
+
+      /* =====================================================
+         TODAY PATIENTS
+      ===================================================== */
 
       const todayPatientsIds =
         new Set();
@@ -378,59 +494,65 @@ export function subscribeToDashboard(
         }
       );
 
-      visits.forEach((item) => {
-        if (
-          isSameLocalDay(
-            item.createdAt ||
-              item.visitDate,
-            now
-          ) &&
-          item.patientId
-        ) {
-          todayPatientsIds.add(
-            item.patientId
-          );
+      todayVisits.forEach(
+        (item) => {
+          if (item.patientId) {
+            todayPatientsIds.add(
+              item.patientId
+            );
+          }
         }
-      });
+      );
 
       const newPatientsToday =
         Object.values(
           patientsMap
-        ).filter((patient) =>
-          isSameLocalDay(
-            patient.createdAt,
-            now
-          )
+        ).filter(
+          (patient) =>
+            isSameLocalDay(
+              patient.createdAt,
+              now
+            )
         ).length;
 
-      const activeQueue = queue
-        .filter(
-          (item) =>
-            ![
-              "completed",
-              "cancelled",
-              "removed",
-            ].includes(
-              item.status
-            )
-        )
-        .sort((a, b) => {
-          const aOrder =
-            Number(
-              a.order ??
-                a.queueNumber ??
-                999999
-            );
+      /* =====================================================
+         QUEUE
+      ===================================================== */
 
-          const bOrder =
-            Number(
-              b.order ??
-                b.queueNumber ??
-                999999
-            );
+      const activeQueue =
+        queue
+          .filter(
+            (item) =>
+              ![
+                "completed",
+                "cancelled",
+                "removed",
+              ].includes(
+                item.status
+              )
+          )
+          .sort(
+            (a, b) => {
+              const aOrder =
+                Number(
+                  a.order ??
+                    a.queueNumber ??
+                    999999
+                );
 
-          return aOrder - bOrder;
-        });
+              const bOrder =
+                Number(
+                  b.order ??
+                    b.queueNumber ??
+                    999999
+                );
+
+              return (
+                aOrder -
+                bOrder
+              );
+            }
+          );
 
       const currentPatient =
         activeQueue.find(
@@ -460,7 +582,10 @@ export function subscribeToDashboard(
         waitingQueue.length
           ? Math.round(
               waitingQueue.reduce(
-                (sum, item) =>
+                (
+                  sum,
+                  item
+                ) =>
                   sum +
                   getWaitMinutes(
                     item
@@ -470,6 +595,10 @@ export function subscribeToDashboard(
                 waitingQueue.length
             )
           : 0;
+
+      /* =====================================================
+         FINANCE
+      ===================================================== */
 
       const todayTransactions =
         transactions.filter(
@@ -493,122 +622,105 @@ export function subscribeToDashboard(
 
       const todayRevenue =
         todayTransactions.reduce(
-          (sum, item) =>
+          (
+            sum,
+            item
+          ) =>
             sum +
-            getPaidAmount(item),
+            getPaidAmount(
+              item
+            ),
           0
         );
 
       const todayExpenseTotal =
         todayExpenses.reduce(
-          (sum, item) =>
+          (
+            sum,
+            item
+          ) =>
             sum +
-            getExpenseAmount(item),
+            getExpenseAmount(
+              item
+            ),
           0
         );
+
+      /* =====================================================
+         LAST 7 DAYS REVENUE
+      ===================================================== */
 
       const sevenDays =
         getLastSevenDays();
 
       const revenueChart =
-        sevenDays.map((date) => {
-          const value =
-            transactions
-              .filter((item) =>
-                isSameLocalDay(
-                  transactionDate(
-                    item
-                  ),
-                  date
+        sevenDays.map(
+          (date) => {
+            const value =
+              transactions
+                .filter(
+                  (item) =>
+                    isSameLocalDay(
+                      transactionDate(
+                        item
+                      ),
+                      date
+                    )
                 )
-              )
-              .reduce(
-                (sum, item) =>
-                  sum +
-                  getPaidAmount(
+                .reduce(
+                  (
+                    sum,
                     item
-                  ),
-                0
-              );
+                  ) =>
+                    sum +
+                    getPaidAmount(
+                      item
+                    ),
+                  0
+                );
 
-          return {
-            key:
-              getLocalDateKey(
-                date
-              ),
+            return {
+              key:
+                getLocalDateKey(
+                  date
+                ),
 
-            label:
-              new Intl.DateTimeFormat(
-                "ar-EG",
-                {
-                  weekday:
-                    "short",
-                }
-              ).format(date),
+              label:
+                new Intl.DateTimeFormat(
+                  "ar-EG",
+                  {
+                    weekday:
+                      "short",
+                  }
+                ).format(
+                  date
+                ),
 
-            value,
-          };
-        });
+              value,
+            };
+          }
+        );
 
       const weekRevenue =
         revenueChart.reduce(
-          (sum, day) =>
-            sum + day.value,
+          (
+            sum,
+            day
+          ) =>
+            sum +
+            day.value,
           0
         );
+
+      /* =====================================================
+         APPOINTMENTS VIEW
+      ===================================================== */
 
       const appointmentsView =
         todayAppointments
           .slice(0, 7)
-          .map((item) => {
-            const name =
-              getPatientName(
-                item,
-                patientsMap
-              );
-
-            return {
-              ...item,
-
-              name,
-
-              initials:
-                getInitials(
-                  name
-                ),
-
-              phone:
-                getPatientPhone(
-                  item,
-                  patientsMap
-                ),
-
-              doctorName:
-                getDoctorName(
-                  item,
-                  staffMap
-                ),
-
-              displayTime:
-                formatTime(
-                  getAppointmentTime(
-                    item
-                  )
-                ),
-
-              type:
-                item.type ||
-                item.visitType ||
-                item.serviceName ||
-                "كشف",
-            };
-          });
-
-      const queueView =
-        waitingQueue
-          .slice(0, 6)
           .map(
-            (item, index) => {
+            (item) => {
               const name =
                 getPatientName(
                   item,
@@ -620,14 +732,73 @@ export function subscribeToDashboard(
 
                 name,
 
-                number: String(
-                  item.queueNumber ??
-                    item.order ??
-                    index + 1
-                ).padStart(
-                  2,
-                  "0"
-                ),
+                initials:
+                  getInitials(
+                    name
+                  ),
+
+                phone:
+                  getPatientPhone(
+                    item,
+                    patientsMap
+                  ),
+
+                doctorName:
+                  getDoctorName(
+                    item,
+                    staffMap
+                  ),
+
+                displayTime:
+                  formatTime(
+                    getAppointmentTime(
+                      item
+                    )
+                  ),
+
+                type:
+                  item.type ||
+                  item.visitTypeLabel ||
+                  item.visitType ||
+                  item.serviceName ||
+                  "كشف",
+              };
+            }
+          );
+
+      /* =====================================================
+         QUEUE VIEW
+      ===================================================== */
+
+      const queueView =
+        waitingQueue
+          .slice(0, 6)
+          .map(
+            (
+              item,
+              index
+            ) => {
+              const name =
+                getPatientName(
+                  item,
+                  patientsMap
+                );
+
+              return {
+                ...item,
+
+                name,
+
+                number:
+                  String(
+                    item.queueNumber ??
+                      item.order ??
+                      index +
+                        1
+                  ).padStart(
+                    2,
+                    "0"
+                  ),
 
                 waitMinutes:
                   getWaitMinutes(
@@ -642,6 +813,10 @@ export function subscribeToDashboard(
               };
             }
           );
+
+      /* =====================================================
+         CURRENT PATIENT VIEW
+      ===================================================== */
 
       let currentPatientView =
         null;
@@ -659,7 +834,9 @@ export function subscribeToDashboard(
           name,
 
           initials:
-            getInitials(name),
+            getInitials(
+              name
+            ),
 
           doctorName:
             getDoctorName(
@@ -668,6 +845,10 @@ export function subscribeToDashboard(
             ),
         };
       }
+
+      /* =====================================================
+         RECENT ACTIVITY
+      ===================================================== */
 
       const recentActivity = [
         ...todayAppointments.map(
@@ -705,7 +886,8 @@ export function subscribeToDashboard(
             id:
               `payment-${item.id}`,
 
-            type: "payment",
+            type:
+              "payment",
 
             title:
               item.patientName ||
@@ -727,6 +909,10 @@ export function subscribeToDashboard(
         .slice(-6)
         .reverse();
 
+      /* =====================================================
+         RESULT
+      ===================================================== */
+
       callback({
         profile,
 
@@ -741,6 +927,15 @@ export function subscribeToDashboard(
             todayPatientsIds.size,
 
           newPatientsToday,
+
+          completedVisits:
+            completedVisitsToday,
+
+          consultations:
+            consultationsToday,
+
+          followups:
+            followupsToday,
 
           waiting:
             waitingQueue.length,
@@ -763,7 +958,8 @@ export function subscribeToDashboard(
         appointments:
           appointmentsView,
 
-        queue: queueView,
+        queue:
+          queueView,
 
         currentPatient:
           currentPatientView,
@@ -773,6 +969,7 @@ export function subscribeToDashboard(
         recentActivity,
       });
     },
+
     (error) => {
       console.error(
         "Dashboard realtime error:",

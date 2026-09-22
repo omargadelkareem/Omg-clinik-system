@@ -16,7 +16,6 @@ import {
   ReceiptText,
   Stethoscope,
   UserPlus,
-  Users,
 } from "lucide-react";
 
 import {
@@ -33,16 +32,27 @@ import {
 
 import "./DashboardPage.css";
 
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
 const EMPTY_DASHBOARD = {
   profile: {},
 
   totals: {
     appointments: 0,
     confirmedAppointments: 0,
+
     patientsToday: 0,
     newPatientsToday: 0,
+
+    completedVisits: 0,
+    consultations: 0,
+    followups: 0,
+
     waiting: 0,
     averageWait: 0,
+
     revenue: 0,
     expenses: 0,
     net: 0,
@@ -56,10 +66,16 @@ const EMPTY_DASHBOARD = {
   recentActivity: [],
 };
 
+/* =========================================================
+   HELPERS
+========================================================= */
+
 function formatMoney(value) {
   return Number(
     value || 0
-  ).toLocaleString("ar-EG");
+  ).toLocaleString(
+    "ar-EG"
+  );
 }
 
 function formatDashboardDate() {
@@ -71,29 +87,44 @@ function formatDashboardDate() {
       month: "long",
       year: "numeric",
     }
-  ).format(new Date());
+  ).format(
+    new Date()
+  );
 }
 
-function getFirstName(name = "") {
+function getFirstName(
+  name = ""
+) {
   const cleaned = name
-    .replace(/^د\.?\s*/i, "")
+    .replace(
+      /^د\.?\s*/i,
+      ""
+    )
     .trim();
 
   return (
-    cleaned.split(/\s+/)[0] ||
+    cleaned
+      .split(/\s+/)[0] ||
     ""
   );
 }
+
+/* =========================================================
+   STATUS
+========================================================= */
 
 function StatusText({
   status,
 }) {
   const labels = {
     confirmed: "مؤكد",
-    pending: "بانتظار التأكيد",
+    pending:
+      "بانتظار التأكيد",
     arrived: "وصل",
-    waiting: "في الانتظار",
-    in_progress: "داخل الكشف",
+    waiting:
+      "في الانتظار",
+    in_progress:
+      "داخل الكشف",
     completed: "مكتمل",
     cancelled: "ملغي",
   };
@@ -109,8 +140,13 @@ function StatusText({
   );
 }
 
+/* =========================================================
+   PAGE
+========================================================= */
+
 export default function DashboardPage() {
-  const navigate = useNavigate();
+  const navigate =
+    useNavigate();
 
   const {
     clinicId,
@@ -118,17 +154,31 @@ export default function DashboardPage() {
     clinic,
   } = useAuth();
 
-  const [dashboard, setDashboard] =
-    useState(EMPTY_DASHBOARD);
+  const [
+    dashboard,
+    setDashboard,
+  ] = useState(
+    EMPTY_DASHBOARD
+  );
 
-  const [loading, setLoading] =
-    useState(true);
+  const [
+    loading,
+    setLoading,
+  ] = useState(true);
 
-  const [error, setError] =
-    useState("");
+  const [
+    error,
+    setError,
+  ] = useState("");
+
+  /* =======================================================
+     REALTIME DASHBOARD
+  ======================================================= */
 
   useEffect(() => {
-    if (!clinicId) return;
+    if (!clinicId) {
+      return;
+    }
 
     setLoading(true);
     setError("");
@@ -138,8 +188,13 @@ export default function DashboardPage() {
         clinicId,
 
         (data) => {
-          setDashboard(data);
-          setLoading(false);
+          setDashboard(
+            data
+          );
+
+          setLoading(
+            false
+          );
         },
 
         () => {
@@ -147,7 +202,9 @@ export default function DashboardPage() {
             "تعذر قراءة بيانات العيادة."
           );
 
-          setLoading(false);
+          setLoading(
+            false
+          );
         }
       );
 
@@ -156,41 +213,75 @@ export default function DashboardPage() {
     };
   }, [clinicId]);
 
-  const maxRevenue = useMemo(
-    () =>
-      Math.max(
-        ...dashboard.revenueChart.map(
-          (item) => item.value
+  /* =======================================================
+     REVENUE MAX
+  ======================================================= */
+
+  const maxRevenue =
+    useMemo(
+      () =>
+        Math.max(
+          ...dashboard
+            .revenueChart
+            .map(
+              (item) =>
+                item.value
+            ),
+          1
         ),
-        1
-      ),
-    [dashboard.revenueChart]
-  );
+      [
+        dashboard
+          .revenueChart,
+      ]
+    );
+
+  /* =======================================================
+     CLINIC / USER
+  ======================================================= */
 
   const displayClinicName =
-    dashboard.profile?.nameAr ||
+    dashboard.profile
+      ?.nameAr ||
     clinic?.nameAr ||
-    dashboard.profile?.name ||
+    dashboard.profile
+      ?.name ||
     clinic?.name ||
     "العيادة";
 
   const displayUserName =
-    userProfile?.name || "";
+    userProfile?.name ||
+    "";
 
   const firstName =
-    getFirstName(displayUserName);
+    getFirstName(
+      displayUserName
+    );
+
+  /* =======================================================
+     QUICK ACTIONS
+  ======================================================= */
 
   const quickActions = [
     {
-      label: "إضافة مريض",
-      icon: UserPlus,
+      label:
+        "إضافة مريض",
+
+      icon:
+        UserPlus,
+
       action: () =>
-        navigate("/patients"),
+        navigate(
+          "/patients"
+        ),
     },
 
     {
-      label: "حجز موعد",
-      icon: CalendarDays,
+      label:
+        "حجز موعد",
+
+      icon:
+        CalendarDays,
+
       action: () =>
         navigate(
           "/appointments"
@@ -198,19 +289,35 @@ export default function DashboardPage() {
     },
 
     {
-      label: "قائمة الانتظار",
-      icon: Clock3,
+      label:
+        "قائمة الانتظار",
+
+      icon:
+        Clock3,
+
       action: () =>
-        navigate("/queue"),
+        navigate(
+          "/queue"
+        ),
     },
 
     {
-      label: "المالية",
-      icon: ReceiptText,
+      label:
+        "المالية",
+
+      icon:
+        ReceiptText,
+
       action: () =>
-        navigate("/finance"),
+        navigate(
+          "/finance"
+        ),
     },
   ];
+
+  /* =======================================================
+     LOADING
+  ======================================================= */
 
   if (loading) {
     return (
@@ -233,16 +340,21 @@ export default function DashboardPage() {
     );
   }
 
+  /* =======================================================
+     ERROR
+  ======================================================= */
+
   if (error) {
     return (
       <div className="ops-dashboard">
         <div className="dashboard-state dashboard-error-state">
           <strong>
-            لم نتمكن من تحميل لوحة
-            التشغيل
+            لم نتمكن من تحميل لوحة التشغيل
           </strong>
 
-          <span>{error}</span>
+          <span>
+            {error}
+          </span>
 
           <button
             onClick={() =>
@@ -256,9 +368,16 @@ export default function DashboardPage() {
     );
   }
 
+  /* =======================================================
+     UI
+  ======================================================= */
+
   return (
     <div className="ops-dashboard">
-      {/* TOP BAR */}
+
+      {/* ===================================================
+          TOP BAR
+      =================================================== */}
 
       <header className="ops-header">
         <div>
@@ -274,7 +393,9 @@ export default function DashboardPage() {
 
           <p>
             {displayClinicName}
+
             <span />
+
             {formatDashboardDate()}
           </p>
         </div>
@@ -282,6 +403,7 @@ export default function DashboardPage() {
         <div className="ops-header-actions">
           <span className="clinic-live-state">
             <i />
+
             النظام متصل
           </span>
 
@@ -293,75 +415,122 @@ export default function DashboardPage() {
               )
             }
           >
-            <Plus size={17} />
+            <Plus
+              size={17}
+            />
+
             حجز موعد
           </button>
         </div>
       </header>
 
-      {/* COMMAND STRIP */}
+      {/* ===================================================
+          COMMAND STRIP
+      =================================================== */}
 
       <section className="command-strip">
+
+        {/* APPOINTMENTS */}
+
         <CommandMetric
           label="مواعيد اليوم"
           value={
-            dashboard.totals
+            dashboard
+              .totals
               .appointments
           }
           note={`${dashboard.totals.confirmedAppointments} مؤكد`}
-          icon={CalendarDays}
+          icon={
+            CalendarDays
+          }
         />
 
+        {/* COMPLETED VISITS */}
+
         <CommandMetric
-          label="حضور اليوم"
+          label="زيارات اليوم"
           value={
-            dashboard.totals
-              .patientsToday
+            dashboard
+              .totals
+              .completedVisits
           }
-          note={`${dashboard.totals.newPatientsToday} ملفات جديدة`}
-          icon={Users}
+          note={`${dashboard.totals.consultations} كشف · ${dashboard.totals.followups} إعادة`}
+          icon={
+            Stethoscope
+          }
         />
+
+        {/* WAITING */}
 
         <CommandMetric
           label="بانتظار الكشف"
           value={
-            dashboard.totals.waiting
+            dashboard
+              .totals
+              .waiting
           }
           note={
-            dashboard.totals.waiting
+            dashboard
+              .totals
+              .waiting
               ? `متوسط ${dashboard.totals.averageWait} د`
               : "لا يوجد انتظار"
           }
-          icon={Clock3}
+          icon={
+            Clock3
+          }
           attention={
-            dashboard.totals.waiting >
+            dashboard
+              .totals
+              .waiting >
             0
           }
         />
 
+        {/* REVENUE */}
+
         <CommandMetric
           label="تحصيل اليوم"
-          value={formatMoney(
-            dashboard.totals.revenue
-          )}
+          value={
+            formatMoney(
+              dashboard
+                .totals
+                .revenue
+            )
+          }
           suffix="ج.م"
           note={`صافي ${formatMoney(
-            dashboard.totals.net
+            dashboard
+              .totals
+              .net
           )} ج.م`}
-          icon={Banknote}
+          icon={
+            Banknote
+          }
         />
       </section>
 
-      {/* MAIN OPERATIONS */}
+      {/* ===================================================
+          MAIN OPERATIONS
+      =================================================== */}
 
       <section className="operations-layout">
-        {/* APPOINTMENT DESK */}
+
+        {/* =================================================
+            APPOINTMENT DESK
+        ================================================= */}
 
         <div className="schedule-workspace">
+
           <div className="workspace-heading">
             <div>
-              <span>جدول التشغيل</span>
-              <h2>مواعيد اليوم</h2>
+              <span>
+                جدول التشغيل
+              </span>
+
+              <h2>
+                مواعيد اليوم
+              </h2>
             </div>
 
             <button
@@ -372,12 +541,17 @@ export default function DashboardPage() {
               }
             >
               الجدول الكامل
-              <ArrowLeft size={15} />
+
+              <ArrowLeft
+                size={15}
+              />
             </button>
           </div>
 
-          {dashboard.appointments
-            .length === 0 ? (
+          {dashboard
+            .appointments
+            .length ===
+          0 ? (
             <EmptySchedule
               onAdd={() =>
                 navigate(
@@ -387,96 +561,108 @@ export default function DashboardPage() {
             />
           ) : (
             <div className="schedule-list">
-              {dashboard.appointments.map(
-                (
-                  appointment,
-                  index
-                ) => (
-                  <button
-                    className="schedule-line"
-                    key={
-                      appointment.id
-                    }
-                    onClick={() =>
-                      navigate(
-                        "/appointments"
-                      )
-                    }
-                  >
-                    <div className="schedule-sequence">
-                      {String(
-                        index + 1
-                      ).padStart(
-                        2,
-                        "0"
-                      )}
-                    </div>
 
-                    <div className="schedule-time">
-                      <strong>
-                        {
-                          appointment.displayTime
-                        }
-                      </strong>
+              {dashboard
+                .appointments
+                .map(
+                  (
+                    appointment,
+                    index
+                  ) => (
+                    <button
+                      className="schedule-line"
+                      key={
+                        appointment.id
+                      }
+                      onClick={() =>
+                        navigate(
+                          "/appointments"
+                        )
+                      }
+                    >
 
-                      <span>
-                        {appointment.duration ||
-                          appointment.slotDuration ||
-                          30}{" "}
-                        دقيقة
-                      </span>
-                    </div>
+                      <div className="schedule-sequence">
+                        {String(
+                          index +
+                            1
+                        ).padStart(
+                          2,
+                          "0"
+                        )}
+                      </div>
 
-                    <div className="schedule-patient">
-                      <span className="patient-mark">
-                        {
-                          appointment.initials
-                        }
-                      </span>
-
-                      <div>
+                      <div className="schedule-time">
                         <strong>
                           {
-                            appointment.name
+                            appointment
+                              .displayTime
                           }
                         </strong>
 
                         <span>
-                          {appointment.phone ||
-                            "بدون رقم هاتف"}
+                          {appointment.duration ||
+                            appointment.slotDuration ||
+                            30}{" "}
+                          دقيقة
                         </span>
                       </div>
-                    </div>
 
-                    <div className="schedule-service">
-                      <span>
-                        {
-                          appointment.type
-                        }
-                      </span>
-
-                      {appointment.doctorName && (
-                        <small>
+                      <div className="schedule-patient">
+                        <span className="patient-mark">
                           {
-                            appointment.doctorName
+                            appointment
+                              .initials
                           }
-                        </small>
-                      )}
-                    </div>
+                        </span>
 
-                    <StatusText
-                      status={
-                        appointment.status
-                      }
-                    />
+                        <div>
+                          <strong>
+                            {
+                              appointment
+                                .name
+                            }
+                          </strong>
 
-                    <ChevronLeft
-                      size={17}
-                      className="schedule-arrow"
-                    />
-                  </button>
-                )
-              )}
+                          <span>
+                            {appointment.phone ||
+                              "بدون رقم هاتف"}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="schedule-service">
+                        <span>
+                          {
+                            appointment
+                              .type
+                          }
+                        </span>
+
+                        {appointment
+                          .doctorName && (
+                          <small>
+                            {
+                              appointment
+                                .doctorName
+                            }
+                          </small>
+                        )}
+                      </div>
+
+                      <StatusText
+                        status={
+                          appointment
+                            .status
+                        }
+                      />
+
+                      <ChevronLeft
+                        size={17}
+                        className="schedule-arrow"
+                      />
+                    </button>
+                  )
+                )}
             </div>
           )}
 
@@ -488,29 +674,43 @@ export default function DashboardPage() {
               )
             }
           >
-            <Plus size={16} />
+            <Plus
+              size={16}
+            />
+
             إضافة موعد جديد
           </button>
         </div>
 
-        {/* LIVE CLINIC */}
+        {/* =================================================
+            LIVE CLINIC
+        ================================================= */}
 
         <aside className="clinic-live-panel">
+
           <div className="live-panel-heading">
             <div>
-              <span>LIVE FLOOR</span>
-              <h2>العيادة الآن</h2>
+              <span>
+                LIVE FLOOR
+              </span>
+
+              <h2>
+                العيادة الآن
+              </h2>
             </div>
 
             <i />
           </div>
 
-          {dashboard.currentPatient ? (
+          {dashboard
+            .currentPatient ? (
             <div className="exam-room">
+
               <div className="exam-room-label">
                 <Stethoscope
                   size={16}
                 />
+
                 داخل الكشف الآن
               </div>
 
@@ -543,6 +743,7 @@ export default function DashboardPage() {
             </div>
           ) : (
             <div className="exam-room exam-room-empty">
+
               <Stethoscope
                 size={22}
               />
@@ -552,11 +753,12 @@ export default function DashboardPage() {
               </strong>
 
               <span>
-                ستظهر حالة غرفة الكشف
-                هنا فور بدء الزيارة.
+                ستظهر حالة غرفة الكشف هنا فور بدء الزيارة.
               </span>
             </div>
           )}
+
+          {/* WAITING QUEUE */}
 
           <div className="waiting-head">
             <span>
@@ -565,131 +767,197 @@ export default function DashboardPage() {
 
             <strong>
               {
-                dashboard.queue
+                dashboard
+                  .queue
                   .length
               }
             </strong>
           </div>
 
           <div className="live-queue">
-            {dashboard.queue.length ===
+
+            {dashboard
+              .queue
+              .length ===
             0 ? (
               <div className="empty-queue">
                 قائمة الانتظار فارغة
               </div>
             ) : (
-              dashboard.queue.map(
-                (patient) => (
-                  <button
-                    key={patient.id}
-                    onClick={() =>
-                      navigate(
-                        "/queue"
-                      )
-                    }
-                    className="live-queue-line"
-                  >
-                    <span className="live-queue-number">
-                      {
-                        patient.number
+              dashboard
+                .queue
+                .map(
+                  (
+                    patient
+                  ) => (
+                    <button
+                      key={
+                        patient.id
                       }
-                    </span>
-
-                    <div>
-                      <strong>
-                        {patient.name}
-                      </strong>
-
-                      <small>
-                        منذ{" "}
+                      onClick={() =>
+                        navigate(
+                          "/queue"
+                        )
+                      }
+                      className="live-queue-line"
+                    >
+                      <span className="live-queue-number">
                         {
-                          patient.waitMinutes
-                        }{" "}
-                        دقيقة
-                      </small>
-                    </div>
+                          patient
+                            .number
+                        }
+                      </span>
 
-                    <Clock3
-                      size={15}
-                    />
-                  </button>
+                      <div>
+                        <strong>
+                          {
+                            patient
+                              .name
+                          }
+                        </strong>
+
+                        <small>
+                          منذ{" "}
+                          {
+                            patient
+                              .waitMinutes
+                          }{" "}
+                          دقيقة
+                        </small>
+                      </div>
+
+                      <Clock3
+                        size={15}
+                      />
+                    </button>
+                  )
                 )
-              )
             )}
           </div>
 
           <button
             className="manage-floor"
             onClick={() =>
-              navigate("/queue")
+              navigate(
+                "/queue"
+              )
             }
           >
             فتح إدارة الانتظار
-            <ArrowLeft size={15} />
+
+            <ArrowLeft
+              size={15}
+            />
           </button>
         </aside>
       </section>
 
-      {/* LOWER WORKSPACE */}
+      {/* ===================================================
+          LOWER WORKSPACE
+      =================================================== */}
 
       <section className="lower-operations">
-        {/* FINANCE */}
+
+        {/* =================================================
+            FINANCE
+        ================================================= */}
 
         <div className="cash-workspace">
+
           <div className="lower-heading">
             <div>
-              <span>FINANCE</span>
-              <h2>حركة اليوم</h2>
+              <span>
+                FINANCE
+              </span>
+
+              <h2>
+                حركة اليوم
+              </h2>
             </div>
 
             <button
               onClick={() =>
-                navigate("/finance")
+                navigate(
+                  "/finance"
+                )
               }
             >
               المالية
-              <ArrowLeft size={14} />
+
+              <ArrowLeft
+                size={14}
+              />
             </button>
           </div>
 
+          {/* LEDGER */}
+
           <div className="cash-ledger">
+
             <div>
-              <span>المحصل</span>
+              <span>
+                المحصل
+              </span>
 
               <strong>
                 {formatMoney(
-                  dashboard.totals
+                  dashboard
+                    .totals
                     .revenue
                 )}
-                <small> ج.م</small>
+
+                <small>
+                  {" "}
+                  ج.م
+                </small>
               </strong>
             </div>
 
             <div>
-              <span>المصروفات</span>
+              <span>
+                المصروفات
+              </span>
 
               <strong>
                 {formatMoney(
-                  dashboard.totals
+                  dashboard
+                    .totals
                     .expenses
                 )}
-                <small> ج.م</small>
+
+                <small>
+                  {" "}
+                  ج.م
+                </small>
               </strong>
             </div>
 
             <div className="net-cell">
-              <span>صافي اليوم</span>
+              <span>
+                صافي اليوم
+              </span>
 
               <strong>
                 {formatMoney(
-                  dashboard.totals.net
+                  dashboard
+                    .totals
+                    .net
                 )}
-                <small> ج.م</small>
+
+                <small>
+                  {" "}
+                  ج.م
+                </small>
               </strong>
             </div>
           </div>
 
+          {/* =================================================
+              REVENUE CHART
+          ================================================= */}
+
           <div className="revenue-graph">
+
             <div className="revenue-graph-head">
               <span>
                 تحصيل آخر 7 أيام
@@ -697,7 +965,8 @@ export default function DashboardPage() {
 
               <strong>
                 {formatMoney(
-                  dashboard.totals
+                  dashboard
+                    .totals
                     .weekRevenue
                 )}{" "}
                 ج.م
@@ -705,60 +974,77 @@ export default function DashboardPage() {
             </div>
 
             <div className="revenue-bars">
-              {dashboard.revenueChart.map(
-                (day) => (
-                  <div
-                    className="revenue-day"
-                    key={day.key}
-                  >
-                    <div className="revenue-track">
-                      <div
-                        className="revenue-fill"
-                        style={{
-                          height:
-                            day.value ===
-                            0
-                              ? "2px"
-                              : `${Math.max(
-                                  10,
-                                  (day.value /
-                                    maxRevenue) *
-                                    100
-                                )}%`,
-                        }}
-                      >
-                        {day.value >
-                          0 && (
-                          <span>
-                            {formatMoney(
-                              day.value
-                            )}
-                          </span>
-                        )}
-                      </div>
-                    </div>
 
-                    <small>
-                      {day.label}
-                    </small>
-                  </div>
-                )
-              )}
+              {dashboard
+                .revenueChart
+                .map(
+                  (day) => (
+                    <div
+                      className="revenue-day"
+                      key={
+                        day.key
+                      }
+                    >
+
+                      <div className="revenue-track">
+                        <div
+                          className="revenue-fill"
+                          style={{
+                            height:
+                              day.value ===
+                              0
+                                ? "2px"
+                                : `${Math.max(
+                                    10,
+                                    (day.value /
+                                      maxRevenue) *
+                                      100
+                                  )}%`,
+                          }}
+                        >
+                          {day.value >
+                            0 && (
+                            <span>
+                              {formatMoney(
+                                day.value
+                              )}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <small>
+                        {
+                          day.label
+                        }
+                      </small>
+                    </div>
+                  )
+                )}
             </div>
           </div>
         </div>
 
-        {/* QUICK COMMANDS */}
+        {/* =================================================
+            QUICK COMMANDS
+        ================================================= */}
 
         <div className="quick-command-panel">
+
           <div className="lower-heading">
             <div>
-              <span>SHORTCUTS</span>
-              <h2>تشغيل سريع</h2>
+              <span>
+                SHORTCUTS
+              </span>
+
+              <h2>
+                تشغيل سريع
+              </h2>
             </div>
           </div>
 
           <div className="quick-command-list">
+
             {quickActions.map(
               (action) => {
                 const Icon =
@@ -778,7 +1064,9 @@ export default function DashboardPage() {
                     />
 
                     <span>
-                      {action.label}
+                      {
+                        action.label
+                      }
                     </span>
 
                     <ChevronLeft
@@ -801,8 +1089,7 @@ export default function DashboardPage() {
               </strong>
 
               <span>
-                أي تغيير في Firebase
-                يظهر هنا لحظياً.
+                أي تغيير في Firebase يظهر هنا لحظياً.
               </span>
             </div>
           </div>
@@ -811,6 +1098,10 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+/* =========================================================
+   COMMAND METRIC
+========================================================= */
 
 function CommandMetric({
   label,
@@ -828,10 +1119,14 @@ function CommandMetric({
           : ""
       }`}
     >
-      <Icon size={18} />
+      <Icon
+        size={18}
+      />
 
       <div>
-        <span>{label}</span>
+        <span>
+          {label}
+        </span>
 
         <strong>
           {value}
@@ -844,18 +1139,26 @@ function CommandMetric({
           )}
         </strong>
 
-        <small>{note}</small>
+        <small>
+          {note}
+        </small>
       </div>
     </div>
   );
 }
+
+/* =========================================================
+   EMPTY SCHEDULE
+========================================================= */
 
 function EmptySchedule({
   onAdd,
 }) {
   return (
     <div className="empty-schedule">
-      <CalendarDays size={25} />
+      <CalendarDays
+        size={25}
+      />
 
       <div>
         <strong>
@@ -867,8 +1170,15 @@ function EmptySchedule({
         </span>
       </div>
 
-      <button onClick={onAdd}>
-        <Plus size={15} />
+      <button
+        onClick={
+          onAdd
+        }
+      >
+        <Plus
+          size={15}
+        />
+
         إضافة أول موعد
       </button>
     </div>
