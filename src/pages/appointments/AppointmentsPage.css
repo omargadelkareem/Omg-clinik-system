@@ -14,3 +14,5 @@
 .flow-status.flow-completed i{background:#c94f4f}
 .today-row.status-completed .cell-time strong,
 .today-row.status-completed .patient-cell strong{color:#8f3737}
+
+.row-billing-state{display:block;margin-top:4px;color:#8a6868;font-size:8px;font-weight:800}.main-row-action.collect{border-color:#d8c9a8;background:#fffaf0;color:#7e642c}.status-completed .row-billing-state{color:#9c5555}
