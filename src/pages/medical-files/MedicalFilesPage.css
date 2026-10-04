@@ -1198,3 +1198,5 @@
     gap: 3px;
   }
 }
+/* OMG Clinical v2 */
+.medical-files-page{padding:20px 26px 40px;background:#f4f7f6;color:#23494f}.mf-header{padding-bottom:15px;border-color:#d9e3e1}.mf-overline{font-size:8px;color:#71888a}.mf-header h1{font-size:23px;color:#1c454b}.mf-header p{font-size:10px}.mf-create-button{height:35px;border-color:#245b61;border-radius:5px;background:#245b61;font-size:9px}.mf-operating-line,.mf-toolbar,.mf-table{border-color:#dbe5e3!important;border-radius:6px!important;box-shadow:none!important}.mf-table-head{font-size:8px!important}.mf-record{min-height:55px!important}.medical-files-page input,.medical-files-page select,.medical-files-page textarea{border-radius:5px!important}
