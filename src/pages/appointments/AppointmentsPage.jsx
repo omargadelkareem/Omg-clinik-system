@@ -205,26 +205,29 @@ export default function AppointmentsPage() {
       </div>
     </header>
 
-    <section className="day-controlbar">
-      <div className="date-switcher"><button onClick={()=>shiftDay(-1)} aria-label="اليوم السابق">‹</button><button className="date-main" onClick={()=>setSelectedDateKey(todayKey)}><CalendarDays size={16}/><span>{selectedDateKey===todayKey?"اليوم":formatFullDate(selectedDate)}</span></button><button onClick={()=>shiftDay(1)} aria-label="اليوم التالي">›</button></div>
-      <label className="today-search"><Search size={16}/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="ابحث باسم المريض أو الهاتف أو رقم الملف"/>{search&&<button onClick={()=>setSearch("")}><X size={14}/></button>}</label>
-      <label className="doctor-select"><Stethoscope size={15}/><select value={doctorFilter} onChange={e=>setDoctorFilter(e.target.value)}><option value="all">كل الأطباء</option>{doctors.map(d=><option key={d.id} value={d.id}>{d.name || d.fullName || "طبيب"}</option>)}</select></label>
-    </section>
+    <div className="today-clinical-workspace">
+      <aside className="today-status-rail">
+        <div className="rail-title"><span>LIVE DESK</span><strong>حالة العيادة</strong></div>
+        <div className="rail-metrics">
+          <button className={statusFilter==="all"?"active":""} onClick={()=>setStatusFilter("all")}><span>كل الحالات</span><strong>{stats.total}</strong></button>
+          <button className={statusFilter==="waiting"?"active warning":""} onClick={()=>setStatusFilter("waiting")}><span>الانتظار</span><strong>{stats.waiting}</strong></button>
+          <button className={statusFilter==="in-progress"?"active live":""} onClick={()=>setStatusFilter("in-progress")}><span>داخل الكشف</span><strong>{stats.current}</strong></button>
+          <button className={statusFilter==="completed"?"active done":""} onClick={()=>setStatusFilter("completed")}><span>تم الكشف</span><strong>{stats.completed}</strong></button>
+        </div>
+        <button className={statusFilter==="active"?"rail-now active": "rail-now"} onClick={()=>setStatusFilter("active")}><i/> العيادة الآن</button>
+        <div className="rail-note"><Clock3 size={15}/><span>الحالات تتحدث مباشرة مع الاستقبال وغرفة الكشف.</span></div>
+      </aside>
 
-    <section className="today-metrics">
-      <div><span>إجمالي اليوم</span><strong>{stats.total}</strong></div>
-      <div><span>في الانتظار</span><strong>{stats.waiting}</strong></div>
-      <div><span>داخل الكشف</span><strong>{stats.current}</strong></div>
-      <div><span>انتهى الكشف</span><strong>{stats.completed}</strong></div>
-    </section>
+      <section className="today-main-workspace">
+        <section className="day-controlbar">
+          <div className="date-switcher"><button onClick={()=>shiftDay(-1)} aria-label="اليوم السابق">‹</button><button className="date-main" onClick={()=>setSelectedDateKey(todayKey)}><CalendarDays size={16}/><span>{selectedDateKey===todayKey?"اليوم":formatFullDate(selectedDate)}</span></button><button onClick={()=>shiftDay(1)} aria-label="اليوم التالي">›</button></div>
+          <label className="today-search"><Search size={16}/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="ابحث باسم المريض أو الهاتف أو رقم الملف"/>{search&&<button onClick={()=>setSearch("")}><X size={14}/></button>}</label>
+          <label className="doctor-select"><Stethoscope size={15}/><select value={doctorFilter} onChange={e=>setDoctorFilter(e.target.value)}><option value="all">كل الأطباء</option>{doctors.map(d=><option key={d.id} value={d.id}>{d.name || d.fullName || "طبيب"}</option>)}</select></label>
+        </section>
 
-    <section className="flow-tabs">
-      {[['active','العيادة الآن'],['all','الكل'],['waiting','الانتظار'],['in-progress','داخل الكشف'],['completed','انتهى']].map(([v,l])=><button key={v} className={statusFilter===v?'active':''} onClick={()=>setStatusFilter(v)}>{l}</button>)}
-    </section>
+        {error&&<div className="today-error"><CircleAlert size={16}/><span>{error}</span></div>}
 
-    {error&&<div className="today-error"><CircleAlert size={16}/><span>{error}</span></div>}
-
-    <main className="today-board">
+        <main className="today-board">
       <div className="today-table-head"><span>الوقت</span><span>المريض</span><span>الطبيب</span><span>نوع الزيارة</span><span>الحالة</span><span>الإجراء</span></div>
       {rows.length===0 ? <div className="today-empty"><CalendarDays size={27}/><strong>لا توجد حالات مطابقة</strong><span>أضف المريض وحدد هل هو موجود الآن أم لديه موعد لاحق.</span></div> : rows.map(row=>{
         const meta=STATUS_META[row.status] || STATUS_META.scheduled;
@@ -247,7 +250,9 @@ export default function AppointmentsPage() {
           </div>
         </article>
       })}
-    </main>
+        </main>
+      </section>
+    </div>
 
     <footer className="today-footer"><span><i/> تحديث مباشر من Firebase</span><span>الحجز، الوصول، الانتظار والكشف في مسار واحد</span></footer>
 
