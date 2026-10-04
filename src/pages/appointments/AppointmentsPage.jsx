@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
   CalendarDays, CheckCircle2, ChevronLeft, CircleAlert, Clock3,
   LoaderCircle, LogIn, Plus, Search, Stethoscope, UserCheck,
-  UserRound, Users, X, CalendarPlus, ArrowUpLeft, Phone
+  UserRound, Users, X, CalendarPlus, ArrowUpLeft, Phone, CreditCard
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
