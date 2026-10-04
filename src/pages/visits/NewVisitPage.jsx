@@ -43,6 +43,8 @@ import {
 } from "../../services/visitService";
 
 import Dental3DViewer from "./Dental3DViewer";
+import DentalCopilot from "./DentalCopilot";
+import DentalPatientPresentation from "./DentalPatientPresentation";
 
 import "./NewVisitPage.css";
 import "./MedicalOrders.css";
@@ -2414,6 +2416,7 @@ function SpecialtyWorkspace({
       ) : specialtyId === "dentistry" ? (
         <DentistryWorkspace
           data={data}
+          patient={visit.patient || null}
           updateSpecialtyField={updateSpecialtyField}
         />
       ) : specialtyId === "orthodontics" ? (
@@ -2637,12 +2640,13 @@ function ObgynWorkspace({ data, updateSpecialtyField }) {
   );
 }
 
-function DentistryWorkspace({ data, updateSpecialtyField }) {
+function DentistryWorkspace({ data, patient, updateSpecialtyField }) {
   const chart = data.dentalChart || {};
   const treatmentPlan = data.treatmentPlanItems || [];
   const sessions = data.dentalSessions || [];
   const media = data.dentalMedia || [];
   const [dentalTab, setDentalTab] = useState("chart");
+  const [presentationOpen, setPresentationOpen] = useState(false);
 
   const addTreatment = (item) => {
     updateSpecialtyField("treatmentPlanItems", [
@@ -2673,6 +2677,35 @@ function DentistryWorkspace({ data, updateSpecialtyField }) {
     );
   };
 
+  const applyCopilotCommand = (command) => {
+    const key=String(command.tooth);
+    const surfaceMap={};
+    command.surfaces.forEach((surface)=>{ surfaceMap[surface]=true; });
+    updateSpecialtyField("dentalChart", {
+      ...chart,
+      [key]: {
+        ...(chart[key] || {}),
+        status: command.status || chart[key]?.status || "healthy",
+        surfaces: { ...(chart[key]?.surfaces || {}), ...surfaceMap },
+        note: chart[key]?.note || command.raw,
+        lastCopilotCommand: command.raw,
+      },
+    });
+
+    if (command.procedures.length) {
+      const additions=command.procedures.map((procedure,index)=>({
+        id:`copilot-${Date.now()}-${index}`,
+        tooth:command.tooth,
+        procedure,
+        status:"planned",
+        cost:index===command.procedures.length-1 ? command.cost : "",
+        source:"dental_copilot",
+      }));
+      updateSpecialtyField("treatmentPlanItems", [...treatmentPlan, ...additions]);
+    }
+    updateSpecialtyField("lastCopilotCommand", command.raw);
+  };
+
   return (
     <div className="dental-workspace">
       <div className="dental-hero">
@@ -2686,6 +2719,14 @@ function DentistryWorkspace({ data, updateSpecialtyField }) {
           <div><strong>{Object.keys(chart).length}</strong><span>أسنان مسجلة</span></div>
           <div><strong>{treatmentPlan.length}</strong><span>إجراءات مخططة</span></div>
         </div>
+      </div>
+
+      <div className="dental-ai-actions">
+        <DentalCopilot chart={chart} treatmentPlan={treatmentPlan} onApply={applyCopilotCommand} />
+        <button type="button" className="patient-presentation-button" onClick={()=>setPresentationOpen(true)}>
+          <span>عرض للمريض</span>
+          <strong>شرح الحالة والخطة</strong>
+        </button>
       </div>
 
       <div className="dental-suite-tabs">
@@ -2736,6 +2777,16 @@ function DentistryWorkspace({ data, updateSpecialtyField }) {
         <VisitSection title="الأشعة والصور">
           <DentalMedia items={media} onChange={(next)=>updateSpecialtyField("dentalMedia",next)} />
         </VisitSection>
+      )}
+
+      {presentationOpen && (
+        <DentalPatientPresentation
+          patient={patient}
+          chart={chart}
+          treatmentPlan={treatmentPlan}
+          sessions={sessions}
+          onClose={()=>setPresentationOpen(false)}
+        />
       )}
 
       <VisitSection title="التقييم السريري">
