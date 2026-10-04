@@ -497,6 +497,10 @@ export async function updateClinicPricing({
   consultationPrice,
   followupPrice,
   followupDays,
+  procedureDefaultPrice = 0,
+  homeVisitPrice = 0,
+  discountLimitPercent = 20,
+  currency = "EGP",
   updatedBy = "",
   updatedByName = "",
 }) {
@@ -552,10 +556,10 @@ export async function updateClinicPricing({
 
       followupDays:
         days,
-      procedureDefaultPrice: normalizeNumber(arguments[0]?.procedureDefaultPrice, 0),
-      homeVisitPrice: normalizeNumber(arguments[0]?.homeVisitPrice, 0),
-      discountLimitPercent: normalizeNumber(arguments[0]?.discountLimitPercent, 20),
-      currency: arguments[0]?.currency || "EGP",
+      procedureDefaultPrice: normalizeNumber(procedureDefaultPrice, 0),
+      homeVisitPrice: normalizeNumber(homeVisitPrice, 0),
+      discountLimitPercent: normalizeNumber(discountLimitPercent, 20),
+      currency: currency || "EGP",
     }
   );
 
