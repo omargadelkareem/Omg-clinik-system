@@ -1330,6 +1330,7 @@ const doctor = useMemo(
             }
             config={specialtyConfig}
             visit={visit}
+            patient={patient}
             updateField={updateField}
             updateSpecialtyField={
               updateSpecialtyField
@@ -2381,6 +2382,7 @@ function SpecialtyWorkspace({
   specialtyName,
   config,
   visit,
+  patient,
   updateField,
   updateSpecialtyField,
 }) {
@@ -2416,7 +2418,7 @@ function SpecialtyWorkspace({
       ) : specialtyId === "dentistry" ? (
         <DentistryWorkspace
           data={data}
-          patient={visit.patient || null}
+          patient={patient}
           updateSpecialtyField={updateSpecialtyField}
         />
       ) : specialtyId === "orthodontics" ? (
