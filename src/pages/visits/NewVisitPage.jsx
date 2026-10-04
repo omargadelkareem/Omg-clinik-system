@@ -42,6 +42,8 @@ import {
   subscribeDrugLibrary,
 } from "../../services/visitService";
 
+import Dental3DViewer from "./Dental3DViewer";
+
 import "./NewVisitPage.css";
 import "./MedicalOrders.css";
 
@@ -2990,8 +2992,7 @@ function ToothModel({ status = "healthy" }) {
 function DentalChart({ value = {}, onChange, onAddTreatment }) {
   const [activeTooth, setActiveTooth] = useState(null);
   const [viewMode, setViewMode] = useState("2d");
-  const [jawRotation, setJawRotation] = useState({ x: -8, y: 0 });
-  const [zoom, setZoom] = useState(1);
+
   const upper = [18,17,16,15,14,13,12,11,21,22,23,24,25,26,27,28];
   const lower = [48,47,46,45,44,43,42,41,31,32,33,34,35,36,37,38];
   const states = [
@@ -3044,13 +3045,7 @@ function DentalChart({ value = {}, onChange, onAddTreatment }) {
           <button type="button" className={viewMode==="2d" ? "active" : ""} onClick={()=>setViewMode("2d")}>2D Chart</button>
           <button type="button" className={viewMode==="3d" ? "active" : ""} onClick={()=>setViewMode("3d")}>3D Jaw</button>
         </div>
-        {viewMode==="3d" && <div className="dental-3d-controls">
-          <button type="button" onClick={()=>setJawRotation(r=>({...r,y:r.y-12}))}>↺</button>
-          <button type="button" onClick={()=>setJawRotation(r=>({...r,y:r.y+12}))}>↻</button>
-          <button type="button" onClick={()=>setZoom(z=>Math.min(1.35,z+.1))}>+</button>
-          <button type="button" onClick={()=>setZoom(z=>Math.max(.75,z-.1))}>−</button>
-          <button type="button" onClick={()=>{setJawRotation({x:-8,y:0});setZoom(1)}}>Reset</button>
-        </div>}
+
       </div>
       <div className="odontogram">
       {viewMode==="2d" ? <div className="odontogram-stage">
@@ -3059,24 +3054,7 @@ function DentalChart({ value = {}, onChange, onAddTreatment }) {
         <div className="dental-midline"><span>FDI</span></div>
         {renderJaw(lower, "الفك السفلي")}
       </div> : (
-        <div className="dental-3d-stage">
-          <div className="dental-3d-scene" style={{transform:`scale(${zoom}) rotateX(${jawRotation.x}deg) rotateY(${jawRotation.y}deg)`}}>
-            <div className="jaw-model jaw-upper">
-              {upper.map((tooth,index)=>{
-                const status=value[String(tooth)]?.status || "healthy";
-                return <button key={tooth} type="button" className={`jaw-tooth dental-status-${status} ${activeTooth===tooth?"active":""}`} style={{"--i":index}} onClick={()=>setActiveTooth(tooth)}><ToothModel status={status}/><span>{tooth}</span></button>
-              })}
-            </div>
-            <div className="jaw-palate" />
-            <div className="jaw-model jaw-lower">
-              {lower.map((tooth,index)=>{
-                const status=value[String(tooth)]?.status || "healthy";
-                return <button key={tooth} type="button" className={`jaw-tooth dental-status-${status} ${activeTooth===tooth?"active":""}`} style={{"--i":index}} onClick={()=>setActiveTooth(tooth)}><ToothModel status={status}/><span>{tooth}</span></button>
-              })}
-            </div>
-          </div>
-          <div className="dental-3d-hint">اسحب الرؤية من أدوات الدوران والتقريب · اضغط على أي سن لتحديده</div>
-        </div>
+        <Dental3DViewer value={value} activeTooth={activeTooth} onSelect={setActiveTooth} />
       )}
 
       <aside className={`dental-inspector ${activeTooth ? "open" : ""}`}>
