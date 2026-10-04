@@ -535,6 +535,11 @@ export async function saveVisitDraft({
         visit.investigations
       ),
 
+    specialty:
+      visit.specialty && typeof visit.specialty === "object"
+        ? visit.specialty
+        : { id: "", workspace: "general", data: {} },
+
     updatedAt:
       serverTimestamp(),
   };
@@ -951,6 +956,11 @@ export async function completeVisit({
       ),
 
     medicalFileIds,
+
+    specialty:
+      visit.specialty && typeof visit.specialty === "object"
+        ? visit.specialty
+        : { id: "", workspace: "general", data: {} },
 
     prescriptionId:
       prescriptionId ||
