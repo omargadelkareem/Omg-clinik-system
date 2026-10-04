@@ -580,8 +580,27 @@ export default function StaffPage() {
       }
 
       try {
-        setSaving(true);
         setError("");
+
+        if (form.role === "doctor") {
+          const consultationPrice = Number(form.consultationPrice);
+          const followupPrice = Number(form.followupPrice);
+          const followupDays = Number(form.followupDays);
+
+          if (form.consultationPrice === "" || !Number.isFinite(consultationPrice) || consultationPrice < 0) {
+            throw new Error("حدد سعر الكشف للطبيب قبل الحفظ.");
+          }
+
+          if (form.followupPrice === "" || !Number.isFinite(followupPrice) || followupPrice < 0) {
+            throw new Error("حدد سعر الإعادة للطبيب قبل الحفظ.");
+          }
+
+          if (form.followupDays === "" || !Number.isFinite(followupDays) || followupDays < 0) {
+            throw new Error("حدد مدة صلاحية الإعادة للطبيب.");
+          }
+        }
+
+        setSaving(true);
 
         if (
           memberModal?.mode ===
