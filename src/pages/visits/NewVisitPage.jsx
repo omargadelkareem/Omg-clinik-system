@@ -326,12 +326,6 @@ export default function NewVisitPage() {
   const queueId =
     location.state?.queueId || "";
 
-  const fromQueue =
-    Boolean(
-      location.state?.fromQueue ||
-      queueId
-    );
-
   const source =
     location.state?.source ||
     (queueId
@@ -964,54 +958,16 @@ const doctor = useMemo(
 
     setFinishOpen(false);
 
-    if (fromQueue) {
-      navigate(
-        "/queue",
-        {
-          replace: true,
-
-          state: {
-            visitCompleted: true,
-
-            patientName:
-              patient.name,
-
-            visitId:
-              result.visitId,
-
-            prescriptionId:
-              result.prescriptionId,
-
-            medicalFileIds:
-              result.medicalFileIds ||
-              [],
-          },
-        }
-      );
-
-      return;
-    }
-
-    navigate(
-      `/patients/${patient.id}`,
-      {
-        replace: true,
-
-        state: {
-          visitCompleted: true,
-
-          visitId:
-            result.visitId,
-
-          prescriptionId:
-            result.prescriptionId,
-
-          medicalFileIds:
-            result.medicalFileIds ||
-            [],
-        },
-      }
-    );
+    navigate("/appointments", {
+      replace: true,
+      state: {
+        visitCompleted: true,
+        patientName: patient.name,
+        visitId: result.visitId,
+        prescriptionId: result.prescriptionId,
+        medicalFileIds: result.medicalFileIds || [],
+      },
+    });
   } catch (error) {
     console.error(
       "Complete visit error:",
