@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Check, Mic, MicOff, Play, Sparkles, X } from "lucide-react";
 
 const STATUS_RULES = [
@@ -44,26 +44,86 @@ export function parseDentalCommand(raw=""){
 
 export default function DentalCopilot({ chart={}, treatmentPlan=[], onApply }) {
   const [text,setText]=useState("");
-  const [listening,setListening]=useState(false);
+  const [voiceState,setVoiceState]=useState("idle");
   const [message,setMessage]=useState("");
+  const [seconds,setSeconds]=useState(0);
   const recognitionRef=useRef(null);
+  const timerRef=useRef(null);
+  const listening=voiceState==="listening";
   const parsed=useMemo(()=>parseDentalCommand(text),[text]);
 
-  const startVoice=()=>{
+  useEffect(()=>()=>{ clearInterval(timerRef.current); recognitionRef.current?.abort?.(); },[]);
+
+  const startVoice=async()=>{
+    setMessage("");
+    setVoiceState("starting");
+    setSeconds(0);
+
     const Recognition=window.SpeechRecognition || window.webkitSpeechRecognition;
-    if(!Recognition){ setMessage("المتصفح الحالي لا يدعم الإملاء الصوتي. اكتب الأمر وسيتم تحليله بنفس الطريقة."); return; }
-    const recognition=new Recognition();
-    recognition.lang="ar-EG"; recognition.interimResults=true; recognition.continuous=false;
-    recognition.onstart=()=>setListening(true);
-    recognition.onend=()=>setListening(false);
-    recognition.onerror=()=>{setListening(false);setMessage("تعذر التقاط الصوت. جرّب مرة أخرى أو اكتب الأمر.");};
-    recognition.onresult=(event)=>{
-      const transcript=Array.from(event.results).map(r=>r[0].transcript).join(" ");
-      setText(transcript);
-    };
-    recognitionRef.current=recognition; recognition.start();
+    if(!Recognition){
+      setVoiceState("error");
+      setMessage("الإملاء الصوتي غير مدعوم في هذا المتصفح. افتح النظام على Chrome أو Edge.");
+      return;
+    }
+
+    try{
+      if(navigator.mediaDevices?.getUserMedia){
+        const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+        stream.getTracks().forEach(track=>track.stop());
+      }
+
+      const recognition=new Recognition();
+      recognition.lang="ar-EG";
+      recognition.interimResults=true;
+      recognition.continuous=true;
+      recognition.maxAlternatives=1;
+
+      recognition.onstart=()=>{
+        setVoiceState("listening");
+        setMessage("");
+        timerRef.current=setInterval(()=>setSeconds(value=>value+1),1000);
+      };
+      recognition.onspeechstart=()=>setVoiceState("listening");
+      recognition.onresult=(event)=>{
+        let transcript="";
+        for(let i=0;i<event.results.length;i++) transcript+=event.results[i][0].transcript+" ";
+        setText(transcript.trim());
+      };
+      recognition.onerror=(event)=>{
+        clearInterval(timerRef.current);
+        setVoiceState("error");
+        const errors={
+          "not-allowed":"صلاحية الميكروفون مرفوضة. اسمح للمتصفح باستخدام الميكروفون ثم جرّب مرة أخرى.",
+          "service-not-allowed":"خدمة التعرف على الصوت محظورة في المتصفح.",
+          "audio-capture":"لم يتم العثور على ميكروفون يعمل على الجهاز.",
+          "no-speech":"لم أسمع كلامًا. اضغط الميكروفون وتحدث بعد ظهور «جاري الاستماع».",
+          "network":"تعذر الوصول لخدمة التعرف على الصوت. تحقق من الإنترنت.",
+        };
+        setMessage(errors[event.error] || `تعذر تشغيل الصوت (${event.error || "unknown"}).`);
+      };
+      recognition.onend=()=>{
+        clearInterval(timerRef.current);
+        setVoiceState(current=>current==="error" ? "error" : "captured");
+      };
+
+      recognitionRef.current=recognition;
+      recognition.start();
+    }catch(error){
+      clearInterval(timerRef.current);
+      setVoiceState("error");
+      if(error?.name==="NotAllowedError" || error?.name==="PermissionDeniedError")
+        setMessage("صلاحية الميكروفون مرفوضة. اضغط علامة القفل بجانب عنوان الموقع وفعّل Microphone.");
+      else if(error?.name==="NotFoundError")
+        setMessage("لا يوجد ميكروفون متاح على الجهاز.");
+      else
+        setMessage("تعذر فتح الميكروفون. راجع صلاحية Microphone في المتصفح.");
+    }
   };
-  const stopVoice=()=>{recognitionRef.current?.stop();setListening(false);};
+  const stopVoice=()=>{
+    recognitionRef.current?.stop();
+    clearInterval(timerRef.current);
+    setVoiceState("captured");
+  };
   const apply=()=>{
     if(!parsed.tooth){setMessage("اذكر رقم السن بنظام FDI، مثال: السن 16.");return;}
     if(!parsed.status && !parsed.procedures.length){setMessage("اذكر الحالة أو الإجراء المطلوب.");return;}
@@ -72,8 +132,16 @@ export default function DentalCopilot({ chart={}, treatmentPlan=[], onApply }) {
 
   return <section className="dental-copilot">
     <div className="copilot-brand"><span className="copilot-mark"><Sparkles size={17}/></span><div><strong>OMG Dental Copilot</strong><span>أمر واحد يحدّث الـChart وخطة العلاج</span></div><em>LOCAL AI</em></div>
+    <div className={`copilot-voice-status ${voiceState}`}>
+      <span className="voice-status-dot" />
+      <div>
+        <strong>{voiceState==="starting" ? "جاري تشغيل الميكروفون..." : listening ? "جاري الاستماع — اتكلم الآن" : voiceState==="captured" ? "تم التقاط الكلام" : voiceState==="error" ? "الميكروفون غير متاح" : "اضغط الميكروفون ثم ابدأ الكلام"}</strong>
+        <small>{listening ? `استماع 00:${String(seconds).padStart(2,"0")}` : voiceState==="captured" ? "يمكنك مراجعة النص ثم الضغط على تنفيذ" : "سيظهر كلامك مباشرة داخل المربع"}</small>
+      </div>
+      {listening && <div className="voice-wave" aria-hidden="true">{[1,2,3,4,5].map(x=><i key={x}/>)}</div>}
+    </div>
     <div className="copilot-command">
-      <button type="button" className={listening?"copilot-mic listening":"copilot-mic"} onClick={listening?stopVoice:startVoice}>{listening?<MicOff size={18}/>:<Mic size={18}/>}</button>
+      <button type="button" aria-label={listening?"إيقاف الاستماع":"بدء الاستماع"} className={listening?"copilot-mic listening":voiceState==="starting"?"copilot-mic starting":"copilot-mic"} onClick={listening?stopVoice:startVoice} disabled={voiceState==="starting"}>{listening?<MicOff size={18}/>:<Mic size={18}/>}</button>
       <textarea value={text} onChange={e=>{setText(e.target.value);setMessage("");}} placeholder='قل أو اكتب: "السن 16 تسوس Occlusal وDistal، محتاج RCT وبعدها Crown، التكلفة 6000"' />
       <button type="button" className="copilot-run" onClick={apply}><Play size={15}/> تنفيذ</button>
     </div>
