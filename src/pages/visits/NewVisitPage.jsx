@@ -2415,7 +2415,7 @@ function SpecialtyWorkspace({
           data={data}
           updateSpecialtyField={updateSpecialtyField}
         />
-      ) : specialtyId === "dentistry" ? (
+      ) : ["dentistry", "endodontics", "periodontics", "prosthodontics", "pediatric_dentistry", "oral_maxillofacial_surgery"].includes(specialtyId) ? (
         <DentistryWorkspace
           data={data}
           patient={patient}
