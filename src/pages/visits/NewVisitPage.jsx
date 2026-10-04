@@ -2989,6 +2989,9 @@ function ToothModel({ status = "healthy" }) {
 
 function DentalChart({ value = {}, onChange, onAddTreatment }) {
   const [activeTooth, setActiveTooth] = useState(null);
+  const [viewMode, setViewMode] = useState("2d");
+  const [jawRotation, setJawRotation] = useState({ x: -8, y: 0 });
+  const [zoom, setZoom] = useState(1);
   const upper = [18,17,16,15,14,13,12,11,21,22,23,24,25,26,27,28];
   const lower = [48,47,46,45,44,43,42,41,31,32,33,34,35,36,37,38];
   const states = [
@@ -3002,7 +3005,8 @@ function DentalChart({ value = {}, onChange, onAddTreatment }) {
     ["fracture","كسر"],
   ];
 
-  const toothData = activeTooth ? value[String(activeTooth)] || { status: "healthy", note: "" } : null;
+  const toothData = activeTooth ? value[String(activeTooth)] || { status: "healthy", note: "", surfaces: {} } : null;
+  const surfaces = [["occlusal","O"],["mesial","M"],["distal","D"],["buccal","B"],["lingual","L"]];
 
   const updateTooth = (patch) => {
     if (!activeTooth) return;
@@ -3034,13 +3038,46 @@ function DentalChart({ value = {}, onChange, onAddTreatment }) {
   );
 
   return (
-    <div className="odontogram">
-      <div className="odontogram-stage">
+    <div className="odontogram-shell">
+      <div className="dental-view-toolbar">
+        <div className="dental-view-switch">
+          <button type="button" className={viewMode==="2d" ? "active" : ""} onClick={()=>setViewMode("2d")}>2D Chart</button>
+          <button type="button" className={viewMode==="3d" ? "active" : ""} onClick={()=>setViewMode("3d")}>3D Jaw</button>
+        </div>
+        {viewMode==="3d" && <div className="dental-3d-controls">
+          <button type="button" onClick={()=>setJawRotation(r=>({...r,y:r.y-12}))}>↺</button>
+          <button type="button" onClick={()=>setJawRotation(r=>({...r,y:r.y+12}))}>↻</button>
+          <button type="button" onClick={()=>setZoom(z=>Math.min(1.35,z+.1))}>+</button>
+          <button type="button" onClick={()=>setZoom(z=>Math.max(.75,z-.1))}>−</button>
+          <button type="button" onClick={()=>{setJawRotation({x:-8,y:0});setZoom(1)}}>Reset</button>
+        </div>}
+      </div>
+      <div className="odontogram">
+      {viewMode==="2d" ? <div className="odontogram-stage">
         <div className="dental-orientation"><span>يمين المريض</span><span>يسار المريض</span></div>
         {renderJaw(upper, "الفك العلوي")}
         <div className="dental-midline"><span>FDI</span></div>
         {renderJaw(lower, "الفك السفلي")}
-      </div>
+      </div> : (
+        <div className="dental-3d-stage">
+          <div className="dental-3d-scene" style={{transform:`scale(${zoom}) rotateX(${jawRotation.x}deg) rotateY(${jawRotation.y}deg)`}}>
+            <div className="jaw-model jaw-upper">
+              {upper.map((tooth,index)=>{
+                const status=value[String(tooth)]?.status || "healthy";
+                return <button key={tooth} type="button" className={`jaw-tooth dental-status-${status} ${activeTooth===tooth?"active":""}`} style={{"--i":index}} onClick={()=>setActiveTooth(tooth)}><ToothModel status={status}/><span>{tooth}</span></button>
+              })}
+            </div>
+            <div className="jaw-palate" />
+            <div className="jaw-model jaw-lower">
+              {lower.map((tooth,index)=>{
+                const status=value[String(tooth)]?.status || "healthy";
+                return <button key={tooth} type="button" className={`jaw-tooth dental-status-${status} ${activeTooth===tooth?"active":""}`} style={{"--i":index}} onClick={()=>setActiveTooth(tooth)}><ToothModel status={status}/><span>{tooth}</span></button>
+              })}
+            </div>
+          </div>
+          <div className="dental-3d-hint">اسحب الرؤية من أدوات الدوران والتقريب · اضغط على أي سن لتحديده</div>
+        </div>
+      )}
 
       <aside className={`dental-inspector ${activeTooth ? "open" : ""}`}>
         {!activeTooth ? (
@@ -3063,6 +3100,13 @@ function DentalChart({ value = {}, onChange, onAddTreatment }) {
                 </button>
               ))}
             </div>
+            <label className="dental-inspector-label">أسطح السن</label>
+            <div className="tooth-surfaces">
+              {surfaces.map(([key,label])=>(
+                <button type="button" key={key} className={toothData.surfaces?.[key] ? "active" : ""} onClick={()=>updateTooth({surfaces:{...(toothData.surfaces||{}),[key]:!toothData.surfaces?.[key]}})}>{label}</button>
+              ))}
+            </div>
+            <div className="surface-caption">O إطباقي · M أنسي · D وحشي · B شدقي · L لساني</div>
             <label className="dental-inspector-label">ملاحظة</label>
             <textarea value={toothData.note || ""} onChange={(e)=>updateTooth({note:e.target.value})} placeholder="ملاحظة خاصة بالسن..." />
             <button type="button" className="dental-add-plan" onClick={()=>onAddTreatment?.({tooth:activeTooth,procedure:states.find(([k])=>k===toothData.status)?.[1] || ""})}>
@@ -3071,6 +3115,7 @@ function DentalChart({ value = {}, onChange, onAddTreatment }) {
           </>
         )}
       </aside>
+      </div>
     </div>
   );
 }
