@@ -22,23 +22,28 @@ export async function syncDentalVisitToTwin({clinicId,patientId,visitId,doctor,d
   const existing=await get(ref(database,root));
   const old=existing.exists()?existing.val():{};
   const previousChart=old.currentChart||{};
-  const currentChart=dentalData.dentalChart||{};
+  const hasChart=dentalData.dentalChart && typeof dentalData.dentalChart==="object";
+  const currentChart=hasChart?dentalData.dentalChart:previousChart;
+  const treatmentPlan=dentalData.treatmentPlanItems??old.treatmentPlan??[];
+  const sessions=dentalData.dentalSessions??old.sessions??[];
+  const periodontalChart=dentalData.periodontalChart??old.periodontalChart??{};
+  const media=dentalData.dentalMedia??old.media??[];
   const timestamp=Date.now();
   const snapshotId=push(ref(database,`${root}/snapshots`)).key;
   const eventId=push(ref(database,`${root}/timeline`)).key;
   const updates={};
 
   updates[`${root}/currentChart`]=currentChart;
-  updates[`${root}/treatmentPlan`]=dentalData.treatmentPlanItems||[];
-  updates[`${root}/sessions`]=dentalData.dentalSessions||[];
-  updates[`${root}/periodontalChart`]=dentalData.periodontalChart||{};
-  updates[`${root}/media`]=dentalData.dentalMedia||[];
+  updates[`${root}/treatmentPlan`]=treatmentPlan;
+  updates[`${root}/sessions`]=sessions;
+  updates[`${root}/periodontalChart`]=periodontalChart;
+  updates[`${root}/media`]=media;
   updates[`${root}/updatedAt`]=timestamp;
   updates[`${root}/lastVisitId`]=visitId;
 
   if(snapshotId) updates[`${root}/snapshots/${snapshotId}`]={
     id:snapshotId,visitId,createdAt:timestamp,doctorId:doctor?.id||"",doctorName:doctor?.name||"",
-    chart:currentChart,treatmentPlan:dentalData.treatmentPlanItems||[],media:dentalData.dentalMedia||[]
+    chart:currentChart,treatmentPlan,media
   };
 
   const changedTeeth=[...new Set([...Object.keys(previousChart),...Object.keys(currentChart)])].filter(key=>
