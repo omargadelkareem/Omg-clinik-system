@@ -1,5 +1,6 @@
 import {
   BrowserRouter,
+  Navigate,
   Route,
   Routes,
 } from "react-router-dom";
@@ -11,8 +12,6 @@ import AppointmentsPage from "../pages/appointments/AppointmentsPage";
 import PatientsPage from "../pages/patients/PatientsPage";
 import PatientProfilePage from "../pages/patients/PatientProfilePage";
 import NewVisitPage from "../pages/visits/NewVisitPage";
-import QueuePage from "../pages/queue/QueuePage";
-import PlaceholderPage from "../pages/PlaceholderPage";
 import PrescriptionsPage from "../pages/prescriptions/PrescriptionsPage";
 import DrugLibraryPage from "../pages/drugs/DrugLibraryPage";
 import FinancePage from "../pages/finance/FinancePage";
@@ -81,7 +80,7 @@ export default function AppRoutes() {
 
           <Route
             path="queue"
-            element={<QueuePage />}
+            element={<Navigate to="/appointments" replace />}
           />
 
        <Route
