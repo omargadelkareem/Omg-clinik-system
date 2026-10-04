@@ -2510,3 +2510,5 @@
     box-shadow: none;
   }
 }
+/* ===== OMG Clinical Workspace v2 / Finance ===== */
+.finance-page{background:#f4f7f6;color:#23494f;font-size:12px}.finance-header{min-height:80px;padding:15px 26px;border-color:#dbe4e2}.finance-eyebrow{color:#71888a;font-size:8px;letter-spacing:.12em}.finance-header h1{color:#1b444a;font-size:23px}.finance-header p{font-size:10px}.finance-header-actions button{min-height:35px;padding:0 12px;border-radius:5px;font-size:9px}.finance-page input,.finance-page select,.finance-page textarea{border-radius:5px!important;border-color:#dbe4e2!important}.finance-page button{box-shadow:none!important}.finance-summary-card,.finance-panel,.finance-table-wrap{border-color:#dbe5e3!important;box-shadow:none!important}
