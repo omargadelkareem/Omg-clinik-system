@@ -18,6 +18,7 @@ import {
   Phone,
   Pill,
   Plus,
+  Receipt,
   Stethoscope,
   UserRound,
   CheckCircle2,
