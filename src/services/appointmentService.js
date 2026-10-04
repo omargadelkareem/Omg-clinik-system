@@ -337,6 +337,15 @@ export function subscribeAppointmentDoctors(
               role:
                 member.role ||
                 "doctor",
+
+              consultationPrice:
+                Number(member.consultationPrice || 0),
+
+              followupPrice:
+                Number(member.followupPrice || 0),
+
+              followupDays:
+                Number(member.followupDays ?? 14),
             })
           );
 
@@ -440,6 +449,18 @@ export async function createAppointment({
       cleanText(
         doctor?.specialty
       ),
+
+    doctorPricingSnapshot: {
+      consultationPrice: Number(doctor?.consultationPrice || 0),
+      followupPrice: Number(doctor?.followupPrice || 0),
+      followupDays: Number(doctor?.followupDays ?? 14),
+      capturedAt: Date.now(),
+    },
+
+    expectedPrice:
+      cleanText(type).includes("إعادة")
+        ? Number(doctor?.followupPrice || 0)
+        : Number(doctor?.consultationPrice || 0),
 
     date:
       cleanText(date),
