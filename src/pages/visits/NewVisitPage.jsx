@@ -45,6 +45,8 @@ import {
 import Dental3DViewer from "./Dental3DViewer";
 import DentalCopilot from "./DentalCopilot";
 import DentalPatientPresentation from "./DentalPatientPresentation";
+import DentalTwinPanel from "./DentalTwinPanel";
+import { subscribeDentalTwin } from "../../services/dentalService";
 
 import "./NewVisitPage.css";
 import "./MedicalOrders.css";
@@ -367,6 +369,9 @@ const doctor = useMemo(
   const [patient, setPatient] =
     useState(null);
 
+  const [dentalTwin, setDentalTwin] =
+    useState(null);
+
   const [patientLoading, setPatientLoading] =
     useState(true);
 
@@ -464,6 +469,17 @@ const doctor = useMemo(
     clinicId,
     patientId,
   ]);
+
+  useEffect(() => {
+    if (!clinicId || !patientId) return;
+    const unsubscribe = subscribeDentalTwin(
+      clinicId,
+      patientId,
+      (value) => setDentalTwin(value),
+      (firebaseError) => console.error("Dental twin realtime error:", firebaseError)
+    );
+    return () => unsubscribe?.();
+  }, [clinicId, patientId]);
 
   /* =======================================================
      DRUG LIBRARY
@@ -2383,6 +2399,7 @@ function SpecialtyWorkspace({
   config,
   visit,
   patient,
+  dentalTwin,
   updateField,
   updateSpecialtyField,
 }) {
@@ -2419,6 +2436,7 @@ function SpecialtyWorkspace({
         <DentistryWorkspace
           data={data}
           patient={patient}
+          dentalTwin={dentalTwin}
           updateSpecialtyField={updateSpecialtyField}
         />
       ) : specialtyId === "orthodontics" ? (
@@ -2642,7 +2660,7 @@ function ObgynWorkspace({ data, updateSpecialtyField }) {
   );
 }
 
-function DentistryWorkspace({ data, patient, updateSpecialtyField }) {
+function DentistryWorkspace({ data, patient, dentalTwin, updateSpecialtyField }) {
   const chart = data.dentalChart || {};
   const treatmentPlan = data.treatmentPlanItems || [];
   const sessions = data.dentalSessions || [];
@@ -2730,6 +2748,12 @@ function DentistryWorkspace({ data, patient, updateSpecialtyField }) {
           <strong>شرح الحالة والخطة</strong>
         </button>
       </div>
+
+      <DentalTwinPanel
+        twin={dentalTwin}
+        currentChart={chart}
+        onLoadTwin={(nextChart)=>updateSpecialtyField("dentalChart", nextChart)}
+      />
 
       <div className="dental-suite-tabs">
         {[
