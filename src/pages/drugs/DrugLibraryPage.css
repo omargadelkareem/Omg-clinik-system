@@ -1614,3 +1614,5 @@
     grid-template-columns: 1fr;
   }
 }
+/* OMG Clinical v2 */
+.drug-library-page{background:#f4f7f6;color:#23494f;font-size:12px}.drug-library-header{min-height:80px;padding:15px 25px;border-color:#dbe4e2}.drug-library-title>span{font-size:8px;color:#71888a}.drug-library-title h1{font-size:23px;color:#1c454b}.drug-library-title p{font-size:10px}.drug-library-header-actions button{height:35px;padding:0 12px;border-radius:5px;font-size:9px}.add-drug-button{border-color:#245b61;background:#245b61}.drug-library-page input,.drug-library-page select,.drug-library-page textarea{border-radius:5px!important;border-color:#dbe4e2!important}.drug-library-page button{box-shadow:none!important}
