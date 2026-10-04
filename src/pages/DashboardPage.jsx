@@ -297,7 +297,7 @@ export default function DashboardPage() {
 
       action: () =>
         navigate(
-          "/queue"
+          "/appointments"
         ),
     },
 
