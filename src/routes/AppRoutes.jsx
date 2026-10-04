@@ -53,17 +53,29 @@ export default function AppRoutes() {
 
           <Route
             path="appointments"
-            element={<AppointmentsPage />}
+            element={
+              <ProtectedRoute permissions={["appointments_view"]}>
+                <AppointmentsPage />
+              </ProtectedRoute>
+            }
           />
 
           <Route
             path="patients"
-            element={<PatientsPage />}
+            element={
+              <ProtectedRoute permissions={["patients_basic"]}>
+                <PatientsPage />
+              </ProtectedRoute>
+            }
           />
 
           <Route
             path="patients/:patientId"
-            element={<PatientProfilePage />}
+            element={
+              <ProtectedRoute permissions={["patients_basic"]}>
+                <PatientProfilePage />
+              </ProtectedRoute>
+            }
           />
 
             <Route
@@ -75,7 +87,11 @@ export default function AppRoutes() {
 
           <Route
             path="patients/:patientId/visit/new"
-            element={<NewVisitPage />}
+            element={
+              <ProtectedRoute permissions={["visits"]}>
+                <NewVisitPage />
+              </ProtectedRoute>
+            }
           />
 
           <Route
@@ -90,17 +106,29 @@ export default function AppRoutes() {
 
           <Route
             path="prescriptions"
-            element={<PrescriptionsPage />}
+            element={
+              <ProtectedRoute permissions={["prescriptions"]}>
+                <PrescriptionsPage />
+              </ProtectedRoute>
+            }
           />
 
           <Route
             path="drugs"
-            element={<DrugLibraryPage />}
+            element={
+              <ProtectedRoute permissions={["drug_library"]}>
+                <DrugLibraryPage />
+              </ProtectedRoute>
+            }
           />
 
         <Route
   path="medical-files"
-  element={<MedicalFilesPage />}
+  element={
+    <ProtectedRoute permissions={["medical_files"]}>
+      <MedicalFilesPage />
+    </ProtectedRoute>
+  }
 />
 
           <Route
@@ -110,22 +138,38 @@ export default function AppRoutes() {
 
           <Route
             path="finance"
-            element={<FinancePage />}
+            element={
+              <ProtectedRoute permissions={["finance"]}>
+                <FinancePage />
+              </ProtectedRoute>
+            }
           />
 
           <Route
             path="reports"
-            element={<ReportsPage />}
+            element={
+              <ProtectedRoute permissions={["reports"]}>
+                <ReportsPage />
+              </ProtectedRoute>
+            }
           />
 
           <Route
             path="staff"
-            element={<StaffPage />}
+            element={
+              <ProtectedRoute permissions={["staff"]}>
+                <StaffPage />
+              </ProtectedRoute>
+            }
           />
 
           <Route
             path="settings"
-            element={<SettingsPage />}
+            element={
+              <ProtectedRoute permissions={["settings"]}>
+                <SettingsPage />
+              </ProtectedRoute>
+            }
           />
         </Route>
       </Routes>
