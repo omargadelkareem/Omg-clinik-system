@@ -81,7 +81,9 @@ export default function AppRoutes() {
             <Route
             path="representatives"
             element={
-              <RepresentativeVisitsPage />
+              <ProtectedRoute permissions={["visits"]}>
+                <RepresentativeVisitsPage />
+              </ProtectedRoute>
             }
           />
 
@@ -101,7 +103,11 @@ export default function AppRoutes() {
 
        <Route
   path="visits"
-  element={<VisitsPage />}
+  element={
+    <ProtectedRoute permissions={["visits", "medical_history"]}>
+      <VisitsPage />
+    </ProtectedRoute>
+  }
 />
 
           <Route
@@ -133,7 +139,11 @@ export default function AppRoutes() {
 
           <Route
             path="whatsapp"
-            element={<WhatsAppPage />}
+            element={
+              <ProtectedRoute permissions={["medical_files"]}>
+                <WhatsAppPage />
+              </ProtectedRoute>
+            }
           />
 
           <Route
