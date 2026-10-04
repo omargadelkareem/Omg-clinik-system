@@ -2874,7 +2874,8 @@ function PeriodontalChart({ value = {}, onChange }) {
 }
 
 function DentalMedia({ items = [], onChange }) {
-  const add = () => onChange([...items,{id:`media-${Date.now()}`,type:"panoramic",date:new Date().toISOString().slice(0,10),url:"",note:"",tooth:""}]);
+  const teeth=[18,17,16,15,14,13,12,11,21,22,23,24,25,26,27,28,48,47,46,45,44,43,42,41,31,32,33,34,35,36,37,38];
+  const add = () => onChange([...items,{id:`media-${Date.now()}`,type:"panoramic",date:new Date().toISOString().slice(0,10),url:"",note:"",tooth:"",stage:"diagnostic"}]);
   const update=(id,field,value)=>onChange(items.map(x=>x.id===id?{...x,[field]:value}:x));
   return <div className="dental-media">
     <div className="ortho-stage-toolbar"><div><strong>ملفات الأشعة والصور</strong><span>سجّل رابط الملف أو الصورة واربطه بسن محدد عند الحاجة.</span></div><button type="button" onClick={add}><Plus size={15}/> إضافة ملف</button></div>
@@ -2882,6 +2883,8 @@ function DentalMedia({ items = [], onChange }) {
     <div className="dental-media-grid">{items.map(item=><div className="dental-media-card" key={item.id}>
       <div className="dental-media-preview"><Image size={25}/><span>{item.type}</span></div>
       <select value={item.type} onChange={e=>update(item.id,"type",e.target.value)}><option value="panoramic">Panoramic OPG</option><option value="periapical">Periapical</option><option value="bitewing">Bitewing</option><option value="cbct">CBCT</option><option value="before">Before</option><option value="after">After</option></select>
+      <select value={item.tooth||""} onChange={e=>update(item.id,"tooth",e.target.value)}><option value="">كل الفم / غير مرتبط بسن</option>{teeth.map(tooth=><option key={tooth} value={tooth}>السن {tooth}</option>)}</select>
+      <select value={item.stage||"diagnostic"} onChange={e=>update(item.id,"stage",e.target.value)}><option value="diagnostic">Diagnostic</option><option value="before">Before treatment</option><option value="during">During treatment</option><option value="after">After treatment</option></select>
       <div className="dental-media-fields"><input type="date" value={item.date||""} onChange={e=>update(item.id,"date",e.target.value)}/><input value={item.tooth||""} onChange={e=>update(item.id,"tooth",e.target.value)} placeholder="السن"/></div>
       <input value={item.url||""} onChange={e=>update(item.id,"url",e.target.value)} placeholder="رابط الملف / الصورة"/>
       <input value={item.note||""} onChange={e=>update(item.id,"note",e.target.value)} placeholder="ملاحظة"/>
