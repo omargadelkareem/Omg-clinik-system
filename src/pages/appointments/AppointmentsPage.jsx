@@ -234,13 +234,13 @@ export default function AppointmentsPage() {
           <button className="patient-cell" onClick={()=>openPatient(row)}><span className="patient-avatar">{getInitials(row.patientName)}</span><span><strong>{row.patientName || "مريض"}</strong><small>{row.patientPhone || row.patientCode || "بدون هاتف"}</small></span></button>
           <div className="doctor-cell"><strong>{row.doctorName || "غير محدد"}</strong><small>{row.source==='walk-in'||row.source==='walk_in'?'حضور مباشر':'موعد'}</small></div>
           <div className="type-cell">{row.type || "كشف"}</div>
-          <div><span className={`flow-status flow-${row.status}`}><i/>{meta.label}</span></div>
+          <div><span className={`flow-status flow-${row.status}`}><i/>{meta.label}</span>{row.status==='completed'&&row.visitPrice!==undefined&&<small className="row-billing-state">{Number(row.visitPrice||0).toLocaleString("ar-EG")} ج.م · {row.financeStatus==='paid'?'مدفوع':row.financeStatus==='partial'?'دفع جزئي':row.financeStatus==='free'?'مجاني':'غير مدفوع'}</small>}</div>
           <div className="row-actions">
             {busy ? <button className="main-row-action" disabled><LoaderCircle className="spin" size={15}/> جاري...</button> : <>
               {row.status==='scheduled'&&<button className="main-row-action" onClick={()=>checkIn(row)}><LogIn size={15}/> وصل العيادة</button>}
               {row.status==='waiting'&&<button className="main-row-action start" onClick={()=>startVisit(row)}><Stethoscope size={15}/> بدء الكشف</button>}
               {row.status==='in-progress'&&<button className="main-row-action current" onClick={()=>resumeVisit(row)}><ArrowUpLeft size={15}/> فتح الكشف</button>}
-              {row.status==='completed'&&<button className="main-row-action ghost" onClick={()=>openPatient(row)}><CheckCircle2 size={15}/> ملف المريض</button>}
+              {row.status==='completed'&&<><button className="main-row-action ghost" onClick={()=>openPatient(row)}><CheckCircle2 size={15}/> ملف المريض</button>{row.financeStatus!=='paid'&&row.financeStatus!=='free'&&<button className="main-row-action collect" onClick={()=>navigate("/finance")}><CreditCard size={15}/> تحصيل</button>}</>}
               {(row.status==='cancelled'||row.status==='no-show')&&<button className="main-row-action ghost" onClick={()=>openPatient(row)}>عرض الملف</button>}
             </>}
             {row.kind==='appointment'&&row.status==='scheduled'&&<div className="mini-actions"><button title="لم يحضر" onClick={()=>noShow(row)}>غياب</button><button title="إلغاء" onClick={()=>cancel(row)}>إلغاء</button></div>}
