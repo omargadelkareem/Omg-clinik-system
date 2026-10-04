@@ -185,7 +185,8 @@ function numberValue(
 
 async function getVisitPricing(
   clinicId,
-  patientId
+  patientId,
+  doctor = null
 ) {
   const [
     settingsSnapshot,
@@ -211,26 +212,24 @@ async function getVisitPricing(
       ? settingsSnapshot.val()
       : {};
 
-  const consultationPrice =
-    numberValue(
-      pricing.consultationPrice,
-      0
-    );
+  const clinicConsultationPrice = numberValue(pricing.consultationPrice, 0);
+  const clinicFollowupPrice = numberValue(pricing.followupPrice, 0);
+  const clinicFollowupDays = Math.max(0, numberValue(pricing.followupDays, 14));
 
-  const followupPrice =
-    numberValue(
-      pricing.followupPrice,
-      0
-    );
+  let doctorPricing = doctor || {};
+  if (doctor?.id) {
+    const doctorSnapshot = await get(ref(database, `clinics/${clinicId}/staff/${doctor.id}`));
+    if (doctorSnapshot.exists()) doctorPricing = { ...doctorPricing, ...doctorSnapshot.val() };
+  }
 
-  const followupDays =
-    Math.max(
-      0,
-      numberValue(
-        pricing.followupDays,
-        0
-      )
-    );
+  const hasDoctorConsultationPrice = doctorPricing.consultationPrice !== "" && doctorPricing.consultationPrice !== null && doctorPricing.consultationPrice !== undefined;
+  const hasDoctorFollowupPrice = doctorPricing.followupPrice !== "" && doctorPricing.followupPrice !== null && doctorPricing.followupPrice !== undefined;
+  const hasDoctorFollowupDays = doctorPricing.followupDays !== "" && doctorPricing.followupDays !== null && doctorPricing.followupDays !== undefined;
+
+  const consultationPrice = hasDoctorConsultationPrice ? Math.max(0, numberValue(doctorPricing.consultationPrice, clinicConsultationPrice)) : clinicConsultationPrice;
+  const followupPrice = hasDoctorFollowupPrice ? Math.max(0, numberValue(doctorPricing.followupPrice, clinicFollowupPrice)) : clinicFollowupPrice;
+  const followupDays = hasDoctorFollowupDays ? Math.max(0, numberValue(doctorPricing.followupDays, clinicFollowupDays)) : clinicFollowupDays;
+  const pricingSource = (hasDoctorConsultationPrice || hasDoctorFollowupPrice || hasDoctorFollowupDays) ? "doctor" : "clinic";
 
   let previousVisit =
     null;
@@ -330,6 +329,15 @@ async function getVisitPricing(
     previousVisitAt:
       previousVisitAt ||
       null,
+
+    pricingSource,
+    doctorPricing: {
+      doctorId: doctor?.id || "",
+      doctorName: doctor?.name || "",
+      consultationPrice,
+      followupPrice,
+      followupDays,
+    },
   };
 }
 
@@ -690,7 +698,8 @@ export async function completeVisit({
   const pricingResult =
     await getVisitPricing(
       clinicId,
-      patient.id
+      patient.id,
+      doctor
     );
 
   const visitId =
@@ -995,6 +1004,12 @@ export async function completeVisit({
 
       resolvedAt:
         timestamp,
+      source:
+        pricingResult.pricingSource || "clinic",
+      doctorId:
+        doctor?.id || "",
+      doctorName:
+        doctor?.name || "",
     },
 
     previousVisitId:
