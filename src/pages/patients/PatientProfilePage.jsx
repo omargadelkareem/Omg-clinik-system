@@ -1933,17 +1933,9 @@ function VisitsTab({
                 </div>
 
                 <div className="record-copy">
-                  <strong>
-                    {visit.diagnosis ||
-                      visit.complaint ||
-                      "زيارة طبية"}
-                  </strong>
-
-                  <span>
-                    {visit.doctorName
-                      ? `بواسطة ${visit.doctorName}`
-                      : "زيارة مكتملة"}
-                  </span>
+                  <strong>{visit.diagnosis || visit.complaint || "زيارة طبية"}</strong>
+                  <span>{visit.doctorName ? `بواسطة ${visit.doctorName}` : "زيارة مكتملة"}</span>
+                  <span className="visit-billing-inline">{visit.visitTypeLabel || "كشف"} · {Number(visit.visitPrice||0).toLocaleString("ar-EG")} ج.م · {visit.financeStatus==="paid"?"مدفوع":visit.financeStatus==="partial"?"دفع جزئي":visit.financeStatus==="free"?"مجاني":visit.financeStatus==="error"?"خطأ بالفاتورة":"غير مدفوع"}{visit.invoiceNumber?` · ${visit.invoiceNumber}`:""}</span>
                 </div>
 
                 {visit.medicines &&
