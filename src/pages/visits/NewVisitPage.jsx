@@ -2414,6 +2414,11 @@ function SpecialtyWorkspace({
           data={data}
           updateSpecialtyField={updateSpecialtyField}
         />
+      ) : specialtyId === "orthodontics" ? (
+        <OrthodonticsWorkspace
+          data={data}
+          updateSpecialtyField={updateSpecialtyField}
+        />
       ) : specialtyId === "general_surgery" ? (
         <SurgeryWorkspace
           data={data}
@@ -2740,6 +2745,85 @@ function DentalTreatmentPlan({ items = [], onChange, onRemove }) {
           <button type="button" onClick={() => onRemove(item.id)} aria-label="حذف الإجراء"><Trash2 size={15} /></button>
         </div>
       ))}
+    </div>
+  );
+}
+
+function OrthodonticsWorkspace({ data, updateSpecialtyField }) {
+  const stages = data.orthoStages || [];
+
+  const addStage = () => {
+    updateSpecialtyField("orthoStages", [
+      ...stages,
+      { id: `ortho-${Date.now()}`, title: "", appliance: "", status: "planned", notes: "" },
+    ]);
+  };
+
+  const updateStage = (id, field, value) => {
+    updateSpecialtyField(
+      "orthoStages",
+      stages.map((item) => item.id === id ? { ...item, [field]: value } : item)
+    );
+  };
+
+  return (
+    <div className="ortho-workspace">
+      <div className="dental-hero ortho-hero">
+        <div>
+          <span className="dental-eyebrow">ORTHODONTICS</span>
+          <h3>مساحة متابعة التقويم</h3>
+          <p>سجّل الإطباق والقياسات والجهاز ومراحل العلاج في Timeline واحدة.</p>
+        </div>
+        <div className="dental-hero-stats">
+          <div><strong>{stages.length}</strong><span>مراحل العلاج</span></div>
+          <div><strong>{data.applianceType ? "1" : "0"}</strong><span>جهاز حالي</span></div>
+        </div>
+      </div>
+
+      <VisitSection title="التقييم التقويمي">
+        <SpecialtyGrid>
+          <SpecialtyInput label="التشخيص الهيكلي" value={data.skeletalClass || ""} placeholder="Class I / II / III" onChange={(v)=>updateSpecialtyField("skeletalClass",v)} />
+          <SpecialtyInput label="الإطباق" value={data.occlusion || ""} placeholder="Angle classification / crossbite..." onChange={(v)=>updateSpecialtyField("occlusion",v)} />
+          <SpecialtyInput label="Overjet" value={data.overjet || ""} placeholder="mm" onChange={(v)=>updateSpecialtyField("overjet",v)} />
+          <SpecialtyInput label="Overbite" value={data.overbite || ""} placeholder="mm / %" onChange={(v)=>updateSpecialtyField("overbite",v)} />
+          <SpecialtyInput label="Midline" value={data.midline || ""} placeholder="متطابق / انحراف..." onChange={(v)=>updateSpecialtyField("midline",v)} />
+          <SpecialtyInput label="Crowding / Spacing" value={data.crowding || ""} placeholder="وصف المسافات أو التزاحم" onChange={(v)=>updateSpecialtyField("crowding",v)} />
+        </SpecialtyGrid>
+      </VisitSection>
+
+      <VisitSection title="الجهاز الحالي">
+        <div className="specialty-inline-grid">
+          <SpecialtyInput label="نوع الجهاز" value={data.applianceType || ""} placeholder="Fixed / Aligners / Removable" onChange={(v)=>updateSpecialtyField("applianceType",v)} />
+          <SpecialtyInput label="تاريخ البداية" type="date" value={data.orthoStartDate || ""} onChange={(v)=>updateSpecialtyField("orthoStartDate",v)} />
+          <SpecialtyInput label="Archwire / Aligner" value={data.currentWire || ""} placeholder="0.016 NiTi / Aligner 8" onChange={(v)=>updateSpecialtyField("currentWire",v)} />
+          <SpecialtyInput label="Elastic" value={data.elastics || ""} placeholder="Class II 3/16..." onChange={(v)=>updateSpecialtyField("elastics",v)} />
+          <SpecialtyInput label="المتابعة القادمة" type="date" value={data.nextOrthoVisit || ""} onChange={(v)=>updateSpecialtyField("nextOrthoVisit",v)} />
+        </div>
+      </VisitSection>
+
+      <VisitSection title="مراحل العلاج">
+        <div className="ortho-stage-toolbar">
+          <div><strong>Timeline العلاج</strong><span>كل مرحلة محفوظة داخل ملف الزيارة.</span></div>
+          <button type="button" onClick={addStage}><Plus size={15}/> إضافة مرحلة</button>
+        </div>
+        {!stages.length ? (
+          <div className="dental-plan-empty"><span className="dental-plan-empty-icon">+</span><div><strong>لا توجد مراحل بعد</strong><p>أضف أول مرحلة من خطة التقويم.</p></div></div>
+        ) : (
+          <div className="ortho-timeline">
+            {stages.map((stage,index)=>(
+              <div className="ortho-stage" key={stage.id}>
+                <span className="ortho-stage-index">{index+1}</span>
+                <input value={stage.title || ""} onChange={(e)=>updateStage(stage.id,"title",e.target.value)} placeholder="اسم المرحلة" />
+                <input value={stage.appliance || ""} onChange={(e)=>updateStage(stage.id,"appliance",e.target.value)} placeholder="الجهاز / السلك" />
+                <select value={stage.status || "planned"} onChange={(e)=>updateStage(stage.id,"status",e.target.value)}>
+                  <option value="planned">مخطط</option><option value="in_progress">جاري</option><option value="completed">مكتمل</option>
+                </select>
+                <input value={stage.notes || ""} onChange={(e)=>updateStage(stage.id,"notes",e.target.value)} placeholder="ملاحظات" />
+              </div>
+            ))}
+          </div>
+        )}
+      </VisitSection>
     </div>
   );
 }
