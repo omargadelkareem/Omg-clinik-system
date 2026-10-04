@@ -61,3 +61,17 @@ select {
 button {
   cursor: pointer;
 }
+:root{
+  --omg-ink:#183b43;--omg-ink-2:#345a61;--omg-muted:#71888c;--omg-line:#dfe8e7;
+  --omg-surface:#ffffff;--omg-canvas:#f4f7f6;--omg-soft:#eef5f3;--omg-success:#3e765f;
+  --omg-warning:#9a6b2d;--omg-danger:#a84f4f;--omg-radius:10px;--omg-shadow:0 8px 28px rgba(29,58,63,.055)
+}
+body{background:var(--omg-canvas);color:var(--omg-ink);font-size:14px}
+.app-content>div[class$="-page"]{width:100%;max-width:1680px;margin:0 auto}
+button,input,textarea,select{font-size:inherit}
+input,textarea,select{outline:none}
+input:focus,textarea:focus,select:focus{border-color:#88aaa6!important;box-shadow:0 0 0 3px rgba(79,126,120,.08)}
+button:focus-visible,a:focus-visible{outline:2px solid #6d9692;outline-offset:2px}
+::selection{background:#dbece8;color:#183b43}
+.omg-release-surface{background:var(--omg-surface);border:1px solid var(--omg-line);border-radius:var(--omg-radius);box-shadow:var(--omg-shadow)}
+@media(max-width:760px){body{font-size:13px}.app-content>div[class$="-page"]{max-width:none}}
