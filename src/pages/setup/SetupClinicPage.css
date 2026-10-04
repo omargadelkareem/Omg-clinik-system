@@ -941,3 +941,6 @@
   }
 }
 
+
+/* OMG Clinical v2 */
+.setup-clinic-page{grid-template-columns:32% 68%;background:#f4f7f6;color:#23494f}.facility-type-grid{gap:8px}.facility-type-card{min-height:98px;padding:13px;border-color:#dbe4e2;border-radius:6px;box-shadow:none}.facility-type-card:hover{transform:none;border-color:#9bb7b3}.facility-type-card.is-selected{border-color:#4e827d;background:#f0f6f4;box-shadow:none}.facility-type-icon{width:34px;height:34px;border-radius:5px;background:#e9f1ef;color:#426f6d}.facility-type-card.is-selected .facility-type-icon{background:#dcebe7;color:#2e6865}.facility-type-content strong{font-size:11px}.facility-type-content span{font-size:9px}.setup-clinic-page input,.setup-clinic-page select,.setup-clinic-page textarea,.setup-clinic-page button{border-radius:5px!important;box-shadow:none!important}
