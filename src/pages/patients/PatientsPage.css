@@ -394,3 +394,5 @@
     width: 100%;
   }
 }
+/* OMG Clinical v2 */
+.patients-page{padding:20px 26px 40px;background:#f4f7f6;color:#23494f}.patients-page-header{min-height:72px;padding-bottom:15px;border-color:#d9e3e1}.patients-eyebrow{font-size:8px;color:#71888a;letter-spacing:.12em}.patients-page-header h1{font-size:23px;color:#1c454b}.patients-page-header p{font-size:10px}.add-patient-button{height:35px;border-radius:5px;background:#245b61;font-size:9px}.patients-summary-strip{margin-top:14px;border-color:#dbe5e3;border-radius:6px;overflow:hidden}.patients-summary-strip>div{min-height:66px;padding:0 14px}.patients-workspace{margin-top:14px!important;border-color:#dbe5e3!important;border-radius:6px!important;box-shadow:none!important}.patients-toolbar{min-height:54px!important}.patients-search{height:35px!important;border-radius:5px!important}.patients-table-head{min-height:36px!important;font-size:8px!important}.patient-record-row{min-height:57px!important}.patient-record-avatar{border-radius:6px!important}.patient-record-person strong{font-size:10px!important}.patient-record-person span,.patient-code,.patient-phone,.patient-created{font-size:8px!important}
