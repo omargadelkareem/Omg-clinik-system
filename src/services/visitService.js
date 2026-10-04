@@ -11,6 +11,7 @@ import {
 
 import { database } from "../config/firebase";
 import { createFinanceTransaction } from "./financeService";
+import { syncDentalVisitToTwin } from "./dentalService";
 
 /* =========================================================
    HELPERS
@@ -1287,6 +1288,29 @@ export async function completeVisit({
     ref(database),
     updates
   );
+
+  const dentalSpecialties = [
+    "dentistry",
+    "orthodontics",
+    "endodontics",
+    "periodontics",
+    "prosthodontics",
+    "pediatric_dentistry",
+    "oral_maxillofacial_surgery",
+  ];
+  if (dentalSpecialties.includes(visit.specialty?.id)) {
+    try {
+      await syncDentalVisitToTwin({
+        clinicId,
+        patientId: patient.id,
+        visitId,
+        doctor,
+        dentalData: visit.specialty?.data || {},
+      });
+    } catch (dentalError) {
+      console.error("Dental twin sync error:", dentalError);
+    }
+  }
 
   /* =======================================================
      FINANCE
