@@ -575,6 +575,15 @@ export async function createPatientAndAppointment({
         patientData?.gender
       ),
 
+    age:
+      patientData?.age === "" ||
+      patientData?.age == null
+        ? null
+        : Math.max(0, Math.min(120, Number(patientData.age) || 0)),
+
+    ageRecordedAt:
+      serverTimestamp(),
+
     dateOfBirth:
       cleanText(
         patientData?.dateOfBirth
@@ -1037,6 +1046,15 @@ export async function createPatientAndWalkIn({
       cleanText(
         patientData?.gender
       ),
+
+    age:
+      patientData?.age === "" ||
+      patientData?.age == null
+        ? null
+        : Math.max(0, Math.min(120, Number(patientData.age) || 0)),
+
+    ageRecordedAt:
+      serverTimestamp(),
 
     dateOfBirth:
       cleanText(
