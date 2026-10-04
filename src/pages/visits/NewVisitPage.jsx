@@ -2638,6 +2638,9 @@ function ObgynWorkspace({ data, updateSpecialtyField }) {
 function DentistryWorkspace({ data, updateSpecialtyField }) {
   const chart = data.dentalChart || {};
   const treatmentPlan = data.treatmentPlanItems || [];
+  const sessions = data.dentalSessions || [];
+  const media = data.dentalMedia || [];
+  const [dentalTab, setDentalTab] = useState("chart");
 
   const addTreatment = (item) => {
     updateSpecialtyField("treatmentPlanItems", [
@@ -2683,21 +2686,55 @@ function DentistryWorkspace({ data, updateSpecialtyField }) {
         </div>
       </div>
 
-      <VisitSection title="الخريطة السنية">
+      <div className="dental-suite-tabs">
+        {[
+          ["chart","الخريطة"],
+          ["plan","خطة العلاج"],
+          ["sessions","الجلسات"],
+          ["periodontal","اللثة"],
+          ["media","الأشعة والصور"],
+        ].map(([key,label])=>(
+          <button type="button" key={key} className={dentalTab===key ? "active" : ""} onClick={()=>setDentalTab(key)}>{label}</button>
+        ))}
+      </div>
+
+      {dentalTab === "chart" && <VisitSection title="الخريطة السنية">
         <DentalChart
           value={chart}
           onChange={(next) => updateSpecialtyField("dentalChart", next)}
           onAddTreatment={addTreatment}
         />
-      </VisitSection>
+      </VisitSection>}
 
-      <VisitSection title="خطة العلاج">
+      {dentalTab === "plan" && <VisitSection title="خطة العلاج">
         <DentalTreatmentPlan
           items={treatmentPlan}
           onChange={updateTreatment}
           onRemove={removeTreatment}
         />
-      </VisitSection>
+      </VisitSection>}
+
+      {dentalTab === "sessions" && (
+        <VisitSection title="جلسات العلاج">
+          <DentalSessions
+            items={sessions}
+            onChange={(next)=>updateSpecialtyField("dentalSessions",next)}
+            treatmentPlan={treatmentPlan}
+          />
+        </VisitSection>
+      )}
+
+      {dentalTab === "periodontal" && (
+        <VisitSection title="Periodontal chart">
+          <PeriodontalChart value={data.periodontalChart || {}} onChange={(next)=>updateSpecialtyField("periodontalChart",next)} />
+        </VisitSection>
+      )}
+
+      {dentalTab === "media" && (
+        <VisitSection title="الأشعة والصور">
+          <DentalMedia items={media} onChange={(next)=>updateSpecialtyField("dentalMedia",next)} />
+        </VisitSection>
+      )}
 
       <VisitSection title="التقييم السريري">
         <SpecialtyGrid>
@@ -2709,6 +2746,68 @@ function DentistryWorkspace({ data, updateSpecialtyField }) {
       </VisitSection>
     </div>
   );
+}
+
+function DentalSessions({ items = [], onChange, treatmentPlan = [] }) {
+  const add = () => onChange([
+    ...items,
+    { id:`session-${Date.now()}`, date:new Date().toISOString().slice(0,10), title:"", tooth:"", procedure:"", paid:"", notes:"", status:"planned" }
+  ]);
+  const update = (id,field,value)=>onChange(items.map(x=>x.id===id?{...x,[field]:value}:x));
+  const totalPaid=items.reduce((sum,x)=>sum+(Number(x.paid)||0),0);
+  const totalPlan=treatmentPlan.reduce((sum,x)=>sum+(Number(x.cost)||0),0);
+  return <div className="dental-sessions">
+    <div className="dental-session-summary">
+      <div><span>إجمالي الخطة</span><strong>{totalPlan.toLocaleString("ar-EG")} ج.م</strong></div>
+      <div><span>المدفوع</span><strong>{totalPaid.toLocaleString("ar-EG")} ج.م</strong></div>
+      <div><span>المتبقي</span><strong>{Math.max(0,totalPlan-totalPaid).toLocaleString("ar-EG")} ج.م</strong></div>
+      <button type="button" onClick={add}><Plus size={15}/> جلسة جديدة</button>
+    </div>
+    {!items.length ? <div className="dental-plan-empty"><span className="dental-plan-empty-icon">+</span><div><strong>لا توجد جلسات مسجلة</strong><p>أضف الجلسة الأولى واربِطها بالسن والإجراء.</p></div></div> :
+      <div className="dental-session-list">{items.map((item,index)=><div className="dental-session-card" key={item.id}>
+        <span className="session-number">{index+1}</span>
+        <input type="date" value={item.date||""} onChange={e=>update(item.id,"date",e.target.value)}/>
+        <input value={item.tooth||""} onChange={e=>update(item.id,"tooth",e.target.value)} placeholder="السن"/>
+        <input value={item.procedure||""} onChange={e=>update(item.id,"procedure",e.target.value)} placeholder="الإجراء المنفذ"/>
+        <input type="number" min="0" value={item.paid||""} onChange={e=>update(item.id,"paid",e.target.value)} placeholder="المدفوع"/>
+        <select value={item.status||"planned"} onChange={e=>update(item.id,"status",e.target.value)}><option value="planned">مخطط</option><option value="completed">تمت</option><option value="cancelled">ملغاة</option></select>
+        <input value={item.notes||""} onChange={e=>update(item.id,"notes",e.target.value)} placeholder="ملاحظات الجلسة"/>
+      </div>)}</div>}
+  </div>;
+}
+
+function PeriodontalChart({ value = {}, onChange }) {
+  const teeth=[18,17,16,15,14,13,12,11,21,22,23,24,25,26,27,28,48,47,46,45,44,43,42,41,31,32,33,34,35,36,37,38];
+  const update=(tooth,field,val)=>onChange({...value,[tooth]:{...(value[tooth]||{}),[field]:val}});
+  return <div className="perio-wrap">
+    <div className="perio-legend"><span>PD = Pocket Depth</span><span>REC = Recession</span><span>BOP = Bleeding</span><span>MOB = Mobility</span></div>
+    <div className="perio-table">
+      <div className="perio-row perio-head"><strong>سن</strong><strong>PD</strong><strong>REC</strong><strong>BOP</strong><strong>MOB</strong></div>
+      {teeth.map(tooth=><div className="perio-row" key={tooth}>
+        <strong>{tooth}</strong>
+        <input type="number" min="0" max="15" value={value[tooth]?.pd||""} onChange={e=>update(tooth,"pd",e.target.value)}/>
+        <input type="number" min="0" max="15" value={value[tooth]?.recession||""} onChange={e=>update(tooth,"recession",e.target.value)}/>
+        <button type="button" className={value[tooth]?.bop ? "perio-bop active" : "perio-bop"} onClick={()=>update(tooth,"bop",!value[tooth]?.bop)}>{value[tooth]?.bop ? "نعم" : "لا"}</button>
+        <select value={value[tooth]?.mobility||"0"} onChange={e=>update(tooth,"mobility",e.target.value)}><option value="0">0</option><option value="1">I</option><option value="2">II</option><option value="3">III</option></select>
+      </div>)}
+    </div>
+  </div>;
+}
+
+function DentalMedia({ items = [], onChange }) {
+  const add = () => onChange([...items,{id:`media-${Date.now()}`,type:"panoramic",date:new Date().toISOString().slice(0,10),url:"",note:"",tooth:""}]);
+  const update=(id,field,value)=>onChange(items.map(x=>x.id===id?{...x,[field]:value}:x));
+  return <div className="dental-media">
+    <div className="ortho-stage-toolbar"><div><strong>ملفات الأشعة والصور</strong><span>سجّل رابط الملف أو الصورة واربطه بسن محدد عند الحاجة.</span></div><button type="button" onClick={add}><Plus size={15}/> إضافة ملف</button></div>
+    {!items.length ? <div className="dental-plan-empty"><span className="dental-plan-empty-icon">+</span><div><strong>لا توجد صور أو أشعة</strong><p>أضف Panorama أو Periapical أو CBCT أو صور قبل/بعد.</p></div></div> :
+    <div className="dental-media-grid">{items.map(item=><div className="dental-media-card" key={item.id}>
+      <div className="dental-media-preview"><Image size={25}/><span>{item.type}</span></div>
+      <select value={item.type} onChange={e=>update(item.id,"type",e.target.value)}><option value="panoramic">Panoramic OPG</option><option value="periapical">Periapical</option><option value="bitewing">Bitewing</option><option value="cbct">CBCT</option><option value="before">Before</option><option value="after">After</option></select>
+      <div className="dental-media-fields"><input type="date" value={item.date||""} onChange={e=>update(item.id,"date",e.target.value)}/><input value={item.tooth||""} onChange={e=>update(item.id,"tooth",e.target.value)} placeholder="السن"/></div>
+      <input value={item.url||""} onChange={e=>update(item.id,"url",e.target.value)} placeholder="رابط الملف / الصورة"/>
+      <input value={item.note||""} onChange={e=>update(item.id,"note",e.target.value)} placeholder="ملاحظة"/>
+    </div>)}</div>}
+  </div>;
 }
 
 function DentalTreatmentPlan({ items = [], onChange, onRemove }) {
