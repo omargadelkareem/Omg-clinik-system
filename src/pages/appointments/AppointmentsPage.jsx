@@ -99,7 +99,12 @@ export default function AppointmentsPage() {
     const ua=subscribeAppointments(clinicId,x=>{setAppointments(Array.isArray(x)?x:[]);a=true;done()},()=>{a=true;setError("تعذر تحميل بيانات عيادة اليوم.");done()});
     const up=subscribeAppointmentPatients(clinicId,x=>{setPatients(Array.isArray(x)?x:[]);p=true;done()},()=>{p=true;done()});
     const ud=subscribeAppointmentDoctors(clinicId,x=>{setDoctors(Array.isArray(x)?x:[]);d=true;done()},()=>{d=true;done()});
-    const uq=subscribeQueue(clinicId,x=>{setQueue(Array.isArray(x)?x:[]);q=true;done()},()=>{q=true;done()});
+    const uq=subscribeQueue(
+      clinicId,
+      x=>{setQueue(Array.isArray(x)?x:[]);q=true;done()},
+      ()=>{q=true;done()},
+      {includeCompleted:true,includeCancelled:true}
+    );
     return()=>{ua?.();up?.();ud?.();uq?.()};
   },[clinicId]);
 
@@ -118,8 +123,8 @@ export default function AppointmentsPage() {
     if(selectedDateKey===todayKey){
       queue.forEach(q=>{
         if(q.appointmentId && appointmentIds.has(q.appointmentId)) return;
-        const created=normalizeTimestamp(q.checkedInAt || q.createdAt);
-        if(created && toDateKey(new Date(created))!==todayKey) return;
+        const eventTime=normalizeTimestamp(q.checkedInAt || q.createdAt || q.completedAt || q.updatedAt);
+        if(eventTime && toDateKey(new Date(eventTime))!==todayKey) return;
         base.push({ ...q, rowId:`q-${q.id}`, kind:"queue", time:queueTime(q), status:normalizeStatus(q.status), source:q.source || "walk-in" });
       });
     }
@@ -146,8 +151,8 @@ export default function AppointmentsPage() {
       const appointmentIds=new Set(all.map(a=>a.id));
       queue.forEach(q=>{
         if(q.appointmentId && appointmentIds.has(q.appointmentId)) return;
-        const created=normalizeTimestamp(q.checkedInAt || q.createdAt);
-        if(created && toDateKey(new Date(created))!==todayKey) return;
+        const eventTime=normalizeTimestamp(q.checkedInAt || q.createdAt || q.completedAt || q.updatedAt);
+        if(eventTime && toDateKey(new Date(eventTime))!==todayKey) return;
         all.push({...q,status:normalizeStatus(q.status)});
       });
     }
