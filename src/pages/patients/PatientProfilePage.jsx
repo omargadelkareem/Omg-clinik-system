@@ -1080,7 +1080,10 @@ export default function PatientProfilePage() {
           TABS
           ================================================ */}
 
-      <nav className="chart-tabs">
+      <div className="patient-chart-workspace">
+        <aside className="patient-chart-rail">
+          <div className="patient-rail-title"><span>PATIENT CHART</span><strong>الملف الطبي</strong></div>
+                <nav className="chart-tabs chart-tabs-rail">
         {tabs.map(
           (tab) => (
             <button
@@ -1116,6 +1119,15 @@ export default function PatientProfilePage() {
           CONTENT
           ================================================ */}
 
+
+          <div className="patient-rail-quick">
+            <span>إجراءات سريعة</span>
+            <button type="button" onClick={() => navigate(`/patients/${patient.id}/visit/new`)}><Stethoscope size={14}/> بدء كشف جديد</button>
+            {patient.phone && <a href={`tel:${patient.phone}`}><Phone size={14}/> اتصال بالمريض</a>}
+          </div>
+        </aside>
+
+        <section className="patient-chart-main">
       <main className="chart-content">
 
         {loadingChart ? (
@@ -1187,6 +1199,8 @@ export default function PatientProfilePage() {
         )}
 
       </main>
+        </section>
+      </div>
     </div>
   );
 }
