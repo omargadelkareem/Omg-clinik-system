@@ -1698,3 +1698,5 @@
     animation: none !important;
   }
 }
+/* OMG Clinical v2 */
+.reports-page{background:#f4f7f6;color:#23494f;font-size:12px}.reports-header{min-height:80px;padding:15px 25px;border-color:#dbe4e2}.reports-header>div:first-child>span,.report-section-heading span{font-size:8px;color:#71888a}.reports-header h1{font-size:23px;color:#1c454b}.reports-header p{font-size:10px}.report-actions>button,.report-period-wrapper>button,.report-export-wrapper>button{height:35px!important;border-radius:5px!important;font-size:9px!important}.reports-page input,.reports-page select{border-radius:5px!important;border-color:#dbe4e2!important}.report-card,.report-panel,.report-table-wrap{border-color:#dbe5e3!important;box-shadow:none!important}
