@@ -135,14 +135,31 @@ export default function AppointmentsPage() {
   },[appointments,queue,selectedDateKey,todayKey,doctorFilter,statusFilter,search]);
 
   const stats=useMemo(()=>{
-    const all=rows;
+    const all=appointments
+      .filter(a=>a.date===selectedDateKey)
+      .map(a=>{
+        const linked=queue.find(q=>q.appointmentId===a.id || q.id===a.queueId);
+        return {...a,status:normalizeStatus(linked?.status || a.status)};
+      });
+
+    if(selectedDateKey===todayKey){
+      const appointmentIds=new Set(all.map(a=>a.id));
+      queue.forEach(q=>{
+        if(q.appointmentId && appointmentIds.has(q.appointmentId)) return;
+        const created=normalizeTimestamp(q.checkedInAt || q.createdAt);
+        if(created && toDateKey(new Date(created))!==todayKey) return;
+        all.push({...q,status:normalizeStatus(q.status)});
+      });
+    }
+
+    const scoped=doctorFilter==="all" ? all : all.filter(r=>r.doctorId===doctorFilter);
     return {
-      total:all.filter(r=>!["cancelled","no-show"].includes(r.status)).length,
-      waiting:all.filter(r=>r.status==="waiting").length,
-      current:all.filter(r=>r.status==="in-progress").length,
-      completed:all.filter(r=>r.status==="completed").length,
+      total:scoped.filter(r=>!["cancelled","no-show"].includes(r.status)).length,
+      waiting:scoped.filter(r=>r.status==="waiting").length,
+      current:scoped.filter(r=>r.status==="in-progress").length,
+      completed:scoped.filter(r=>r.status==="completed").length,
     };
-  },[rows]);
+  },[appointments,queue,selectedDateKey,todayKey,doctorFilter]);
 
   function shiftDay(amount){ const d=new Date(selectedDate); d.setDate(d.getDate()+amount); setSelectedDateKey(toDateKey(d)); }
   async function run(id,fn){ try{setActionId(id);setError("");await fn()}catch(e){setToast({type:"error",message:e?.message||"تعذر تنفيذ العملية."})}finally{setActionId("")} }
@@ -164,11 +181,11 @@ export default function AppointmentsPage() {
         if(typeof module.startQueueVisit!=="function") throw new Error("خدمة بدء كشف مريض الانتظار غير موجودة في appointmentService.");
         result=await module.startQueueVisit({clinicId,queueItem:row});
       }
-      navigate(`/patients/${row.patientId}/visit/new`,{state:{appointmentId:result?.appointmentId||row.appointmentId||row.id||"",queueId:result?.queueId||row.queueId||row.id||"",source:row.kind==="appointment"?"appointment":"queue",fromQueue:row.kind==="queue"}});
+      navigate(`/patients/${row.patientId}/visit/new`,{state:{appointmentId:result?.appointmentId||row.appointmentId||row.id||"",queueId:result?.queueId||row.queueId||row.id||"",source:row.kind==="appointment"?"appointment":"queue"}});
     });
   }
   function resumeVisit(row){
-    navigate(`/patients/${row.patientId}/visit/new`,{state:{appointmentId:row.appointmentId || (row.kind==="appointment"?row.id:"") ,queueId:row.queueId || (row.kind==="queue"?row.id:""),source:row.kind==="appointment"?"appointment":"queue",fromQueue:row.kind==="queue"}});
+    navigate(`/patients/${row.patientId}/visit/new`,{state:{appointmentId:row.appointmentId || (row.kind==="appointment"?row.id:"") ,queueId:row.queueId || (row.kind==="queue"?row.id:""),source:row.kind==="appointment"?"appointment":"queue"}});
   }
   async function cancel(row){ if(row.kind!=="appointment")return; await run(row.rowId,async()=>{await cancelAppointment(clinicId,row.id);setToast({type:"success",message:"تم إلغاء الموعد."})}); }
   async function noShow(row){ if(row.kind!=="appointment")return; await run(row.rowId,async()=>{await markAppointmentNoShow(clinicId,row.id);setToast({type:"success",message:"تم تسجيل عدم الحضور."})}); }
