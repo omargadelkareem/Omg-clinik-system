@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
   CalendarDays, CheckCircle2, ChevronLeft, CircleAlert, Clock3,
   LoaderCircle, LogIn, Plus, Search, Stethoscope, UserCheck,
-  UserRound, Users, X, CalendarPlus, ArrowUpLeft, Phone
+  UserRound, Users, X, CalendarPlus, ArrowUpLeft, Phone, CreditCard
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -99,7 +99,12 @@ export default function AppointmentsPage() {
     const ua=subscribeAppointments(clinicId,x=>{setAppointments(Array.isArray(x)?x:[]);a=true;done()},()=>{a=true;setError("تعذر تحميل بيانات عيادة اليوم.");done()});
     const up=subscribeAppointmentPatients(clinicId,x=>{setPatients(Array.isArray(x)?x:[]);p=true;done()},()=>{p=true;done()});
     const ud=subscribeAppointmentDoctors(clinicId,x=>{setDoctors(Array.isArray(x)?x:[]);d=true;done()},()=>{d=true;done()});
-    const uq=subscribeQueue(clinicId,x=>{setQueue(Array.isArray(x)?x:[]);q=true;done()},()=>{q=true;done()});
+    const uq=subscribeQueue(
+      clinicId,
+      x=>{setQueue(Array.isArray(x)?x:[]);q=true;done()},
+      ()=>{q=true;done()},
+      {includeCompleted:true,includeCancelled:true}
+    );
     return()=>{ua?.();up?.();ud?.();uq?.()};
   },[clinicId]);
 
@@ -118,8 +123,8 @@ export default function AppointmentsPage() {
     if(selectedDateKey===todayKey){
       queue.forEach(q=>{
         if(q.appointmentId && appointmentIds.has(q.appointmentId)) return;
-        const created=normalizeTimestamp(q.checkedInAt || q.createdAt);
-        if(created && toDateKey(new Date(created))!==todayKey) return;
+        const eventTime=normalizeTimestamp(q.checkedInAt || q.createdAt || q.completedAt || q.updatedAt);
+        if(eventTime && toDateKey(new Date(eventTime))!==todayKey) return;
         base.push({ ...q, rowId:`q-${q.id}`, kind:"queue", time:queueTime(q), status:normalizeStatus(q.status), source:q.source || "walk-in" });
       });
     }
@@ -135,14 +140,31 @@ export default function AppointmentsPage() {
   },[appointments,queue,selectedDateKey,todayKey,doctorFilter,statusFilter,search]);
 
   const stats=useMemo(()=>{
-    const all=rows;
+    const all=appointments
+      .filter(a=>a.date===selectedDateKey)
+      .map(a=>{
+        const linked=queue.find(q=>q.appointmentId===a.id || q.id===a.queueId);
+        return {...a,status:normalizeStatus(linked?.status || a.status)};
+      });
+
+    if(selectedDateKey===todayKey){
+      const appointmentIds=new Set(all.map(a=>a.id));
+      queue.forEach(q=>{
+        if(q.appointmentId && appointmentIds.has(q.appointmentId)) return;
+        const eventTime=normalizeTimestamp(q.checkedInAt || q.createdAt || q.completedAt || q.updatedAt);
+        if(eventTime && toDateKey(new Date(eventTime))!==todayKey) return;
+        all.push({...q,status:normalizeStatus(q.status)});
+      });
+    }
+
+    const scoped=doctorFilter==="all" ? all : all.filter(r=>r.doctorId===doctorFilter);
     return {
-      total:all.filter(r=>!["cancelled","no-show"].includes(r.status)).length,
-      waiting:all.filter(r=>r.status==="waiting").length,
-      current:all.filter(r=>r.status==="in-progress").length,
-      completed:all.filter(r=>r.status==="completed").length,
+      total:scoped.filter(r=>!["cancelled","no-show"].includes(r.status)).length,
+      waiting:scoped.filter(r=>r.status==="waiting").length,
+      current:scoped.filter(r=>r.status==="in-progress").length,
+      completed:scoped.filter(r=>r.status==="completed").length,
     };
-  },[rows]);
+  },[appointments,queue,selectedDateKey,todayKey,doctorFilter]);
 
   function shiftDay(amount){ const d=new Date(selectedDate); d.setDate(d.getDate()+amount); setSelectedDateKey(toDateKey(d)); }
   async function run(id,fn){ try{setActionId(id);setError("");await fn()}catch(e){setToast({type:"error",message:e?.message||"تعذر تنفيذ العملية."})}finally{setActionId("")} }
@@ -164,11 +186,11 @@ export default function AppointmentsPage() {
         if(typeof module.startQueueVisit!=="function") throw new Error("خدمة بدء كشف مريض الانتظار غير موجودة في appointmentService.");
         result=await module.startQueueVisit({clinicId,queueItem:row});
       }
-      navigate(`/patients/${row.patientId}/visit/new`,{state:{appointmentId:result?.appointmentId||row.appointmentId||row.id||"",queueId:result?.queueId||row.queueId||row.id||"",source:row.kind==="appointment"?"appointment":"queue",fromQueue:row.kind==="queue"}});
+      navigate(`/patients/${row.patientId}/visit/new`,{state:{appointmentId:result?.appointmentId||row.appointmentId||row.id||"",queueId:result?.queueId||row.queueId||row.id||"",source:row.kind==="appointment"?"appointment":"queue"}});
     });
   }
   function resumeVisit(row){
-    navigate(`/patients/${row.patientId}/visit/new`,{state:{appointmentId:row.appointmentId || (row.kind==="appointment"?row.id:"") ,queueId:row.queueId || (row.kind==="queue"?row.id:""),source:row.kind==="appointment"?"appointment":"queue",fromQueue:row.kind==="queue"}});
+    navigate(`/patients/${row.patientId}/visit/new`,{state:{appointmentId:row.appointmentId || (row.kind==="appointment"?row.id:"") ,queueId:row.queueId || (row.kind==="queue"?row.id:""),source:row.kind==="appointment"?"appointment":"queue"}});
   }
   async function cancel(row){ if(row.kind!=="appointment")return; await run(row.rowId,async()=>{await cancelAppointment(clinicId,row.id);setToast({type:"success",message:"تم إلغاء الموعد."})}); }
   async function noShow(row){ if(row.kind!=="appointment")return; await run(row.rowId,async()=>{await markAppointmentNoShow(clinicId,row.id);setToast({type:"success",message:"تم تسجيل عدم الحضور."})}); }
@@ -183,26 +205,29 @@ export default function AppointmentsPage() {
       </div>
     </header>
 
-    <section className="day-controlbar">
-      <div className="date-switcher"><button onClick={()=>shiftDay(-1)} aria-label="اليوم السابق">‹</button><button className="date-main" onClick={()=>setSelectedDateKey(todayKey)}><CalendarDays size={16}/><span>{selectedDateKey===todayKey?"اليوم":formatFullDate(selectedDate)}</span></button><button onClick={()=>shiftDay(1)} aria-label="اليوم التالي">›</button></div>
-      <label className="today-search"><Search size={16}/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="ابحث باسم المريض أو الهاتف أو رقم الملف"/>{search&&<button onClick={()=>setSearch("")}><X size={14}/></button>}</label>
-      <label className="doctor-select"><Stethoscope size={15}/><select value={doctorFilter} onChange={e=>setDoctorFilter(e.target.value)}><option value="all">كل الأطباء</option>{doctors.map(d=><option key={d.id} value={d.id}>{d.name || d.fullName || "طبيب"}</option>)}</select></label>
-    </section>
+    <div className="today-clinical-workspace">
+      <aside className="today-status-rail">
+        <div className="rail-title"><span>LIVE DESK</span><strong>حالة العيادة</strong></div>
+        <div className="rail-metrics">
+          <button className={statusFilter==="all"?"active":""} onClick={()=>setStatusFilter("all")}><span>كل الحالات</span><strong>{stats.total}</strong></button>
+          <button className={statusFilter==="waiting"?"active warning":""} onClick={()=>setStatusFilter("waiting")}><span>الانتظار</span><strong>{stats.waiting}</strong></button>
+          <button className={statusFilter==="in-progress"?"active live":""} onClick={()=>setStatusFilter("in-progress")}><span>داخل الكشف</span><strong>{stats.current}</strong></button>
+          <button className={statusFilter==="completed"?"active done":""} onClick={()=>setStatusFilter("completed")}><span>تم الكشف</span><strong>{stats.completed}</strong></button>
+        </div>
+        <button className={statusFilter==="active"?"rail-now active": "rail-now"} onClick={()=>setStatusFilter("active")}><i/> العيادة الآن</button>
+        <div className="rail-note"><Clock3 size={15}/><span>الحالات تتحدث مباشرة مع الاستقبال وغرفة الكشف.</span></div>
+      </aside>
 
-    <section className="today-metrics">
-      <div><span>إجمالي اليوم</span><strong>{stats.total}</strong></div>
-      <div><span>في الانتظار</span><strong>{stats.waiting}</strong></div>
-      <div><span>داخل الكشف</span><strong>{stats.current}</strong></div>
-      <div><span>انتهى الكشف</span><strong>{stats.completed}</strong></div>
-    </section>
+      <section className="today-main-workspace">
+        <section className="day-controlbar">
+          <div className="date-switcher"><button onClick={()=>shiftDay(-1)} aria-label="اليوم السابق">‹</button><button className="date-main" onClick={()=>setSelectedDateKey(todayKey)}><CalendarDays size={16}/><span>{selectedDateKey===todayKey?"اليوم":formatFullDate(selectedDate)}</span></button><button onClick={()=>shiftDay(1)} aria-label="اليوم التالي">›</button></div>
+          <label className="today-search"><Search size={16}/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="ابحث باسم المريض أو الهاتف أو رقم الملف"/>{search&&<button onClick={()=>setSearch("")}><X size={14}/></button>}</label>
+          <label className="doctor-select"><Stethoscope size={15}/><select value={doctorFilter} onChange={e=>setDoctorFilter(e.target.value)}><option value="all">كل الأطباء</option>{doctors.map(d=><option key={d.id} value={d.id}>{d.name || d.fullName || "طبيب"}</option>)}</select></label>
+        </section>
 
-    <section className="flow-tabs">
-      {[['active','العيادة الآن'],['all','الكل'],['waiting','الانتظار'],['in-progress','داخل الكشف'],['completed','انتهى']].map(([v,l])=><button key={v} className={statusFilter===v?'active':''} onClick={()=>setStatusFilter(v)}>{l}</button>)}
-    </section>
+        {error&&<div className="today-error"><CircleAlert size={16}/><span>{error}</span></div>}
 
-    {error&&<div className="today-error"><CircleAlert size={16}/><span>{error}</span></div>}
-
-    <main className="today-board">
+        <main className="today-board">
       <div className="today-table-head"><span>الوقت</span><span>المريض</span><span>الطبيب</span><span>نوع الزيارة</span><span>الحالة</span><span>الإجراء</span></div>
       {rows.length===0 ? <div className="today-empty"><CalendarDays size={27}/><strong>لا توجد حالات مطابقة</strong><span>أضف المريض وحدد هل هو موجود الآن أم لديه موعد لاحق.</span></div> : rows.map(row=>{
         const meta=STATUS_META[row.status] || STATUS_META.scheduled;
@@ -212,20 +237,22 @@ export default function AppointmentsPage() {
           <button className="patient-cell" onClick={()=>openPatient(row)}><span className="patient-avatar">{getInitials(row.patientName)}</span><span><strong>{row.patientName || "مريض"}</strong><small>{row.patientPhone || row.patientCode || "بدون هاتف"}</small></span></button>
           <div className="doctor-cell"><strong>{row.doctorName || "غير محدد"}</strong><small>{row.source==='walk-in'||row.source==='walk_in'?'حضور مباشر':'موعد'}</small></div>
           <div className="type-cell">{row.type || "كشف"}</div>
-          <div><span className={`flow-status flow-${row.status}`}><i/>{meta.label}</span></div>
+          <div><span className={`flow-status flow-${row.status}`}><i/>{meta.label}</span>{row.status==='completed'&&row.visitPrice!==undefined&&<small className="row-billing-state">{Number(row.visitPrice||0).toLocaleString("ar-EG")} ج.م · {row.financeStatus==='paid'?'مدفوع':row.financeStatus==='partial'?'دفع جزئي':row.financeStatus==='free'?'مجاني':'غير مدفوع'}</small>}</div>
           <div className="row-actions">
             {busy ? <button className="main-row-action" disabled><LoaderCircle className="spin" size={15}/> جاري...</button> : <>
               {row.status==='scheduled'&&<button className="main-row-action" onClick={()=>checkIn(row)}><LogIn size={15}/> وصل العيادة</button>}
               {row.status==='waiting'&&<button className="main-row-action start" onClick={()=>startVisit(row)}><Stethoscope size={15}/> بدء الكشف</button>}
               {row.status==='in-progress'&&<button className="main-row-action current" onClick={()=>resumeVisit(row)}><ArrowUpLeft size={15}/> فتح الكشف</button>}
-              {row.status==='completed'&&<button className="main-row-action ghost" onClick={()=>openPatient(row)}><CheckCircle2 size={15}/> ملف المريض</button>}
+              {row.status==='completed'&&<><button className="main-row-action ghost" onClick={()=>openPatient(row)}><CheckCircle2 size={15}/> ملف المريض</button>{row.financeStatus!=='paid'&&row.financeStatus!=='free'&&<button className="main-row-action collect" onClick={()=>navigate("/finance")}><CreditCard size={15}/> تحصيل</button>}</>}
               {(row.status==='cancelled'||row.status==='no-show')&&<button className="main-row-action ghost" onClick={()=>openPatient(row)}>عرض الملف</button>}
             </>}
             {row.kind==='appointment'&&row.status==='scheduled'&&<div className="mini-actions"><button title="لم يحضر" onClick={()=>noShow(row)}>غياب</button><button title="إلغاء" onClick={()=>cancel(row)}>إلغاء</button></div>}
           </div>
         </article>
       })}
-    </main>
+        </main>
+      </section>
+    </div>
 
     <footer className="today-footer"><span><i/> تحديث مباشر من Firebase</span><span>الحجز، الوصول، الانتظار والكشف في مسار واحد</span></footer>
 

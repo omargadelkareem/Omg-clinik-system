@@ -47,7 +47,7 @@ const navigation = [
       },
 
       {
-        label: "المواعيد",
+        label: "عيادة اليوم",
         icon: CalendarDays,
         path: "/appointments",
 
@@ -64,17 +64,6 @@ const navigation = [
 
         permissions: [
           "patients_basic",
-        ],
-      },
-
-      {
-        label: "قائمة الانتظار",
-        icon: ListOrdered,
-        path: "/queue",
-
-        permissions: [
-          "queue",
-          "checkin",
         ],
       },
 

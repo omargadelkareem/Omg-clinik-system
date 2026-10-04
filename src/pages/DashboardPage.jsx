@@ -290,14 +290,14 @@ export default function DashboardPage() {
 
     {
       label:
-        "قائمة الانتظار",
+        "عيادة اليوم",
 
       icon:
         Clock3,
 
       action: () =>
         navigate(
-          "/queue"
+          "/appointments"
         ),
     },
 
@@ -796,7 +796,7 @@ export default function DashboardPage() {
                       }
                       onClick={() =>
                         navigate(
-                          "/queue"
+                          "/appointments"
                         )
                       }
                       className="live-queue-line"
@@ -839,7 +839,7 @@ export default function DashboardPage() {
             className="manage-floor"
             onClick={() =>
               navigate(
-                "/queue"
+                "/appointments"
               )
             }
           >

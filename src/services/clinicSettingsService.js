@@ -36,6 +36,10 @@ export const DEFAULT_CLINIC_SETTINGS = {
     consultationPrice: 0,
     followupPrice: 0,
     followupDays: 14,
+    procedureDefaultPrice: 0,
+    homeVisitPrice: 0,
+    discountLimitPercent: 20,
+    currency: "EGP",
   },
 
   appointments: {
@@ -120,6 +124,10 @@ function normalizeSettings(data = {}) {
         data?.pricing?.followupDays,
         DEFAULT_CLINIC_SETTINGS.pricing.followupDays
       ),
+      procedureDefaultPrice: normalizeNumber(data?.pricing?.procedureDefaultPrice,0),
+      homeVisitPrice: normalizeNumber(data?.pricing?.homeVisitPrice,0),
+      discountLimitPercent: normalizeNumber(data?.pricing?.discountLimitPercent,20),
+      currency: data?.pricing?.currency || "EGP",
     },
 
     appointments: {
@@ -489,6 +497,10 @@ export async function updateClinicPricing({
   consultationPrice,
   followupPrice,
   followupDays,
+  procedureDefaultPrice = 0,
+  homeVisitPrice = 0,
+  discountLimitPercent = 20,
+  currency = "EGP",
   updatedBy = "",
   updatedByName = "",
 }) {
@@ -544,6 +556,10 @@ export async function updateClinicPricing({
 
       followupDays:
         days,
+      procedureDefaultPrice: normalizeNumber(procedureDefaultPrice, 0),
+      homeVisitPrice: normalizeNumber(homeVisitPrice, 0),
+      discountLimitPercent: normalizeNumber(discountLimitPercent, 20),
+      currency: currency || "EGP",
     }
   );
 

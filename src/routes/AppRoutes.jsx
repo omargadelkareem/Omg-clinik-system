@@ -1,5 +1,6 @@
 import {
   BrowserRouter,
+  Navigate,
   Route,
   Routes,
 } from "react-router-dom";
@@ -11,8 +12,6 @@ import AppointmentsPage from "../pages/appointments/AppointmentsPage";
 import PatientsPage from "../pages/patients/PatientsPage";
 import PatientProfilePage from "../pages/patients/PatientProfilePage";
 import NewVisitPage from "../pages/visits/NewVisitPage";
-import QueuePage from "../pages/queue/QueuePage";
-import PlaceholderPage from "../pages/PlaceholderPage";
 import PrescriptionsPage from "../pages/prescriptions/PrescriptionsPage";
 import DrugLibraryPage from "../pages/drugs/DrugLibraryPage";
 import FinancePage from "../pages/finance/FinancePage";
@@ -54,79 +53,133 @@ export default function AppRoutes() {
 
           <Route
             path="appointments"
-            element={<AppointmentsPage />}
+            element={
+              <ProtectedRoute permissions={["appointments_view"]}>
+                <AppointmentsPage />
+              </ProtectedRoute>
+            }
           />
 
           <Route
             path="patients"
-            element={<PatientsPage />}
+            element={
+              <ProtectedRoute permissions={["patients_basic"]}>
+                <PatientsPage />
+              </ProtectedRoute>
+            }
           />
 
           <Route
             path="patients/:patientId"
-            element={<PatientProfilePage />}
+            element={
+              <ProtectedRoute permissions={["patients_basic"]}>
+                <PatientProfilePage />
+              </ProtectedRoute>
+            }
           />
 
             <Route
             path="representatives"
             element={
-              <RepresentativeVisitsPage />
+              <ProtectedRoute permissions={["visits"]}>
+                <RepresentativeVisitsPage />
+              </ProtectedRoute>
             }
           />
 
           <Route
             path="patients/:patientId/visit/new"
-            element={<NewVisitPage />}
+            element={
+              <ProtectedRoute permissions={["visits"]}>
+                <NewVisitPage />
+              </ProtectedRoute>
+            }
           />
 
           <Route
             path="queue"
-            element={<QueuePage />}
+            element={<Navigate to="/appointments" replace />}
           />
 
        <Route
   path="visits"
-  element={<VisitsPage />}
+  element={
+    <ProtectedRoute permissions={["visits", "medical_history"]}>
+      <VisitsPage />
+    </ProtectedRoute>
+  }
 />
 
           <Route
             path="prescriptions"
-            element={<PrescriptionsPage />}
+            element={
+              <ProtectedRoute permissions={["prescriptions"]}>
+                <PrescriptionsPage />
+              </ProtectedRoute>
+            }
           />
 
           <Route
             path="drugs"
-            element={<DrugLibraryPage />}
+            element={
+              <ProtectedRoute permissions={["drug_library"]}>
+                <DrugLibraryPage />
+              </ProtectedRoute>
+            }
           />
 
         <Route
   path="medical-files"
-  element={<MedicalFilesPage />}
+  element={
+    <ProtectedRoute permissions={["medical_files"]}>
+      <MedicalFilesPage />
+    </ProtectedRoute>
+  }
 />
 
           <Route
             path="whatsapp"
-            element={<WhatsAppPage />}
+            element={
+              <ProtectedRoute permissions={["medical_files"]}>
+                <WhatsAppPage />
+              </ProtectedRoute>
+            }
           />
 
           <Route
             path="finance"
-            element={<FinancePage />}
+            element={
+              <ProtectedRoute permissions={["finance"]}>
+                <FinancePage />
+              </ProtectedRoute>
+            }
           />
 
           <Route
             path="reports"
-            element={<ReportsPage />}
+            element={
+              <ProtectedRoute permissions={["reports"]}>
+                <ReportsPage />
+              </ProtectedRoute>
+            }
           />
 
           <Route
             path="staff"
-            element={<StaffPage />}
+            element={
+              <ProtectedRoute permissions={["staff"]}>
+                <StaffPage />
+              </ProtectedRoute>
+            }
           />
 
           <Route
             path="settings"
-            element={<SettingsPage />}
+            element={
+              <ProtectedRoute permissions={["settings"]}>
+                <SettingsPage />
+              </ProtectedRoute>
+            }
           />
         </Route>
       </Routes>

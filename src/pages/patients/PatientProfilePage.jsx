@@ -18,10 +18,18 @@ import {
   Phone,
   Pill,
   Plus,
+  Receipt,
   Stethoscope,
   UserRound,
   CheckCircle2,
   X,
+  Activity,
+  CreditCard,
+  ClipboardList,
+  History,
+  Image,
+  ShieldAlert,
+  WalletCards,
 } from "lucide-react";
 
 import {
@@ -46,6 +54,10 @@ import {
   subscribePatientVisits,
   subscribePatientPrescriptions,
 } from "../../services/visitService";
+
+import { subscribeDentalTwin, buildDentalInsights } from "../../services/dentalService";
+import { subscribePatientFinance } from "../../services/patientFinanceService";
+import Dental3DViewer from "../visits/Dental3DViewer";
 
 import "./PatientProfilePage.css";
 
@@ -362,6 +374,9 @@ export default function PatientProfilePage() {
     "summary"
   );
 
+  const [dentalTwin, setDentalTwin] = useState(null);
+  const [patientFinance, setPatientFinance] = useState({transactions:[],payments:[],summary:{billed:0,paid:0,remaining:0,invoices:0}});
+
   const [
     patientLoading,
     setPatientLoading,
@@ -614,6 +629,26 @@ export default function PatientProfilePage() {
     patientId,
   ]);
 
+  useEffect(() => {
+    if (!clinicId || !patientId) return;
+    return subscribeDentalTwin(
+      clinicId,
+      patientId,
+      setDentalTwin,
+      (subscriptionError) => console.error("Patient dental twin error:", subscriptionError)
+    );
+  }, [clinicId, patientId]);
+
+  useEffect(() => {
+    if (!clinicId || !patientId) return;
+    return subscribePatientFinance(
+      clinicId,
+      patientId,
+      setPatientFinance,
+      (subscriptionError) => console.error("Patient finance error:", subscriptionError)
+    );
+  }, [clinicId, patientId]);
+
   /* ======================================================
      SUCCESS MESSAGE
      ====================================================== */
@@ -708,33 +743,14 @@ export default function PatientProfilePage() {
     );
 
   const tabs = [
-    {
-      id: "summary",
-      label: "الملخص",
-    },
-
-    {
-      id: "visits",
-      label: "الزيارات",
-      count:
-        chart.visits.length,
-    },
-
-    {
-      id: "prescriptions",
-      label: "الروشتات",
-      count:
-        chart.prescriptions
-          .length,
-    },
-
-    {
-      id: "files",
-      label: "الملفات",
-      count:
-        chart.medicalFiles
-          .length,
-    },
+    { id: "summary", label: "نظرة عامة" },
+    { id: "timeline", label: "السجل الطبي", count: chart.visits.length + chart.prescriptions.length + chart.medicalFiles.length },
+    { id: "visits", label: "الكشوفات", count: chart.visits.length },
+    { id: "prescriptions", label: "الروشتات", count: chart.prescriptions.length },
+    { id: "files", label: "التحاليل والأشعة", count: chart.medicalFiles.length },
+    { id: "appointments", label: "المواعيد", count: chart.appointments.length },
+    { id: "billing", label: "الحساب", count: patientFinance.transactions.length },
+    ...(dentalTwin ? [{ id: "dental", label: "ملف الأسنان" }] : []),
   ];
 
   const loadingChart =
@@ -1065,7 +1081,10 @@ export default function PatientProfilePage() {
           TABS
           ================================================ */}
 
-      <nav className="chart-tabs">
+      <div className="patient-chart-workspace">
+        <aside className="patient-chart-rail">
+          <div className="patient-rail-title"><span>PATIENT CHART</span><strong>الملف الطبي</strong></div>
+                <nav className="chart-tabs chart-tabs-rail">
         {tabs.map(
           (tab) => (
             <button
@@ -1101,6 +1120,15 @@ export default function PatientProfilePage() {
           CONTENT
           ================================================ */}
 
+
+          <div className="patient-rail-quick">
+            <span>إجراءات سريعة</span>
+            <button type="button" onClick={() => navigate(`/patients/${patient.id}/visit/new`)}><Stethoscope size={14}/> بدء كشف جديد</button>
+            {patient.phone && <a href={`tel:${patient.phone}`}><Phone size={14}/> اتصال بالمريض</a>}
+          </div>
+        </aside>
+
+        <section className="patient-chart-main">
       <main className="chart-content">
 
         {loadingChart ? (
@@ -1117,17 +1145,7 @@ export default function PatientProfilePage() {
           <>
             {activeTab ===
               "summary" && (
-              <SummaryTab
-                patient={
-                  patient
-                }
-                chart={
-                  chart
-                }
-                navigate={
-                  navigate
-                }
-              />
+              <SummaryTab patient={patient} chart={chart} navigate={navigate} dentalTwin={dentalTwin} patientFinance={patientFinance} />
             )}
 
             {activeTab ===
@@ -1162,10 +1180,28 @@ export default function PatientProfilePage() {
                 }
               />
             )}
+
+            {activeTab === "timeline" && (
+              <PatientTimeline chart={chart} />
+            )}
+
+            {activeTab === "appointments" && (
+              <AppointmentsTab appointments={chart.appointments} />
+            )}
+
+            {activeTab === "billing" && (
+              <PatientBillingLedger finance={patientFinance} navigate={navigate} />
+            )}
+
+            {activeTab === "dental" && dentalTwin && (
+              <PatientDentalRecord twin={dentalTwin} />
+            )}
           </>
         )}
 
       </main>
+        </section>
+      </div>
     </div>
   );
 }
@@ -1178,11 +1214,29 @@ function SummaryTab({
   patient,
   chart,
   navigate,
+  dentalTwin,
+  patientFinance,
 }) {
   const latest =
     chart.latestVisit;
 
+  const latestVitals = latest?.vitals || {};
+  const openFiles = chart.medicalFiles.filter(file => !["reviewed","completed"].includes(file.status)).length;
+  const completedAppointments = chart.appointments.filter(item => item.status === "completed").length;
+  const totalVisitValue = chart.visits.reduce((sum, visit) => sum + (Number(visit.visitPrice || visit.servicePrice) || 0), 0);
+  const dentalInsights = buildDentalInsights(dentalTwin);
+
   return (
+    <>
+    <section className="patient-command-strip">
+      <div><span>آخر زيارة</span><strong>{latest ? formatDate(latest.completedAt || latest.createdAt) : "لا توجد"}</strong><small>{latest?.doctorName || "—"}</small></div>
+      <div><span>إجمالي الكشوفات</span><strong>{chart.visits.length}</strong><small>{completedAppointments} موعد مكتمل</small></div>
+      <div><span>طلبات طبية مفتوحة</span><strong>{openFiles}</strong><small>تحاليل / أشعة / ملفات</small></div>
+      <div><span>إجمالي الحساب</span><strong>{Number(patientFinance?.summary?.billed||totalVisitValue).toLocaleString("ar-EG")} ج.م</strong><small>مدفوع ${Number(patientFinance?.summary?.paid||0).toLocaleString("ar-EG")} ج.م</small></div>
+      <div className={patientFinance?.summary?.remaining>0?"command-debt":""}><span>المبلغ المتبقي</span><strong>{Number(patientFinance?.summary?.remaining||0).toLocaleString("ar-EG")} ج.م</strong><small>{patientFinance?.summary?.remaining>0?"مطلوب تحصيله":"الحساب مسدد"}</small></div>
+      {dentalTwin && <div><span>خطة الأسنان المتبقية</span><strong>{dentalInsights.remaining.toLocaleString("ar-EG")} ج.م</strong><small>{dentalInsights.openPlans} إجراء مفتوح</small></div>}
+    </section>
+
     <div className="chart-summary">
 
       <section className="chart-main-column">
@@ -1281,6 +1335,18 @@ function SummaryTab({
       </aside>
 
     </div>
+
+    <section className="clinical-overview-ledger">
+      <div className="ledger-title"><div><Activity size={16}/><span>آخر قياسات مسجلة</span></div><small>من آخر كشف</small></div>
+      <div className="ledger-vitals">
+        <Vital label="الضغط" value={latestVitals.bloodPressure || latestVitals.pressure} />
+        <Vital label="النبض" value={latestVitals.pulse} />
+        <Vital label="الحرارة" value={latestVitals.temperature} />
+        <Vital label="الأكسجين" value={latestVitals.oxygen ? `${latestVitals.oxygen}%` : "—"} />
+        <Vital label="الوزن" value={latestVitals.weight} />
+      </div>
+    </section>
+    </>
   );
 }
 
@@ -1882,17 +1948,9 @@ function VisitsTab({
                 </div>
 
                 <div className="record-copy">
-                  <strong>
-                    {visit.diagnosis ||
-                      visit.complaint ||
-                      "زيارة طبية"}
-                  </strong>
-
-                  <span>
-                    {visit.doctorName
-                      ? `بواسطة ${visit.doctorName}`
-                      : "زيارة مكتملة"}
-                  </span>
+                  <strong>{visit.diagnosis || visit.complaint || "زيارة طبية"}</strong>
+                  <span>{visit.doctorName ? `بواسطة ${visit.doctorName}` : "زيارة مكتملة"}</span>
+                  <span className="visit-billing-inline">{visit.visitTypeLabel || "كشف"} · {Number(visit.visitPrice||0).toLocaleString("ar-EG")} ج.م · {visit.financeStatus==="paid"?"مدفوع":visit.financeStatus==="partial"?"دفع جزئي":visit.financeStatus==="free"?"مجاني":visit.financeStatus==="error"?"خطأ بالفاتورة":"غير مدفوع"}{visit.invoiceNumber?` · ${visit.invoiceNumber}`:""}</span>
                 </div>
 
                 {visit.medicines &&
@@ -2232,4 +2290,70 @@ function RecordsEmpty({
       </span>
     </div>
   );
+}
+/* ======================================================
+   COMPLETE PATIENT RECORD
+   ====================================================== */
+
+function PatientTimeline({ chart }) {
+  const events = [
+    ...chart.visits.map(item => ({...item,_kind:"visit",_time:item.completedAt||item.createdAt})),
+    ...chart.prescriptions.map(item => ({...item,_kind:"rx",_time:item.createdAt})),
+    ...chart.medicalFiles.map(item => ({...item,_kind:"file",_time:item.uploadedAt||item.createdAt})),
+    ...chart.appointments.map(item => ({...item,_kind:"appointment",_time:item.completedAt||item.createdAt||item.date})),
+  ].sort((a,b)=>new Date(b._time||0)-new Date(a._time||0));
+
+  const labels={visit:"كشف طبي",rx:"روشتة",file:"تحليل / أشعة",appointment:"موعد"};
+  return <section className="patient-ledger-section">
+    <div className="records-heading"><div><h2>السجل الطبي الكامل</h2><p>كل ما حدث للمريض مرتب زمنيًا في مكان واحد</p></div></div>
+    {!events.length?<RecordsEmpty icon={History} title="لا يوجد سجل طبي" text="ستظهر الزيارات والروشتات والملفات والمواعيد هنا تلقائيًا."/>:
+    <div className="patient-master-timeline">{events.map((event,index)=><article key={event.id+"-"+event._kind+"-"+index}>
+      <div className={"timeline-kind kind-"+event._kind}>{event._kind==="visit"?<Stethoscope size={15}/>:event._kind==="rx"?<Pill size={15}/>:event._kind==="file"?<FlaskConical size={15}/>:<CalendarDays size={15}/>}</div>
+      <div className="timeline-date"><strong>{formatDate(event._time)}</strong><span>{formatTime(event._time)}</span></div>
+      <div className="timeline-body"><span>{labels[event._kind]}</span><strong>{event.diagnosis||event.name||event.fileName||event.type||"سجل طبي"}</strong><p>{event.doctorName ? "د. "+event.doctorName : event.notes||event.instructions||""}</p></div>
+      <div className="timeline-state">{event.status||"مسجل"}</div>
+    </article>)}</div>}
+  </section>;
+}
+
+function AppointmentsTab({ appointments=[] }) {
+  const statusLabel={confirmed:"مؤكد",arrived:"وصل",waiting:"انتظار","in-progress":"داخل الكشف",completed:"تم الكشف",cancelled:"ملغي","no-show":"لم يحضر"};
+  return <section className="patient-ledger-section">
+    <div className="records-heading"><div><h2>المواعيد والحضور</h2><p>تاريخ الحجز والوصول والكشف وعدم الحضور</p></div></div>
+    {!appointments.length?<RecordsEmpty icon={CalendarDays} title="لا توجد مواعيد" text="لم يتم تسجيل مواعيد لهذا المريض."/>:
+    <div className="appointments-ledger">{appointments.map(item=><article key={item.id}>
+      <div className="appointment-date-box"><strong>{formatDate(item.date||item.startAt||item.createdAt)}</strong><span>{formatTime(item.time||item.startAt)}</span></div>
+      <div><strong>{item.type||"كشف"}</strong><span>{item.doctorName ? "د. "+item.doctorName : "طبيب غير محدد"}</span></div>
+      <span className={"appointment-status status-"+item.status}>{statusLabel[item.status]||item.status||"مسجل"}</span>
+    </article>)}</div>}
+  </section>;
+}
+
+function PatientDentalRecord({ twin }) {
+  const insights=buildDentalInsights(twin);
+  const snapshots=Object.values(twin.snapshots||{}).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+  const plan=Array.isArray(twin.treatmentPlan)?twin.treatmentPlan:Object.values(twin.treatmentPlan||{});
+  const media=Array.isArray(twin.media)?twin.media:Object.values(twin.media||{});
+  return <section className="patient-ledger-section dental-record-file">
+    <div className="records-heading"><div><h2>ملف الأسنان</h2><p>الحالة الحالية، خطة العلاج، الصور والتاريخ السني للمريض</p></div></div>
+    <div className="dental-record-metrics"><div><span>أسنان تحتاج متابعة</span><strong>{insights.affected}</strong></div><div><span>إجراءات مفتوحة</span><strong>{insights.openPlans}</strong></div><div><span>قيمة الخطة</span><strong>{insights.planValue.toLocaleString("ar-EG")} ج.م</strong></div><div><span>المتبقي</span><strong>{insights.remaining.toLocaleString("ar-EG")} ج.م</strong></div></div>
+    <div className="patient-dental-grid"><div className="patient-dental-model"><div className="ledger-title"><div><Activity size={16}/><span>Dental Digital Twin</span></div><small>الحالة الحالية</small></div><Dental3DViewer value={twin.currentChart||{}}/></div>
+    <div className="patient-dental-side"><div className="ledger-title"><div><ClipboardList size={16}/><span>خطة العلاج</span></div><small>{plan.length} إجراء</small></div>{!plan.length?<div className="side-empty">لا توجد خطة علاج</div>:plan.map((item,i)=><div className="dental-plan-line" key={item.id||i}><div><strong>{item.procedure||item.name||"إجراء"}</strong><span>{item.tooth ? "السن "+item.tooth : "—"} · {item.status||"planned"}</span></div><b>{Number(item.cost||0).toLocaleString("ar-EG")} ج.م</b></div>)}</div></div>
+    <div className="dental-file-bottom"><div><div className="ledger-title"><div><History size={16}/><span>Snapshots</span></div><small>{snapshots.length}</small></div>{snapshots.slice(0,5).map(s=><div className="plain-ledger-line" key={s.id}><strong>{formatDate(s.createdAt)}</strong><span>{s.doctorName||"الطبيب"}</span></div>)}</div><div><div className="ledger-title"><div><Image size={16}/><span>الأشعة والصور</span></div><small>{media.length}</small></div>{media.slice(0,5).map((m,i)=><div className="plain-ledger-line" key={m.id||i}><strong>{m.type||"Dental image"}</strong><span>{m.tooth ? "السن "+m.tooth : "عام"} · {m.stage||"diagnostic"}</span></div>)}</div></div>
+  </section>;
+}
+
+function PatientBillingLedger({ finance, navigate }) {
+  const {transactions=[],payments=[],summary={}}=finance||{};
+  const money=value=>Number(value||0).toLocaleString("ar-EG",{maximumFractionDigits:2});
+  const status={paid:"مدفوع",partial:"مدفوع جزئيًا",unpaid:"غير مدفوع",refunded:"مسترد",cancelled:"ملغي"};
+  return <section className="patient-ledger-section patient-billing-ledger">
+    <div className="records-heading"><div><h2>حساب المريض</h2><p>الفواتير، المدفوعات، المبالغ المتبقية وسجل التحصيل</p></div><button type="button" onClick={()=>navigate("/finance")}><WalletCards size={16}/> فتح المالية</button></div>
+    <div className="billing-summary-strip"><div><span>إجمالي الفواتير</span><strong>{money(summary.billed)} ج.م</strong><small>{summary.invoices||0} فاتورة</small></div><div><span>إجمالي المدفوع</span><strong>{money(summary.paid)} ج.م</strong><small>{payments.length} عملية تحصيل</small></div><div className={summary.remaining>0?"due":""}><span>المتبقي</span><strong>{money(summary.remaining)} ج.م</strong><small>{summary.partial||0} دفع جزئي · {summary.unpaid||0} غير مدفوع</small></div></div>
+    {!transactions.length?<RecordsEmpty icon={Receipt} title="لا توجد فواتير" text="عند إنهاء كشف بسعر أكبر من صفر ستظهر الفاتورة هنا تلقائيًا."/>:<div className="billing-table">
+      <div className="billing-table-head"><span>الفاتورة</span><span>الخدمة</span><span>القيمة</span><span>المدفوع</span><span>المتبقي</span><span>الحالة</span></div>
+      {transactions.map(item=><article key={item.id}><div><strong>{item.invoiceNumber||"—"}</strong><small>{formatDate(item.createdAt)}</small></div><div><strong>{item.serviceName||item.serviceType||"خدمة"}</strong><small>{item.doctorName||"—"}</small></div><b>{money(item.amount)} ج.م</b><b>{money(item.paid)} ج.م</b><b className={Number(item.remaining)>0?"debt":""}>{money(item.remaining)} ج.م</b><span className={"bill-state "+item.status}>{status[item.status]||item.status}</span></article>)}
+    </div>}
+    {payments.length>0&&<div className="payment-history"><div className="ledger-title"><div><CreditCard size={16}/><span>سجل المدفوعات</span></div><small>{payments.length} عملية</small></div>{payments.slice(0,12).map(p=><div className="payment-history-line" key={p.id}><div><strong>{p.receiptNumber||"إيصال"}</strong><span>{formatDate(p.paidAt||p.createdAt)} · {p.methodLabel||p.method||"دفع"}</span></div><b>{money(p.amount)} ج.م</b></div>)}</div>}
+  </section>;
 }

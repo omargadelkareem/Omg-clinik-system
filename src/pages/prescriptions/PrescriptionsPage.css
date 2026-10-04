@@ -1326,3 +1326,5 @@
     print-color-adjust: exact !important;
   }
 }
+/* OMG Clinical v2 */
+.rx-page{background:#f4f7f6;color:#23494f}.rx-page-header{min-height:78px;padding:14px 24px;border-color:#dbe4e2}.rx-eyebrow{font-size:8px;color:#71888a}.rx-page-header h1{font-size:22px;color:#1c454b}.rx-page-header p{font-size:9px}.rx-header-stat{height:40px}.rx-header-stat span{font-size:7px}.rx-header-stat strong{font-size:14px;color:#31575d}.rx-settings-button{height:34px!important;border-radius:5px!important;font-size:9px!important}.rx-workspace{border-color:#dbe5e3!important}.rx-archive{background:#f9fbfa!important}.rx-search{border-radius:5px!important}.rx-list button{border-radius:0!important}.rx-main-toolbar{min-height:53px!important}.rx-current-patient strong{font-size:10px!important}.rx-patient-avatar,.rx-small-avatar{border-radius:6px!important}.rx-paper-area{background:#eef3f2!important}.rx-details{border-color:#dbe5e3!important}

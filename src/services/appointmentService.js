@@ -337,6 +337,15 @@ export function subscribeAppointmentDoctors(
               role:
                 member.role ||
                 "doctor",
+
+              consultationPrice:
+                Number(member.consultationPrice || 0),
+
+              followupPrice:
+                Number(member.followupPrice || 0),
+
+              followupDays:
+                Number(member.followupDays ?? 14),
             })
           );
 
@@ -440,6 +449,18 @@ export async function createAppointment({
       cleanText(
         doctor?.specialty
       ),
+
+    doctorPricingSnapshot: {
+      consultationPrice: Number(doctor?.consultationPrice || 0),
+      followupPrice: Number(doctor?.followupPrice || 0),
+      followupDays: Number(doctor?.followupDays ?? 14),
+      capturedAt: Date.now(),
+    },
+
+    expectedPrice:
+      cleanText(type).includes("إعادة")
+        ? Number(doctor?.followupPrice || 0)
+        : Number(doctor?.consultationPrice || 0),
 
     date:
       cleanText(date),
@@ -574,6 +595,15 @@ export async function createPatientAndAppointment({
       cleanText(
         patientData?.gender
       ),
+
+    age:
+      patientData?.age === "" ||
+      patientData?.age == null
+        ? null
+        : Math.max(0, Math.min(120, Number(patientData.age) || 0)),
+
+    ageRecordedAt:
+      serverTimestamp(),
 
     dateOfBirth:
       cleanText(
@@ -1038,6 +1068,15 @@ export async function createPatientAndWalkIn({
         patientData?.gender
       ),
 
+    age:
+      patientData?.age === "" ||
+      patientData?.age == null
+        ? null
+        : Math.max(0, Math.min(120, Number(patientData.age) || 0)),
+
+    ageRecordedAt:
+      serverTimestamp(),
+
     dateOfBirth:
       cleanText(
         patientData?.dateOfBirth
@@ -1091,7 +1130,8 @@ export async function createPatientAndWalkIn({
 export function subscribeQueue(
   clinicId,
   callback,
-  onError
+  onError,
+  { includeCompleted = false, includeCancelled = false } = {}
 ) {
   if (!clinicId) {
     callback?.([]);
@@ -1114,10 +1154,10 @@ export function subscribeQueue(
         )
           .filter(
             (item) =>
-              item.status !==
-              "completed" &&
-              item.status !==
-              "cancelled"
+              (includeCompleted ||
+                item.status !== "completed") &&
+              (includeCancelled ||
+                item.status !== "cancelled")
           )
           .sort(
             (a, b) =>

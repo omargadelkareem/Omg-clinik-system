@@ -433,3 +433,5 @@ button {
     display: none;
   }
 }
+/* OMG Clinical v2 */
+.login-page{grid-template-columns:42% 58%;background:#f4f7f6}.login-brand-panel{padding:44px 54px;background:#173f45}.brand-logo-icon{width:42px;height:42px;border-radius:7px;background:#245b61;box-shadow:none}.brand-name{font-size:22px}.login-page input{border-radius:5px!important}.login-page button{border-radius:5px!important;box-shadow:none!important}

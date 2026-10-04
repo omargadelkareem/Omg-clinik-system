@@ -1737,3 +1737,5 @@ button:disabled {
     grid-template-columns: 1fr 1fr 40px;
   }
 }
+/* OMG Clinical v2 */
+.staff-page{background:#f4f7f6;color:#23494f;font-size:12px}.staff-header{min-height:80px;padding:15px 25px;border-color:#dbe4e2}.staff-eyebrow{font-size:8px;color:#71888a}.staff-header h1{font-size:23px;color:#1c454b}.staff-header p{font-size:10px}.add-team-member{height:35px;padding:0 12px;border-color:#245b61;border-radius:5px;background:#245b61;font-size:9px}.team-overview{border-color:#dbe5e3!important;box-shadow:none!important}.staff-page input,.staff-page select,.staff-page textarea{border-radius:5px!important;border-color:#dbe4e2!important}.staff-page button{box-shadow:none!important}

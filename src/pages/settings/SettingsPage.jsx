@@ -1802,6 +1802,21 @@ function PricingSettings({
         </div>
 
         <div className="price-line">
+          <span><Receipt size={20}/><b>إجراء طبي افتراضي<small>قيمة افتراضية للإجراءات التي لم يحدد لها سعر مستقل</small></b></span>
+          <label><input type="number" min="0" step="1" value={settings.procedureDefaultPrice||0} onChange={event=>update("procedureDefaultPrice",event.target.value)}/><strong>ج.م</strong></label>
+        </div>
+
+        <div className="price-line">
+          <span><Stethoscope size={20}/><b>زيارة منزلية<small>السعر الافتراضي للزيارة خارج العيادة</small></b></span>
+          <label><input type="number" min="0" step="1" value={settings.homeVisitPrice||0} onChange={event=>update("homeVisitPrice",event.target.value)}/><strong>ج.م</strong></label>
+        </div>
+
+        <div className="price-line">
+          <span><Wallet size={20}/><b>أقصى خصم مسموح<small>حد إداري مرجعي للخصم على الخدمات</small></b></span>
+          <label><input type="number" min="0" max="100" step="1" value={settings.discountLimitPercent??20} onChange={event=>update("discountLimitPercent",event.target.value)}/><strong>%</strong></label>
+        </div>
+
+        <div className="price-line">
           <span>
             <Clock3
               size={20}
