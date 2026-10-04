@@ -2631,21 +2631,116 @@ function ObgynWorkspace({ data, updateSpecialtyField }) {
 }
 
 function DentistryWorkspace({ data, updateSpecialtyField }) {
+  const chart = data.dentalChart || {};
+  const treatmentPlan = data.treatmentPlanItems || [];
+
+  const addTreatment = (item) => {
+    updateSpecialtyField("treatmentPlanItems", [
+      ...treatmentPlan,
+      {
+        id: `dental-${Date.now()}`,
+        tooth: item.tooth,
+        procedure: item.procedure || "إجراء علاجي",
+        status: "planned",
+        cost: "",
+      },
+    ]);
+  };
+
+  const updateTreatment = (id, field, value) => {
+    updateSpecialtyField(
+      "treatmentPlanItems",
+      treatmentPlan.map((item) =>
+        item.id === id ? { ...item, [field]: value } : item
+      )
+    );
+  };
+
+  const removeTreatment = (id) => {
+    updateSpecialtyField(
+      "treatmentPlanItems",
+      treatmentPlan.filter((item) => item.id !== id)
+    );
+  };
+
   return (
-    <>
-      <VisitSection title="كشف الأسنان">
-        <SpecialtyGrid>
-          <SpecialtyTextarea label="التاريخ السني" value={data.dentalHistory || ""} placeholder="الخلع، الحشو، التركيبات والعلاجات السابقة..." onChange={(value) => updateSpecialtyField("dentalHistory", value)} />
-          <SpecialtyTextarea label="فحص الفم والأسنان" value={data.oralExamination || ""} placeholder="نتيجة فحص الأسنان واللثة..." onChange={(value) => updateSpecialtyField("oralExamination", value)} />
-          <SpecialtyTextarea label="الإجراءات" value={data.dentalProcedures || ""} placeholder="الإجراء الذي تم أو المطلوب..." onChange={(value) => updateSpecialtyField("dentalProcedures", value)} />
-          <SpecialtyTextarea label="خطة العلاج" value={data.treatmentPlan || ""} placeholder="خطة العلاج والجلسات..." onChange={(value) => updateSpecialtyField("treatmentPlan", value)} />
-        </SpecialtyGrid>
+    <div className="dental-workspace">
+      <div className="dental-hero">
+        <div>
+          <span className="dental-eyebrow">DENTAL WORKSPACE</span>
+          <h3>خريطة الأسنان وخطة العلاج</h3>
+          <p>حدد السن ثم سجّل حالته أو أضف إجراءً لخطة العلاج مباشرة.</p>
+        </div>
+
+        <div className="dental-hero-stats">
+          <div><strong>{Object.keys(chart).length}</strong><span>أسنان مسجلة</span></div>
+          <div><strong>{treatmentPlan.length}</strong><span>إجراءات مخططة</span></div>
+        </div>
+      </div>
+
+      <VisitSection title="الخريطة السنية">
+        <DentalChart
+          value={chart}
+          onChange={(next) => updateSpecialtyField("dentalChart", next)}
+          onAddTreatment={addTreatment}
+        />
       </VisitSection>
 
-      <VisitSection title="Dental Chart">
-        <DentalChart value={data.dentalChart || {}} onChange={(chart) => updateSpecialtyField("dentalChart", chart)} />
+      <VisitSection title="خطة العلاج">
+        <DentalTreatmentPlan
+          items={treatmentPlan}
+          onChange={updateTreatment}
+          onRemove={removeTreatment}
+        />
       </VisitSection>
-    </>
+
+      <VisitSection title="التقييم السريري">
+        <SpecialtyGrid>
+          <SpecialtyTextarea label="التاريخ السني" value={data.dentalHistory || ""} placeholder="العلاجات السابقة، الحساسية، الخلع والتركيبات..." onChange={(value) => updateSpecialtyField("dentalHistory", value)} />
+          <SpecialtyTextarea label="فحص الفم واللثة" value={data.oralExamination || ""} placeholder="اللثة، الإطباق، الأنسجة الرخوة وملاحظات الفحص..." onChange={(value) => updateSpecialtyField("oralExamination", value)} />
+          <SpecialtyTextarea label="الإجراءات المنفذة اليوم" value={data.dentalProcedures || ""} placeholder="ما تم تنفيذه في الجلسة الحالية..." onChange={(value) => updateSpecialtyField("dentalProcedures", value)} />
+          <SpecialtyTextarea label="ملاحظات الخطة" value={data.treatmentPlan || ""} placeholder="ملاحظات عامة عن مراحل العلاج والجلسات..." onChange={(value) => updateSpecialtyField("treatmentPlan", value)} />
+        </SpecialtyGrid>
+      </VisitSection>
+    </div>
+  );
+}
+
+function DentalTreatmentPlan({ items = [], onChange, onRemove }) {
+  if (!items.length) {
+    return (
+      <div className="dental-plan-empty">
+        <span className="dental-plan-empty-icon">+</span>
+        <div>
+          <strong>خطة العلاج فارغة</strong>
+          <p>اختَر سنًا من الخريطة واضغط «إضافة لخطة العلاج».</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="dental-plan">
+      <div className="dental-plan-head">
+        <span>السن</span><span>الإجراء</span><span>الحالة</span><span>التكلفة</span><span />
+      </div>
+      {items.map((item) => (
+        <div className="dental-plan-row" key={item.id}>
+          <strong>{item.tooth}</strong>
+          <input value={item.procedure || ""} onChange={(e) => onChange(item.id, "procedure", e.target.value)} placeholder="الإجراء" />
+          <select value={item.status || "planned"} onChange={(e) => onChange(item.id, "status", e.target.value)}>
+            <option value="planned">مخطط</option>
+            <option value="in_progress">جاري</option>
+            <option value="completed">مكتمل</option>
+          </select>
+          <div className="dental-cost-input">
+            <input type="number" min="0" value={item.cost || ""} onChange={(e) => onChange(item.id, "cost", e.target.value)} placeholder="0" />
+            <span>ج.م</span>
+          </div>
+          <button type="button" onClick={() => onRemove(item.id)} aria-label="حذف الإجراء"><Trash2 size={15} /></button>
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -2696,40 +2791,103 @@ function SpecialtyInput({
   );
 }
 
-function DentalChart({ value = {}, onChange }) {
-  const teeth = [
-    18, 17, 16, 15, 14, 13, 12, 11,
-    21, 22, 23, 24, 25, 26, 27, 28,
-    48, 47, 46, 45, 44, 43, 42, 41,
-    31, 32, 33, 34, 35, 36, 37, 38,
+function ToothModel({ status = "healthy" }) {
+  return (
+    <svg className="tooth-model" viewBox="0 0 54 74" aria-hidden="true">
+      <path className="tooth-crown" d="M10 10C13 3 20 4 27 7C34 4 41 3 44 10C49 22 43 35 38 44C35 49 34 66 28 69C24 70 23 55 20 49C16 56 14 68 10 65C5 61 10 48 7 42C2 31 4 18 10 10Z" />
+      <path className="tooth-highlight" d="M15 12C18 8 22 9 27 11C32 9 36 8 39 12C41 16 41 22 39 27" />
+      <path className="tooth-root-line" d="M20 48C22 43 24 40 27 40C30 40 32 44 34 49" />
+      {status === "root_canal" && <path className="tooth-root-canal" d="M27 18V59" />}
+      {status === "implant" && <path className="tooth-implant" d="M27 40V66M21 48H33M22 54H32M23 60H31" />}
+      {status === "missing" && <path className="tooth-missing" d="M12 14L42 61M42 14L12 61" />}
+    </svg>
+  );
+}
+
+function DentalChart({ value = {}, onChange, onAddTreatment }) {
+  const [activeTooth, setActiveTooth] = React.useState(null);
+  const upper = [18,17,16,15,14,13,12,11,21,22,23,24,25,26,27,28];
+  const lower = [48,47,46,45,44,43,42,41,31,32,33,34,35,36,37,38];
+  const states = [
+    ["healthy","سليم"],
+    ["caries","تسوس"],
+    ["filling","حشو"],
+    ["root_canal","علاج جذور"],
+    ["crown","تاج"],
+    ["implant","زرعة"],
+    ["missing","مفقود"],
+    ["fracture","كسر"],
   ];
 
-  const toggleTooth = (tooth) => {
-    const key = String(tooth);
-    const next = { ...value };
+  const toothData = activeTooth ? value[String(activeTooth)] || { status: "healthy", note: "" } : null;
 
-    if (next[key]) {
-      delete next[key];
-    } else {
-      next[key] = { selected: true };
-    }
-
-    onChange(next);
+  const updateTooth = (patch) => {
+    if (!activeTooth) return;
+    const key=String(activeTooth);
+    onChange({ ...value, [key]: { ...value[key], status: "healthy", ...patch } });
   };
 
+  const renderJaw = (teeth, label) => (
+    <div className="dental-jaw">
+      <div className="dental-jaw-label">{label}</div>
+      <div className="dental-arch">
+        {teeth.map((tooth) => {
+          const status=value[String(tooth)]?.status || "healthy";
+          return (
+            <button
+              key={tooth}
+              type="button"
+              className={`dental-tooth dental-status-${status} ${activeTooth===tooth ? "active" : ""}`}
+              onClick={() => setActiveTooth(tooth)}
+              title={`السن ${tooth}`}
+            >
+              <ToothModel status={status} />
+              <strong>{tooth}</strong>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+
   return (
-    <div className="dental-chart">
-      {teeth.map((tooth) => (
-        <button
-          key={tooth}
-          type="button"
-          className={value[String(tooth)] ? "dental-tooth selected" : "dental-tooth"}
-          onClick={() => toggleTooth(tooth)}
-        >
-          <span>🦷</span>
-          <strong>{tooth}</strong>
-        </button>
-      ))}
+    <div className="odontogram">
+      <div className="odontogram-stage">
+        <div className="dental-orientation"><span>يمين المريض</span><span>يسار المريض</span></div>
+        {renderJaw(upper, "الفك العلوي")}
+        <div className="dental-midline"><span>FDI</span></div>
+        {renderJaw(lower, "الفك السفلي")}
+      </div>
+
+      <aside className={`dental-inspector ${activeTooth ? "open" : ""}`}>
+        {!activeTooth ? (
+          <div className="dental-inspector-empty">
+            <div className="mini-tooth"><ToothModel /></div>
+            <strong>اختَر سنًا</strong>
+            <p>اضغط على أي سن لعرض حالته وتسجيل الإجراء.</p>
+          </div>
+        ) : (
+          <>
+            <div className="dental-inspector-head">
+              <div className="mini-tooth"><ToothModel status={toothData.status} /></div>
+              <div><span>السن المحدد</span><strong>{activeTooth}</strong></div>
+            </div>
+            <label className="dental-inspector-label">حالة السن</label>
+            <div className="dental-state-grid">
+              {states.map(([key,label]) => (
+                <button key={key} type="button" className={toothData.status===key ? "selected" : ""} onClick={() => updateTooth({status:key})}>
+                  <i className={`state-dot dental-status-${key}`} />{label}
+                </button>
+              ))}
+            </div>
+            <label className="dental-inspector-label">ملاحظة</label>
+            <textarea value={toothData.note || ""} onChange={(e)=>updateTooth({note:e.target.value})} placeholder="ملاحظة خاصة بالسن..." />
+            <button type="button" className="dental-add-plan" onClick={()=>onAddTreatment?.({tooth:activeTooth,procedure:states.find(([k])=>k===toothData.status)?.[1] || ""})}>
+              <Plus size={15} /> إضافة لخطة العلاج
+            </button>
+          </>
+        )}
+      </aside>
     </div>
   );
 }
