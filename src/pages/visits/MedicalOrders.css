@@ -327,3 +327,6 @@
     grid-row: 1 / span 2;
   }
 }
+
+/* OMG Clinical v2 */
+.investigation-head strong{color:#31575d;font-size:10px}.investigation-head span{font-size:8px}.add-investigation-button{min-height:31px;border-color:#d5e2df;border-radius:5px;background:#f8faf9;color:#3f706e;font-size:9px}.investigation-empty{min-height:62px;border-color:#dbe5e3;font-size:9px}.investigation-list{border-color:#dbe5e3;border-radius:5px;overflow:hidden}.investigation-row{min-height:48px;border-color:#e7eeec}.investigation-type{width:28px;height:28px;border-radius:5px;background:#eaf2f0;color:#477471}
