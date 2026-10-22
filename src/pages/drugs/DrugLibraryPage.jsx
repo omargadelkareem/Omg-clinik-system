@@ -51,6 +51,7 @@ import {
 } from "../../services/drugLibraryService";
 
 import "./DrugLibraryPage.css";
+import { STARTER_GENERIC_DRUGS } from "../../data/starterGenericDrugs";
 
 /* =========================================================
    EMPTY DRUG
@@ -206,6 +207,7 @@ export default function DrugLibraryPage() {
 
   const [importing, setImporting] =
     useState(false);
+  const [starterLoading, setStarterLoading] = useState(false);
 
   /* =======================================================
      GLOBAL MESSAGE
@@ -556,6 +558,17 @@ export default function DrugLibraryPage() {
      OPEN ADD
   ======================================================= */
 
+  const addStarterCatalog = async () => {
+    if (!clinicId || starterLoading) return;
+    setStarterLoading(true);
+    try {
+      const result = await importDrugs({clinicId,drugs:STARTER_GENERIC_DRUGS,createdBy:currentUserId});
+      showPageMessage("success", `تمت إضافة ${result.addedCount} مادة فعالة للمراجعة. تم تخطي ${result.duplicateCount} مكرر.`);
+    } catch (error) {
+      showPageMessage("error",error?.message || "تعذر إضافة المكتبة المبدئية.");
+    } finally {setStarterLoading(false);}
+  };
+
   const openAddDrug = () => {
     setEditingDrug(null);
 
@@ -579,6 +592,8 @@ export default function DrugLibraryPage() {
 
     setDrugForm({
       specialties: drug.specialties || [],
+      reviewStatus: drug.reviewStatus || "reviewed",
+      source: drug.source || "",
       tradeName:
         drug.tradeName || "",
 
@@ -683,6 +698,7 @@ export default function DrugLibraryPage() {
 
           drug: {
             ...drugForm,
+            reviewStatus: "reviewed",
 
             usageCount:
               editingDrug.usageCount ||
@@ -705,6 +721,7 @@ export default function DrugLibraryPage() {
 
             drug: {
               ...drugForm,
+              reviewStatus: "reviewed",
 
               usageCount: 0,
             },
@@ -1171,6 +1188,7 @@ export default function DrugLibraryPage() {
         </div>
 
         <div className="drug-library-header-actions">
+          <button type="button" className="import-drugs-button" disabled={starterLoading} onClick={addStarterCatalog} title="أسماء مواد فعالة فقط، تحتاج مراجعة صيدلي قبل استخدامها في الروشتة"><Pill size={17}/>{starterLoading ? "جاري الإضافة..." : "إضافة 50 مادة فعالة"}</button>
           <button
             className="import-drugs-button"
             onClick={() => {
@@ -1815,6 +1833,7 @@ export default function DrugLibraryPage() {
                 </div>
               </div>
 
+              {editingDrug?.reviewStatus === "pending" && <div className="import-message error">هذه مادة فعالة مبدئية غير مراجعة. تحقق من الاسم والشكل والتركيز ثم اعتمدها قبل استخدامها في الروشتة.</div>}
               <div className="drug-specialty-editor">
                 <strong>التخصصات المرتبطة بالدواء</strong>
                 <small>اختر تخصصًا أو أكثر. التصنيف لتنظيم المكتبة وليس توصية علاجية.</small>
