@@ -4,6 +4,7 @@ import { useAuth } from "../../context/AuthContext";
 import { BUILTIN_PROCEDURES, PROCEDURE_STATUSES, validateToothNumber } from "../../config/procedureCatalog";
 import { addProcedureSession, createPatientProcedure, subscribePatientProcedures, updatePatientProcedureStatus } from "../../services/procedureService";
 import "./PatientProceduresPage.css";
+import DentalAnatomyChart from "./DentalAnatomyChart";
 
 const STATUS_LABELS = { planned: "مخطط", scheduled: "مجدول", in_progress: "جاري العلاج", completed: "مكتمل", cancelled: "ملغي" };
 const DENTAL_SPECIALTIES = ["dentistry", "orthodontics", "endodontics", "periodontics", "prosthodontics", "pediatric_dentistry", "oral_maxillofacial_surgery"];
@@ -78,7 +79,7 @@ export default function PatientProceduresPage() {
   const visibleRecords = records.filter(item => showCompleted || item.status !== "completed");
   const activeCount = records.filter(item => !["completed","cancelled"].includes(item.status)).length;
   const completedCount = records.filter(item => item.status === "completed").length;
-  return <main className="procedures-page procedures-v2" dir="rtl">
+  return <main className="procedures-page procedures-v2 procedures-v3" dir="rtl">
     <header className="procedures-header">
       <div><Link to={`/patients/${patientId}`}>← الرجوع لملف المريض</Link><h1>{isDental ? "مخطط الأسنان وخطة العلاج" : "الإجراءات وخطة العلاج"}</h1><p>{specialtyLabel} · ملف المريض · إدارة العلاج من مكان واحد</p></div>
       <div className="procedures-total"><small>إجمالي الإجراءات المسجلة (ليس فاتورة)</small><strong>{total.toLocaleString("ar-EG")} ج.م</strong></div>
@@ -90,13 +91,7 @@ export default function PatientProceduresPage() {
       <div className="odontogram-heading"><div><span className="workspace-eyebrow">DENTAL WORKSPACE / OMG CLINIC</span><h2>خريطة الأسنان التفاعلية</h2><p>اختار السن ثم الإجراء — كل خطوة بتتسجل في خطة العلاج</p></div><span className="odontogram-selection">{selectedTooth ? `السن المختار: ${selectedTooth}` : "اختر سنًا"}</span></div>
       <div className="dentition-switch"><button type="button" className={dentition === "permanent" ? "active" : ""} onClick={() => {setDentition("permanent");setSelectedTooth(null);setForm(prev=>({...prev,toothNumber:""}));}}>الأسنان الدائمة (32)</button><button type="button" className={dentition === "primary" ? "active" : ""} onClick={() => {setDentition("primary");setSelectedTooth(null);setForm(prev=>({...prev,toothNumber:""}));}}>الأسنان اللبنية (20)</button></div>
       <div className="odontogram-legend"><span><i className="tooth-indicator planned"/>مخطط</span><span><i className="tooth-indicator in_progress"/>جاري العلاج</span><span><i className="tooth-indicator completed"/>مكتمل</span></div>
-      <div className="odontogram-arches">
-        <div className="odontogram-arch-label">الفك العلوي</div>
-        <div className="odontogram-row">{teeth.slice(0,teeth.length/2).map(tooth => <button type="button" key={tooth} aria-pressed={selectedTooth === tooth} className={`odontogram-tooth ${selectedTooth === tooth ? "selected" : ""} ${toothStatuses.get(tooth) || ""}`} onClick={() => { setSelectedTooth(tooth); setForm(prev => ({...prev, toothNumber:String(tooth)})); }}><span className="tooth-shape">♧</span><small>{tooth}</small></button>)}</div>
-        <div className="odontogram-arch-divider"/>
-        <div className="odontogram-row">{teeth.slice(teeth.length/2).map(tooth => <button type="button" key={tooth} aria-pressed={selectedTooth === tooth} className={`odontogram-tooth ${selectedTooth === tooth ? "selected" : ""} ${toothStatuses.get(tooth) || ""}`} onClick={() => { setSelectedTooth(tooth); setForm(prev => ({...prev, toothNumber:String(tooth)})); }}><small>{tooth}</small><span className="tooth-shape">♧</span></button>)}</div>
-        <div className="odontogram-arch-label">الفك السفلي</div>
-      </div>
+      <DentalAnatomyChart teeth={teeth} selectedTooth={selectedTooth} statuses={toothStatuses} onSelect={tooth => {setSelectedTooth(tooth);setForm(prev=>({...prev,toothNumber:String(tooth)}));}}/>
       <p className="odontogram-note">ترقيم FDI للأسنان الدائمة واللبنية. ألوان الأسنان تعكس آخر حالة مسجلة؛ التمثيل التشريحي الدقيق للأسطح ما زال قيد التطوير.</p>
     </section>}
     <div className="procedures-grid">
