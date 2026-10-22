@@ -29,3 +29,11 @@
 .procedure-picks button{background:#f7fafb!important;color:#315466!important;border:1px solid #dce8eb!important;border-radius:9px!important;text-align:right;padding:10px!important;font-size:12px!important;font-weight:700!important}
 .procedure-picks button.active{background:#e1f3f0!important;border-color:#178980!important;color:#096a63!important}
 @media(max-width:600px){.odontogram-heading{align-items:flex-start;flex-direction:column}.procedure-picks{grid-template-columns:1fr}.odontogram-panel{padding:13px}}
+
+.surfaces-control{display:grid;gap:8px;font-size:13px}
+.surface-buttons{display:flex;gap:7px;flex-wrap:wrap}
+.surface-buttons button{width:43px;height:43px;padding:0!important;background:#f3f7f8!important;color:#356072!important;border:1px solid #d6e3e7!important;border-radius:10px!important}
+.surface-buttons button.active{background:#176f70!important;color:#fff!important}
+.session-entry{display:flex;gap:8px;margin:12px 0}
+.session-entry input{flex:1;min-width:0}
+.session-entry button{white-space:nowrap;padding:8px 12px;font-size:12px}
