@@ -838,12 +838,6 @@ export default function PatientProfilePage() {
 
   return (
     <div className="patient-chart-page">
-      <div style={{padding:"12px 24px",display:"flex",justifyContent:"flex-end"}}>
-        <button type="button" onClick={() => navigate(`/patients/${patientId}/procedures`)} style={{border:0,borderRadius:9,background:"#156b70",color:"#fff",padding:"11px 17px",fontWeight:800,cursor:"pointer",fontFamily:"inherit"}}>
-          + الإجراءات وخطة العلاج
-        </button>
-      </div>
-
       {/* ================================================
           VISIT SUCCESS
           ================================================ */}
@@ -914,6 +908,7 @@ export default function PatientProfilePage() {
           PATIENT HEADER
           ================================================ */}
 
+      <div className="chart-workspace-heading"><span>الملف الطبي / PATIENT RECORD</span><div className="chart-workspace-actions"><button type="button" className="chart-workspace-secondary" onClick={()=>navigate(`/patients/${patientId}/procedures`)}>خطة العلاج والجلسات</button><button type="button" className="chart-workspace-primary" onClick={()=>navigate(`/patients/${patientId}/visit/new`)}>+ كشف جديد</button></div></div>
       <header className="chart-patient-header">
         <div className="chart-patient-identity">
           <span className="chart-avatar">
