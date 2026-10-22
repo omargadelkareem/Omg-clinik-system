@@ -1541,6 +1541,13 @@ const doctor = useMemo(
             title="العلاج"
             last
           >
+            <div className="visit-drug-specialty-bar">
+              <span>الأدوية المناسبة لتخصص {currentDrugSpecialty || "الطبيب"} تظهر أولًا</span>
+              {currentDrugSpecialty && <label>
+                <input type="checkbox" checked={drugSpecialtyOnly} onChange={event => setDrugSpecialtyOnly(event.target.checked)}/>
+                عرض أدوية التخصص فقط
+              </label>}
+            </div>
             <div className="medicine-toolbar">
               <div className="medicine-search">
                 <Search
