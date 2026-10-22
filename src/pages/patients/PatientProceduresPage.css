@@ -177,3 +177,17 @@
 .dw-side-list{padding:15px}.dw-side-list>div{padding:12px 0;border-bottom:1px solid #e7edf1;display:grid;gap:5px}.dw-side-list small{color:#718297}
 .dw-total{flex-wrap:wrap;gap:10px}
 @media(max-width:750px){.dw-finance-summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+
+.dw-installment{border-top:1px solid #e2eaf0;margin-top:20px;padding:16px 0}
+.dw-installment h4{font-size:14px;margin:0 0 12px;color:#244b66}
+.dw-installment table{width:100%;border-collapse:collapse;min-width:520px;font-size:12px}
+.dw-installment th,.dw-installment td{padding:10px;border-bottom:1px solid #e7edf2;text-align:right}
+.dw-installment th{background:#f3f7fa}
+.dw-installment-meta{display:flex;gap:24px;color:#4c7188;margin-bottom:12px}
+.dw-schedule-form{display:grid;grid-template-columns:1fr 1fr 1.4fr auto;gap:10px;align-items:end}
+.dw-schedule-form label{display:grid;gap:5px;color:#607b8e;font-size:12px}
+.dw-schedule-form input{padding:10px;border:1px solid #d8e5ed;border-radius:5px;min-width:0;width:100%;box-sizing:border-box}
+.dw-schedule-form button{background:#006bc3;color:#fff;border:0;border-radius:5px;padding:11px;cursor:pointer}
+.dw-schedule-form button:disabled{opacity:.5}
+@media(max-width:720px){.dw-schedule-form{grid-template-columns:1fr 1fr}.dw-installment{overflow-x:auto}}
