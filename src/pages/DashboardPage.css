@@ -990,3 +990,12 @@
 .schedule-list{min-height:292px}.schedule-line{min-height:58px;grid-template-columns:35px 80px minmax(180px,1.5fr) minmax(110px,.8fr) 95px 20px;padding:0 14px;gap:10px}.schedule-line:hover{background:#f7faf9}.schedule-sequence{font-size:9px}.schedule-time strong{font-size:11px;color:#31575d}.schedule-time span,.schedule-patient span,.schedule-service small{font-size:9px}.patient-mark{width:31px;height:31px;flex-basis:31px;border-radius:7px;background:#edf4f2;color:#3b696b;font-size:9px}.schedule-patient strong{font-size:11px;color:#294e54}.schedule-service>span{font-size:10px}.ops-status{padding:3px 6px;border-radius:4px;font-size:9px}.schedule-add-line{min-height:43px;font-size:10px}
 .clinic-live-panel,.quick-command-panel{background:#f9fbfa}.exam-room{margin:12px;padding:12px;border-right-width:2px;background:#f0f6f4}.exam-room-label{font-size:9px;color:#507977}.exam-patient{margin-top:10px}.exam-patient>span{width:32px;height:32px;border-radius:7px;background:#dfecea;color:#376d6b;font-size:9px}.exam-patient strong{font-size:11px;color:#31585c}.exam-patient small{font-size:9px}.waiting-head{min-height:38px}.waiting-head span{font-size:9px}.live-queue-line{min-height:47px}.live-queue-line strong{font-size:10px}.live-queue-line small,.empty-queue{font-size:9px}.manage-floor{min-height:35px;font-size:9px}
 .cash-ledger>div{min-height:76px}.cash-ledger span{font-size:9px}.cash-ledger strong{font-size:17px}.revenue-graph{padding:15px 17px 12px}.revenue-bars{height:128px}.revenue-track{height:100px}.quick-command-list button{min-height:45px}.quick-command-list span{font-size:10px}.system-note{margin:11px;padding:10px}.system-note strong{font-size:9px}.system-note span{font-size:8px}
+
+/* Clinical UI alignment */
+
+.ops-dashboard{--ink:#1c374c;--muted:#708596;--line:#dce6ed;--canvas:#f3f6f9;--navy:#102b40;--blue:#176eb5;background:#f3f6f9}
+.ops-header{border-bottom-color:#dce6ed}
+.ops-header h1{color:#173c55}
+.ops-eyebrow{color:#16839d}
+.ops-dashboard button{border-radius:4px!important;box-shadow:none!important}
+.ops-dashboard input,.ops-dashboard select{border-radius:4px!important;border-color:#d8e3ea!important}
