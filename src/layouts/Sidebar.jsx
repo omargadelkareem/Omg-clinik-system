@@ -37,7 +37,7 @@ import {
 
 const navigation = [
   {
-    title: "إدارة العيادة",
+    title: "القائمة الرئيسية",
 
     items: [
       {
@@ -48,7 +48,7 @@ const navigation = [
       },
 
       {
-        label: "عيادة اليوم",
+        label: "المواعيد",
         icon: CalendarDays,
         path: "/appointments",
 
@@ -69,7 +69,7 @@ const navigation = [
       },
 
       {
-        label: "الزيارات",
+        label: "الكشف الطبي",
         icon: Stethoscope,
         path: "/visits",
 
@@ -93,7 +93,7 @@ const navigation = [
   },
 
   {
-    title: "الملف الطبي",
+    title: "الخدمات الطبية",
 
     items: [
       {
@@ -141,7 +141,7 @@ const navigation = [
   },
 
   {
-    title: "الإدارة",
+    title: "الإدارة والتقارير",
 
     items: [
       {
@@ -338,7 +338,7 @@ export default function Sidebar({
             </div>
 
             <p>
-              MEDICAL WORKSPACE
+              CLINIC MANAGEMENT
             </p>
           </div>
 
