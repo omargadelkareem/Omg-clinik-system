@@ -1628,3 +1628,5 @@
 .drug-specialty-tags{display:flex;flex-wrap:wrap;gap:8px}
 .drug-specialty-tags label{display:flex;align-items:center;gap:6px;border:1px solid #d8e5ef;border-radius:7px;background:white;padding:8px 10px;font-size:12px;cursor:pointer;color:#3a5a72}
 .drug-specialty-tags input{accent-color:#1476b8;width:15px;height:15px}
+
+.drug-pagination{display:flex;justify-content:center;padding:18px 10px 8px}.drug-pagination button{border:1px solid #c7dcec;border-radius:10px;background:#eef7fd;color:#17618a;padding:10px 20px;font-weight:700;cursor:pointer}.drug-pagination button:disabled{opacity:.55;cursor:wait}.drug-pagination-note{text-align:center;color:#778b99;font-size:12px;padding:0 12px 14px}
