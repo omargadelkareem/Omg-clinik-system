@@ -34,3 +34,22 @@
 .rail-note{display:flex;align-items:flex-start;gap:7px;margin-top:16px;padding:10px 7px;border-top:1px solid #e1e8e6;color:#849496}.rail-note span{font-size:8px;line-height:1.7}
 .today-main-workspace{min-width:0;background:#fff}.today-main-workspace .day-controlbar{margin:0;padding:10px 14px;background:#fff}.today-main-workspace .today-board{margin:0;border-width:1px 0 0;border-radius:0}.today-main-workspace .today-table-head,.today-main-workspace .today-row{grid-template-columns:72px minmax(200px,1.5fr) minmax(120px,.9fr) 82px 120px 190px}
 @media(max-width:980px){.today-clinical-workspace{grid-template-columns:1fr}.today-status-rail{display:none}.today-main-workspace .today-board{overflow-x:auto}.today-main-workspace .today-table-head,.today-main-workspace .today-row{min-width:900px}}
+
+
+/* Unified front-desk visual system */
+.today-clinic-page{background:#f3f6f9;color:#1c3449}
+.today-header{min-height:86px;padding:18px 26px;background:#fff;border-color:#dfe7ed}
+.today-heading>span{color:#287e99;font-size:10px;letter-spacing:1.2px}
+.today-heading h1{color:#163a55;font-size:25px}
+.today-heading p{color:#7a8d9c}
+.today-header .primary-action,.today-clinic-page .primary-action{background:#176eb5;border-color:#176eb5;border-radius:4px;box-shadow:none}
+.day-controlbar{background:#fff;border-color:#dfe7ed;padding:12px 26px}
+.date-switcher,.today-search,.doctor-select{border-color:#d8e3ea;border-radius:4px;box-shadow:none}
+.today-board{background:#fff;border:1px solid #dfe7ed;border-radius:5px;box-shadow:none}
+.today-table-head{background:#f4f8fa;color:#537083;border-bottom:1px solid #dfe7ed}
+.today-clinic-page .main-row-action{border-radius:4px;box-shadow:none}
+.today-clinic-page .patient-avatar{border-radius:4px;background:#e5f1f6;color:#1e688b}
+.today-clinic-page .today-status-rail{background:#fff;border:1px solid #dfe7ed;border-radius:5px;box-shadow:none}
+.today-clinic-page .rail-metrics{background:transparent}
+.today-clinic-page input,.today-clinic-page select,.today-clinic-page textarea{border-radius:4px!important}
+@media(max-width:760px){.today-header{padding:16px}.day-controlbar{padding:12px}}
