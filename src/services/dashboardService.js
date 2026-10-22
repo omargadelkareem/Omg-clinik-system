@@ -413,27 +413,16 @@ export function subscribeToDashboard(
          TODAY APPOINTMENTS
       ===================================================== */
 
+      const todayKey = getLocalDateKey(now);
+      // Appointments store calendar dates as YYYY-MM-DD. Compare keys,
+      // never parse them as UTC timestamps (timezone shifts the day).
       const todayAppointments =
-        appointments
-          .filter(
-            (item) =>
-              isSameLocalDay(
-                appointmentDate(
-                  item
-                ),
-                now
-              )
-          )
-          .sort(
-            (a, b) =>
-              getAppointmentTime(
-                a
-              ).localeCompare(
-                getAppointmentTime(
-                  b
-                )
-              )
-          );
+        appointments.filter(item => {
+          const date = appointmentDate(item);
+          return typeof date === "string" && /^\\d{4}-\\d{2}-\\d{2}$/.test(date)
+            ? date === todayKey
+            : isSameLocalDay(date, now);
+        }).sort((a,b) => getAppointmentTime(a).localeCompare(getAppointmentTime(b)));
 
       const confirmedToday =
         todayAppointments.filter(
