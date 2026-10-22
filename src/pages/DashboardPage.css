@@ -1078,3 +1078,31 @@
 .today-bookings-notice button{border:0;background:transparent;color:inherit;font:inherit;cursor:pointer}
 @media(max-width:950px){.today-clinic-stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:560px){.today-clinic-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.today-clinic-stats>div{min-height:74px}}
+
+
+.quick-reception-layer{position:fixed;inset:0;z-index:10000;display:flex;justify-content:center;align-items:center;padding:16px;direction:rtl}
+.quick-reception-backdrop{position:absolute;inset:0;background:rgba(9,30,49,.62)}
+.quick-reception-panel{position:relative;background:white;width:min(100%,560px);max-height:94vh;display:flex;flex-direction:column;border-radius:12px;overflow:hidden;color:#173b56;font:inherit}
+.quick-reception-panel header,.quick-reception-panel footer{padding:18px 22px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e8eef3}
+.quick-reception-panel h2{margin:5px 0;font-size:23px}
+.quick-reception-panel header p,.quick-reception-panel header small{font-size:12px;color:#73899b;margin:0}
+.quick-reception-body{padding:16px 22px;overflow:auto;display:flex;flex-direction:column;gap:12px}
+.quick-reception-step{display:flex;align-items:center;gap:9px;font-size:14px}
+.quick-reception-step b{display:grid;place-items:center;width:26px;height:26px;background:#166bb4;color:white;border-radius:50%}
+.quick-reception-body label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:800}
+.quick-reception-body input:not([type=checkbox]),.quick-reception-body select{width:100%;min-height:44px;border:1px solid #d7e2ea;border-radius:6px;padding:9px;background:white;color:#173b56;font:inherit}
+.quick-reception-search{display:flex;align-items:center;gap:8px}
+.quick-reception-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.quick-reception-results{display:flex;flex-direction:column}
+.quick-reception-results button,.quick-reception-selected{display:flex;justify-content:space-between;padding:10px;border:1px solid #e3eaf0;background:#f7fafc}
+.quick-reception-price{display:flex;justify-content:space-between;background:#f3f7fa;padding:12px;border-radius:6px}
+.quick-reception-choices{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.quick-reception-choices button{border:1px solid #d7e2ea;border-radius:6px;padding:12px 4px;background:white;font:inherit;font-size:12px;cursor:pointer}
+.quick-reception-choices button.active{background:#e9f5ff;border-color:#126bb7;color:#126bb7}
+.quick-reception-body label.quick-reception-present{flex-direction:row;align-items:center;background:#f3f8fc;padding:13px;border-radius:6px}
+.quick-reception-error{background:#fff0ef;color:#aa342d;padding:12px}
+.quick-reception-panel footer{border-top:1px solid #e8eef3;border-bottom:0;justify-content:flex-end;gap:10px}
+.quick-reception-panel footer button,.quick-reception-panel header button{border:1px solid #d7e2ea;background:white;border-radius:6px;padding:11px 17px;font:inherit;cursor:pointer}
+.quick-reception-panel footer button[type=submit]{background:#126bb7;color:white}
+.quick-reception-panel button:disabled{opacity:.6}
+@media(max-width:520px){.quick-reception-layer{padding:0}.quick-reception-panel{height:100vh;max-height:100vh;border-radius:0}.quick-reception-body{padding:12px}}
