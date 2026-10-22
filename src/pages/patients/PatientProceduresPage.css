@@ -75,3 +75,37 @@
 .procedures-v2 .procedures-record-top span{font-size:15px}
 @media(max-width:1050px){.workspace-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.procedures-v2 .procedures-grid{grid-template-columns:1fr}.procedures-v2 .odontogram-row{min-width:540px;justify-content:space-between}.procedures-v2 .odontogram-arches{overflow-x:auto}}
 @media(max-width:600px){.procedures-v2{padding:12px}.procedures-v2 .procedures-header{padding:20px}.procedures-v2 .procedures-header h1{font-size:23px}.workspace-metrics{gap:8px}.workspace-metrics>div{padding:13px}.workspace-metrics strong{font-size:23px}.procedures-v2 .odontogram-arches{padding:14px 8px}.dentition-switch{flex-wrap:wrap}}
+
+/* Clinical workbench - restrained EHR styling rather than dashboard cards */
+.procedures-v3{background:#f6f8fa;padding:0;min-height:100vh}
+.procedures-v3 .procedures-header{border-radius:0;background:#fff;color:#223c4b;box-shadow:none;border-bottom:1px solid #e2e8ec;padding:23px 28px;margin:0}
+.procedures-v3 .procedures-header h1{color:#18394d;font-size:22px}
+.procedures-v3 .procedures-header p{color:#788a96}
+.procedures-v3 .procedures-header a{color:#0875ad}
+.procedures-v3 .procedures-total{color:#173b4c;background:#f5f9fa;border:1px solid #e1e8ec;border-radius:7px}
+.procedures-v3 .procedures-total small{color:#8396a0}
+.procedures-v3 .workspace-metrics{display:none}
+.procedures-v3 .procedures-grid{padding:14px 18px 26px;grid-template-columns:minmax(340px,0.78fr) minmax(0,1.22fr);gap:12px}
+.procedures-v3 .procedures-card{border:1px solid #e3e9ed;box-shadow:none;border-radius:8px}
+.procedures-v3 .odontogram-panel{margin:14px 18px 0;border-top:1px solid #e3e9ed}
+.procedures-v3 .odontogram-panel h2{font-size:18px}
+.procedures-v3 .odontogram-panel .workspace-eyebrow{color:#7c919a;letter-spacing:1px}
+.procedures-v3 .dentition-switch button{border-radius:5px}
+.anatomy-chart{border:1px solid #e5e9ec;border-radius:6px;padding:18px 10px;background:linear-gradient(#fcfdfd,#f4f8f8);overflow-x:auto}
+.anatomy-jaw-label{text-align:center;font-size:11px;color:#91a0a8;padding:7px}
+.anatomy-jaw-divider{border-top:1px dashed #cedbdf;margin:18px auto;max-width:90%}
+.anatomy-tooth-row{display:flex;justify-content:center;gap:3px;min-width:560px}
+.anatomy-tooth{width:clamp(30px,4.7vw,53px);height:78px;flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:1px solid transparent;background:transparent;border-radius:5px;cursor:pointer;color:#5c7280}
+.anatomy-tooth svg{width:100%;max-width:49px;height:52px;filter:drop-shadow(0 2px 2px #b7b5a544);transition:transform .15s}
+.anatomy-tooth svg.lower{transform:rotate(180deg)}
+.anatomy-tooth:hover{background:#e8f4f7}
+.anatomy-tooth:hover svg{transform:scale(1.12)}
+.anatomy-tooth:hover svg.lower{transform:rotate(180deg) scale(1.12)}
+.anatomy-tooth.selected{background:#e6f2ff;border-color:#1584d5;color:#005ea5;font-weight:900}
+.anatomy-tooth.completed{background:#e5f7ef}
+.anatomy-tooth.in_progress{background:#e8f1ff}
+.anatomy-tooth.planned{background:#fff4e0}
+.anatomy-tooth small{font-size:11px;font-weight:800}
+.procedures-v3 .procedure-picks button{border-radius:5px!important}
+.procedures-v3 .procedures-record{border-radius:5px;border-right:3px solid #087d79}
+@media(max-width:900px){.procedures-v3 .procedures-grid{grid-template-columns:1fr}}
