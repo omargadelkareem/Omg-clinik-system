@@ -158,3 +158,22 @@
 .dw-empty{color:#8496a7;text-align:center;padding:25px}.dw-alert{margin:10px 16px;background:#eaf4ff;padding:12px;border-radius:7px}
 @media(max-width:1100px){.dw-columns{grid-template-columns:1fr}.dw-side{position:static}.dw-chart .anatomy-tooth-row{overflow-x:auto}}
 @media(max-width:620px){.dw-patient-bar{padding:12px;height:auto;flex-wrap:wrap}.dw-tabs{gap:20px;padding:0 14px}.dw-columns{padding:8px}.dw-chart{padding:12px}.dw-surfaces{gap:4px}.dw-surfaces button{min-width:0}}
+
+
+.dw-tabs a,.dw-tabs button{display:flex;align-items:center;background:transparent;border:0;border-bottom:2px solid transparent;padding:0 2px;text-decoration:none;color:#718297;font:inherit;font-weight:600;white-space:nowrap}
+.dw-tabs button.active{color:#056ac5;border-bottom-color:#0876d6;font-weight:800}
+.dw-side-tabs button{background:transparent;border:0;padding:12px 8px;border-radius:5px;color:#667c91;font:inherit;font-size:12px}
+.dw-side-tabs button.on{background:#006bc3;color:#fff;font-weight:800}
+.dw-finance-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:12px}
+.dw-finance-summary>div{border:1px solid #e4eaf0;background:#f8fafc;border-radius:6px;padding:13px;color:#718297;font-size:12px}
+.dw-finance-summary strong{display:block;font-size:19px;color:#183b56;margin-top:9px}
+.dw-finance-note{font-size:12px;color:#718297;margin:12px 0}
+.dw-payment-form{display:flex;gap:5px;align-items:center;min-width:240px}
+.dw-payment-form input{width:75px;padding:7px;border:1px solid #dce5ed;border-radius:4px}
+.dw-payment-form select{width:85px}.dw-payment-form button,.dw-invoice-actions button,.dw-session-row button{border:0;background:#006bc3;color:#fff;border-radius:5px;padding:8px 11px;font:inherit}
+.dw-payment-form button:disabled,.dw-session-row button:disabled{opacity:.45;cursor:not-allowed}
+.dw-invoice-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.dw-session-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:15px;border-bottom:1px solid #e7edf1}
+.dw-side-list{padding:15px}.dw-side-list>div{padding:12px 0;border-bottom:1px solid #e7edf1;display:grid;gap:5px}.dw-side-list small{color:#718297}
+.dw-total{flex-wrap:wrap;gap:10px}
+@media(max-width:750px){.dw-finance-summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
