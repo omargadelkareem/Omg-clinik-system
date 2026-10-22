@@ -294,8 +294,8 @@ function PatientPicker({ patients, value, onChange }) {
   </div>;
 }
 
-function BookingModal({ clinicId, patients, doctors, selectedDateKey, defaultTime, staffId, onClose, onSuccess }) {
-  const [arrivalMode, setArrivalMode] = useState("now");
+export function BookingModal({ clinicId, patients, doctors, selectedDateKey, defaultTime, staffId, onClose, onSuccess, defaultArrivalMode = "now" }) {
+  const [arrivalMode, setArrivalMode] = useState(defaultArrivalMode);
   const [patientMode, setPatientMode] = useState("existing");
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [doctorId, setDoctorId] = useState(doctors[0]?.id || "");
