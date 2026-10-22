@@ -70,3 +70,15 @@ export async function updatePatientProcedureStatus({ clinicId, patientId, proced
   }
   await update(ref(database, path), { status, updatedBy: actorId, updatedAt: Date.now() });
 }
+
+export async function addProcedureSession({ clinicId, patientId, procedureId, actorId, notes }) {
+  const author = requiredId(actorId, "actorId");
+  const path = basePath(clinicId, patientId) + "/" + requiredId(procedureId, "procedureId");
+  const snapshot = await get(ref(database, path));
+  if (!snapshot.exists()) throw new Error("Procedure not found");
+  if (["completed", "cancelled"].includes(snapshot.val().status)) throw new Error("Procedure is closed");
+  const session = push(ref(database, path + "/sessions"));
+  await set(session, { id: session.key, notes: String(notes || "").slice(0, 2000), createdBy: author, createdAt: Date.now() });
+  await update(ref(database, path), { status: "in_progress", updatedBy: author, updatedAt: Date.now() });
+  return session.key;
+}
