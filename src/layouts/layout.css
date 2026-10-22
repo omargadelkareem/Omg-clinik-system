@@ -1608,3 +1608,12 @@
 .main-header{height:var(--header-height);padding:0 20px;border-bottom:1px solid #dce5e3;background:#fff;backdrop-filter:none}.global-search{width:min(460px,36vw);height:35px;padding:0 10px;border-color:#dbe4e2;border-radius:5px;background:#f8faf9}.global-search:focus-within{border-color:#8badab;box-shadow:0 0 0 3px rgba(63,111,108,.06)}.global-search input{font-size:9px}.global-search span{border-radius:3px;font-size:7px}.header-actions{gap:6px}.new-appointment-button{height:34px;padding:0 12px;border-radius:5px;background:#245b61;font-size:9px;font-weight:800;box-shadow:none}.new-appointment-button:hover{background:#1d4e53}.header-icon-button,.mobile-menu-button{width:34px;height:34px;border-color:#dfe7e5;border-radius:5px;color:#647d80}.header-icon-button:hover{color:#245b61;background:#f6f9f8}.header-profile{gap:7px}.header-profile-avatar{width:31px;height:31px;border-radius:6px;background:#e5efed;color:#315f61;font-size:9px}.header-profile-info strong{font-size:8px;color:#31545a}.header-profile-info span{font-size:7px}.app-content{padding:0;background:#f4f7f6}
 .app-shell-sidebar-collapsed .sidebar{width:var(--sidebar-collapsed-width)}.sidebar-collapsed .nav-item{width:42px;height:36px}.sidebar-collapsed .nav-icon{width:30px;height:30px;flex-basis:30px}.sidebar-collapsed .sidebar-clinic,.sidebar-collapsed .doctor-card{width:42px;height:42px;min-height:42px}
 @media(max-width:900px){.sidebar,.sidebar.sidebar-collapsed{width:248px}.app-content{padding:0}.main-header{padding:0 13px}}
+
+
+/* Consistent navigation with the approved dental workspace */
+:root{--primary:#006bc3;--primary-light:#eaf4ff;--text-main:#1d3446;--text-secondary:#718297;--border:#e5eaf0;--background:#f4f6f8;--sidebar-bg:#172d40;--sidebar-bg-deep:#102638;--sidebar-accent:#29b4b0}
+.app-shell{background:#f4f6f8}
+.sidebar{background:linear-gradient(180deg,#1b3347 0%,#132b3e 100%);box-shadow:none}
+.nav-item-active{background:#204e69;color:#fff}
+.nav-item-active .nav-icon{color:#b7e4f1}
+.nav-item-active .nav-active-line{background:#2db9b6;box-shadow:none}
