@@ -210,6 +210,7 @@ export default function DrugLibraryPage() {
     useState(false);
   const [starterLoading, setStarterLoading] = useState(false);
   const [brandsLoading, setBrandsLoading] = useState(false);
+  const [thousandLoading, setThousandLoading] = useState(false);
 
   /* =======================================================
      GLOBAL MESSAGE
@@ -559,6 +560,89 @@ export default function DrugLibraryPage() {
   /* =======================================================
      OPEN ADD
   ======================================================= */
+
+  const addThousandEgyptianDrugs = async () => {
+    if (!clinicId || thousandLoading) return;
+    setThousandLoading(true);
+    try {
+      const url = "https://raw.githubusercontent.com/karem505/egyptian-drug-database/main/data/egyptian-drugs.csv";
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("تعذر تحميل قاعدة الأدوية المصرية. حاول مرة أخرى.");
+      const csv = await response.text();
+      const workbook = XLSX.read(csv, { type: "string" });
+      const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { defval: "" });
+      const groups = new Map();
+      const unique = new Set();
+      const inferForm = (name, route) => {
+        const value = (name + " " + route).toLowerCase();
+        if (/syrup|suspension|oral.liquid/.test(value)) return "Syrup";
+        if (/caps|capsule/.test(value)) return "Capsule";
+        if (/cream/.test(value)) return "Cream";
+        if (/ointment/.test(value)) return "Ointment";
+        if (/drop/.test(value)) return "Drops";
+        if (/injection|ampoule|vial|i\\.v\\.|i\\.m\\./.test(value)) return "Injection";
+        if (/inhal/.test(value)) return "Inhaler";
+        if (/suppositor/.test(value)) return "Suppository";
+        if (/sachet/.test(value)) return "Sachet";
+        if (/tablet|tabs|oral.solid|f\\.c\\./.test(value)) return "Tablet";
+        return "Other";
+      };
+      for (const row of rows) {
+        const name = String(row.commercial_name_en || "").trim();
+        const generic = String(row.scientific_name || "").trim();
+        const drugClass = String(row.drug_class || "").trim();
+        if (!name || !generic || !drugClass) continue;
+        const route = String(row.route || "").trim();
+        const form = inferForm(name, route);
+        const key = [name, form].join("|").toLowerCase();
+        if (unique.has(key)) continue;
+        unique.add(key);
+        const item = {
+          tradeName: name,
+          genericName: generic,
+          strength: "",
+          form,
+          route: route || "Other",
+          specialties: [],
+          defaultDose: "",
+          frequency: "",
+          duration: "",
+          instructions: "",
+          reviewStatus: "pending",
+          source: "karem505/egyptian-drug-database (CC0); class: " + drugClass,
+        };
+        const group = groups.get(drugClass) || [];
+        group.push(item);
+        groups.set(drugClass, group);
+      }
+      const ordered = [...groups.values()].sort((a,b) => b.length - a.length);
+      const selected = [];
+      let cursor = 0;
+      while (selected.length < 1000 && ordered.some(group => cursor < group.length)) {
+        for (const group of ordered) {
+          if (cursor < group.length) selected.push(group[cursor]);
+          if (selected.length === 1000) break;
+        }
+        cursor++;
+      }
+      if (selected.length !== 1000) throw new Error("المصدر لا يحتوي على 1000 صنف صالح للاستيراد.");
+      let added = 0, duplicates = 0;
+      for (let index = 0; index < selected.length; index += 100) {
+        const result = await importDrugs({
+          clinicId,
+          drugs: selected.slice(index, index + 100),
+          createdBy: currentUserId,
+        });
+        added += result.addedCount;
+        duplicates += result.duplicateCount;
+      }
+      showPageMessage("success", `اكتمل الاستيراد: ${added} صنف جديد، و${duplicates} مكرر. الأصناف قيد المراجعة قبل وصفها.`);
+    } catch (error) {
+      showPageMessage("error", error?.message || "تعذر استيراد الأدوية.");
+    } finally {
+      setThousandLoading(false);
+    }
+  };
 
   const addEgyptianBrands = async () => {
     if (!clinicId || brandsLoading) return;
@@ -1201,6 +1285,7 @@ export default function DrugLibraryPage() {
         </div>
 
         <div className="drug-library-header-actions">
+          <button type="button" className="import-drugs-button" disabled={thousandLoading} onClick={addThousandEgyptianDrugs} title="استيراد 1000 مستحضر من مصدر بيانات مصري CC0؛ يتطلب إنترنت ومراجعة صيدلي"><FileSpreadsheet size={17}/>{thousandLoading ? "جاري تحميل واستيراد 1000 صنف..." : "استيراد 1000 صنف مصري"}</button>
           <button type="button" className="import-drugs-button" disabled={brandsLoading} onClick={addEgyptianBrands} title="أسماء تجارية شائعة في مصر، تتطلب مراجعة المستحضر والتركيز"><Pill size={17}/>{brandsLoading ? "جاري الإضافة..." : "إضافة 25 اسم تجاري مصري"}</button>
           <button type="button" className="import-drugs-button" disabled={starterLoading} onClick={addStarterCatalog} title="أسماء مواد فعالة فقط، تحتاج مراجعة صيدلي قبل استخدامها في الروشتة"><Pill size={17}/>{starterLoading ? "جاري الإضافة..." : "إضافة 50 مادة فعالة"}</button>
           <button
