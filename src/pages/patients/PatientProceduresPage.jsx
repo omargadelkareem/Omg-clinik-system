@@ -15,6 +15,9 @@ export default function PatientProceduresPage() {
   const [selectedTooth, setSelectedTooth] = useState(null);
   const [search, setSearch] = useState("");
   const [sessionNotes, setSessionNotes] = useState({});
+  const [activeCategory, setActiveCategory] = useState("all");
+  const [dentition, setDentition] = useState("permanent");
+  const [showCompleted, setShowCompleted] = useState(true);
   const [form, setForm] = useState(emptyForm);
   const [records, setRecords] = useState([]);
   const [busy, setBusy] = useState(false);
@@ -26,13 +29,16 @@ export default function PatientProceduresPage() {
   const specialty = DENTAL_SPECIALTIES.includes(resolvedSpecialty) ? "dentistry" : (resolvedSpecialty === "obstetrics_gynecology" ? "gynecology" : resolvedSpecialty);
   const isDental = specialty === "dentistry";
   const specialtyLabel = isDental ? "طب الأسنان" : ({"general_surgery":"الجراحة العامة","obstetrics_gynecology":"النساء والتوليد","gynecology":"النساء والتوليد","orthopedics":"العظام","ent":"الأنف والأذن","ophthalmology":"العيون","dermatology":"الجلدية","urology":"المسالك البولية"}[specialty] || "التخصص الطبي");
-  const teeth = [18,17,16,15,14,13,12,11,21,22,23,24,25,26,27,28,48,47,46,45,44,43,42,41,31,32,33,34,35,36,37,38];
+  const permanentTeeth = [18,17,16,15,14,13,12,11,21,22,23,24,25,26,27,28,48,47,46,45,44,43,42,41,31,32,33,34,35,36,37,38];
+  const primaryTeeth = [55,54,53,52,51,61,62,63,64,65,85,84,83,82,81,71,72,73,74,75];
+  const teeth = dentition === "permanent" ? permanentTeeth : primaryTeeth;
   useEffect(() => {
     if (!clinicId || !patientId) return undefined;
     return subscribePatientProcedures({ clinicId, patientId }, setRecords, err => setError(err.message || "تعذر تحميل الإجراءات"));
   }, [clinicId, patientId]);
-  const options = useMemo(() => BUILTIN_PROCEDURES.filter(item => item.specialty === specialty && item.name.includes(search.trim())), [specialty, search]);
-  const selected = options.find(item => item.code === form.code);
+  const options = useMemo(() => BUILTIN_PROCEDURES.filter(item => item.specialty === specialty && item.name.includes(search.trim()) && (activeCategory === "all" || item.category === activeCategory)), [specialty, search, activeCategory]);
+  const categories = [...new Set(BUILTIN_PROCEDURES.filter(item => item.specialty === specialty).map(item => item.category))];
+  const selected = BUILTIN_PROCEDURES.find(item => item.code === form.code && item.specialty === specialty);
   const total = records.reduce((sum, item) => sum + Number(item.price || 0), 0);
   const create = async event => {
     event.preventDefault();
@@ -69,24 +75,29 @@ export default function PatientProceduresPage() {
   };
   const toothStatuses = new Map();
   records.forEach(item => { if (item.toothNumber && item.status !== "cancelled") toothStatuses.set(Number(item.toothNumber), item.status); });
-  return <main className="procedures-page" dir="rtl">
+  const visibleRecords = records.filter(item => showCompleted || item.status !== "completed");
+  const activeCount = records.filter(item => !["completed","cancelled"].includes(item.status)).length;
+  const completedCount = records.filter(item => item.status === "completed").length;
+  return <main className="procedures-page procedures-v2" dir="rtl">
     <header className="procedures-header">
       <div><Link to={`/patients/${patientId}`}>← الرجوع لملف المريض</Link><h1>{isDental ? "مخطط الأسنان وخطة العلاج" : "الإجراءات وخطة العلاج"}</h1><p>{specialtyLabel} · ملف المريض · إدارة العلاج من مكان واحد</p></div>
       <div className="procedures-total"><small>إجمالي الإجراءات المسجلة (ليس فاتورة)</small><strong>{total.toLocaleString("ar-EG")} ج.م</strong></div>
     </header>
     {error && <p className="procedures-alert error" role="alert">{error}</p>}
     {success && <p className="procedures-alert success" role="status">{success}</p>}
+    <div className="workspace-metrics"><div><span>الخطة العلاجية</span><strong>{records.length}</strong><small>إجراء مسجل</small></div><div><span>تحت العلاج</span><strong>{activeCount}</strong><small>إجراء نشط</small></div><div><span>تم الانتهاء</span><strong>{completedCount}</strong><small>إجراء مكتمل</small></div><div><span>المريض</span><strong>#{patientId?.slice(-6)}</strong><small>رقم الملف</small></div></div>
     {isDental && <section className="procedures-card odontogram-panel">
-      <div className="odontogram-heading"><div><h2>خريطة الأسنان التفاعلية</h2><p>اضغط على السن لتحديده وإضافة العلاج مباشرة</p></div><span className="odontogram-selection">{selectedTooth ? `السن المختار: ${selectedTooth}` : "اختر سنًا"}</span></div>
+      <div className="odontogram-heading"><div><span className="workspace-eyebrow">DENTAL WORKSPACE / OMG CLINIC</span><h2>خريطة الأسنان التفاعلية</h2><p>اختار السن ثم الإجراء — كل خطوة بتتسجل في خطة العلاج</p></div><span className="odontogram-selection">{selectedTooth ? `السن المختار: ${selectedTooth}` : "اختر سنًا"}</span></div>
+      <div className="dentition-switch"><button type="button" className={dentition === "permanent" ? "active" : ""} onClick={() => {setDentition("permanent");setSelectedTooth(null);setForm(prev=>({...prev,toothNumber:""}));}}>الأسنان الدائمة (32)</button><button type="button" className={dentition === "primary" ? "active" : ""} onClick={() => {setDentition("primary");setSelectedTooth(null);setForm(prev=>({...prev,toothNumber:""}));}}>الأسنان اللبنية (20)</button></div>
       <div className="odontogram-legend"><span><i className="tooth-indicator planned"/>مخطط</span><span><i className="tooth-indicator in_progress"/>جاري العلاج</span><span><i className="tooth-indicator completed"/>مكتمل</span></div>
       <div className="odontogram-arches">
         <div className="odontogram-arch-label">الفك العلوي</div>
-        <div className="odontogram-row">{teeth.slice(0,16).map(tooth => <button type="button" key={tooth} aria-pressed={selectedTooth === tooth} className={`odontogram-tooth ${selectedTooth === tooth ? "selected" : ""} ${toothStatuses.get(tooth) || ""}`} onClick={() => { setSelectedTooth(tooth); setForm(prev => ({...prev, toothNumber:String(tooth)})); }}><span className="tooth-shape">♧</span><small>{tooth}</small></button>)}</div>
+        <div className="odontogram-row">{teeth.slice(0,teeth.length/2).map(tooth => <button type="button" key={tooth} aria-pressed={selectedTooth === tooth} className={`odontogram-tooth ${selectedTooth === tooth ? "selected" : ""} ${toothStatuses.get(tooth) || ""}`} onClick={() => { setSelectedTooth(tooth); setForm(prev => ({...prev, toothNumber:String(tooth)})); }}><span className="tooth-shape">♧</span><small>{tooth}</small></button>)}</div>
         <div className="odontogram-arch-divider"/>
-        <div className="odontogram-row">{teeth.slice(16).map(tooth => <button type="button" key={tooth} aria-pressed={selectedTooth === tooth} className={`odontogram-tooth ${selectedTooth === tooth ? "selected" : ""} ${toothStatuses.get(tooth) || ""}`} onClick={() => { setSelectedTooth(tooth); setForm(prev => ({...prev, toothNumber:String(tooth)})); }}><small>{tooth}</small><span className="tooth-shape">♧</span></button>)}</div>
+        <div className="odontogram-row">{teeth.slice(teeth.length/2).map(tooth => <button type="button" key={tooth} aria-pressed={selectedTooth === tooth} className={`odontogram-tooth ${selectedTooth === tooth ? "selected" : ""} ${toothStatuses.get(tooth) || ""}`} onClick={() => { setSelectedTooth(tooth); setForm(prev => ({...prev, toothNumber:String(tooth)})); }}><small>{tooth}</small><span className="tooth-shape">♧</span></button>)}</div>
         <div className="odontogram-arch-label">الفك السفلي</div>
       </div>
-      <p className="odontogram-note">مخطط FDI مبدئي للأسنان الدائمة؛ عرض حالات الأسطح والأسنان اللبنية سيتم إضافته لاحقًا.</p>
+      <p className="odontogram-note">ترقيم FDI للأسنان الدائمة واللبنية. ألوان الأسنان تعكس آخر حالة مسجلة؛ التمثيل التشريحي الدقيق للأسطح ما زال قيد التطوير.</p>
     </section>}
     <div className="procedures-grid">
       <section className="procedures-card">
@@ -96,6 +107,7 @@ export default function PatientProceduresPage() {
           <label>ابحث عن الإجراء
             <input placeholder="بحث سريع..." value={search} onChange={e => setSearch(e.target.value)}/>
           </label>
+          <div className="procedure-categories"><button type="button" className={activeCategory === "all" ? "active" : ""} onClick={() => setActiveCategory("all")}>الكل</button>{categories.map(cat => <button type="button" key={cat} className={activeCategory === cat ? "active" : ""} onClick={() => setActiveCategory(cat)}>{({"restorative":"الحشوات","endodontics":"العصب","surgery":"الجراحة","implants":"الزراعة","prosthodontics":"التركيبات","periodontics":"اللثة","orthodontics":"التقويم","preventive":"الوقاية","imaging":"الأشعة"})[cat] || cat}</button>)}</div>
           <div className="procedure-picks" role="group" aria-label="اختيار الإجراء">
             {options.map(item => <button type="button" key={item.code} aria-pressed={form.code === item.code} className={form.code === item.code ? "active" : ""} onClick={() => setForm(prev => ({...prev, code:item.code}))}>{item.name}</button>)}
             {!options.length && <p>لا توجد إجراءات معرفة لهذا التخصص حاليًا.</p>}
@@ -116,9 +128,9 @@ export default function PatientProceduresPage() {
         </form>
       </section>
       <section className="procedures-card">
-        <h2>خطة العلاج <span>({records.length})</span></h2>
+        <div className="plan-heading"><h2>خطة العلاج <span>({records.length})</span></h2><label><input type="checkbox" checked={showCompleted} onChange={e=>setShowCompleted(e.target.checked)}/> إظهار المكتمل</label></div>
         {!records.length && <p className="procedures-empty">ابدأ باختيار {isDental ? "سن وإجراء" : "إجراء"} لإضافة أول خطوة علاجية.</p>}
-        <div className="procedures-records">{records.map(item => <article key={item.id} className="procedures-record">
+        <div className="procedures-records">{visibleRecords.map(item => <article key={item.id} className="procedures-record">
           <div className="procedures-record-top"><strong>{item.name}</strong><span>{Number(item.price || 0).toLocaleString("ar-EG")} ج.م</span></div>
           <p>{item.toothNumber ? `السن: ${item.toothNumber} · ` : ""}{item.notes || "بدون ملاحظات"}</p>
           {!!item.surfaces?.length && <p>أسطح السن: {item.surfaces.join(" · ")}</p>}
