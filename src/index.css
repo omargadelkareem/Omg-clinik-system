@@ -75,3 +75,21 @@ button:focus-visible,a:focus-visible{outline:2px solid #6d9692;outline-offset:2p
 ::selection{background:#dbece8;color:#183b43}
 .omg-release-surface{background:var(--omg-surface);border:1px solid var(--omg-line);border-radius:var(--omg-radius);box-shadow:var(--omg-shadow)}
 @media(max-width:760px){body{font-size:13px}.app-content>div[class$="-page"]{max-width:none}}
+
+
+/* OMG Clinic 2026 unified clinical design tokens */
+:root{
+ --primary:#006bc3;--primary-light:#eaf4ff;
+ --navy-950:#0c1c2b;--navy-900:#122a3c;--navy-800:#1b3b52;
+ --text-main:#1d3446;--text-secondary:#718297;
+ --border:#e5eaf0;--background:#f4f6f8;
+ --omg-ink:#1d3446;--omg-ink-2:#3e596d;--omg-muted:#718297;
+ --omg-line:#e5eaf0;--omg-canvas:#f4f6f8;--omg-soft:#eaf4ff;
+ --omg-success:#168b67;--omg-radius:8px;--omg-shadow:0 3px 14px rgba(16,43,69,.06)
+}
+body{background:#f4f6f8;color:#1d3446}
+.app-shell{background:#f4f6f8}
+.sidebar{--sidebar-bg:#172d40;--sidebar-bg-deep:#102638;--sidebar-accent:#29b4b0;--sidebar-accent-soft:rgba(0,164,168,.13)}
+.app-content :is(input,select,textarea):focus{border-color:#1984c6!important;box-shadow:0 0 0 3px #1984c61a}
+.app-content :is(button,a):focus-visible{outline:2px solid #1681c8;outline-offset:2px}
+::selection{background:#d9eefd;color:#16374d}
