@@ -57,6 +57,7 @@ import {
 
 import { subscribeDentalTwin, buildDentalInsights } from "../../services/dentalService";
 import { subscribePatientFinance } from "../../services/patientFinanceService";
+import { subscribePatientProcedures } from "../../services/procedureService";
 import Dental3DViewer from "../visits/Dental3DViewer";
 
 import "./PatientProfilePage.css";
@@ -375,6 +376,7 @@ export default function PatientProfilePage() {
   );
 
   const [dentalTwin, setDentalTwin] = useState(null);
+  const [treatmentProcedures,setTreatmentProcedures] = useState([]);
   const [patientFinance, setPatientFinance] = useState({transactions:[],payments:[],summary:{billed:0,paid:0,remaining:0,invoices:0}});
 
   const [
@@ -649,6 +651,11 @@ export default function PatientProfilePage() {
     );
   }, [clinicId, patientId]);
 
+  useEffect(() => {
+    if(!clinicId||!patientId)return undefined;
+    return subscribePatientProcedures({clinicId,patientId},setTreatmentProcedures,err=>console.error("Patient procedures:",err));
+  },[clinicId,patientId]);
+
   /* ======================================================
      SUCCESS MESSAGE
      ====================================================== */
@@ -750,6 +757,7 @@ export default function PatientProfilePage() {
     { id: "files", label: "التحاليل والأشعة", count: chart.medicalFiles.length },
     { id: "appointments", label: "المواعيد", count: chart.appointments.length },
     { id: "billing", label: "الحساب", count: patientFinance.transactions.length },
+    { id: "treatment", label: "خطة العلاج", count: treatmentProcedures.length },
     ...(dentalTwin ? [{ id: "dental", label: "ملف الأسنان" }] : []),
   ];
 
@@ -1193,6 +1201,8 @@ export default function PatientProfilePage() {
             {activeTab === "appointments" && (
               <AppointmentsTab appointments={chart.appointments} />
             )}
+
+            {activeTab === "treatment" && <UnifiedTreatmentTab procedures={treatmentProcedures} finance={patientFinance} onOpen={()=>navigate(`/patients/${patientId}/procedures`)} />}
 
             {activeTab === "billing" && (
               <PatientBillingLedger finance={patientFinance} navigate={navigate} />
@@ -2361,4 +2371,18 @@ function PatientBillingLedger({ finance, navigate }) {
     </div>}
     {payments.length>0&&<div className="payment-history"><div className="ledger-title"><div><CreditCard size={16}/><span>سجل المدفوعات</span></div><small>{payments.length} عملية</small></div>{payments.slice(0,12).map(p=><div className="payment-history-line" key={p.id}><div><strong>{p.receiptNumber||"إيصال"}</strong><span>{formatDate(p.paidAt||p.createdAt)} · {p.methodLabel||p.method||"دفع"}</span></div><b>{money(p.amount)} ج.م</b></div>)}</div>}
   </section>;
+}
+
+function UnifiedTreatmentTab({procedures,finance,onOpen}){
+ const valid=procedures.filter(x=>x.status!=="cancelled");
+ const total=valid.reduce((sum,x)=>sum+Number(x.price||0),0);
+ const completed=valid.filter(x=>x.status==="completed").length;
+ const invoices=finance.transactions.filter(x=>String(x.visitId||"").startsWith("procedure:"));
+ const billed=invoices.reduce((sum,x)=>sum+Number(x.amount||0),0);
+ const paid=invoices.reduce((sum,x)=>sum+Number(x.paid||0),0);
+ return <section className="unified-treatment" dir="rtl">
+  <div className="ut-heading"><div><span>CARE JOURNEY</span><h2>خطة العلاج والمتابعة</h2><p>ملخص المراحل والجلسات والحساب المرتبط بالإجراءات الطبية</p></div><button type="button" onClick={onOpen}>فتح مساحة العلاج ←</button></div>
+  <div className="ut-metrics"><div><small>إجمالي الخطة</small><strong>{total.toLocaleString("ar-EG")} ج.م</strong></div><div><small>الإجراءات المكتملة</small><strong>{completed} / {valid.length}</strong></div><div><small>فواتير العلاج</small><strong>{billed.toLocaleString("ar-EG")} ج.م</strong></div><div><small>المتبقي على فواتير العلاج</small><strong>{Math.max(0,billed-paid).toLocaleString("ar-EG")} ج.م</strong></div></div>
+  <div className="ut-table"><table><thead><tr><th>الإجراء</th><th>السن</th><th>الجلسات</th><th>المراحل المكتملة</th><th>القيمة</th><th>الحالة</th></tr></thead><tbody>{valid.map(item=>{const stages=Object.values(item.stages||{});return <tr key={item.id}><td>{item.name}</td><td>{item.toothNumber||"—"}</td><td>{Object.keys(item.sessions||{}).length} / {item.plannedSessions||1}</td><td>{stages.filter(x=>x.status==="completed").length} / {stages.length}</td><td>{Number(item.price||0).toLocaleString("ar-EG")} ج.م</td><td>{({planned:"مخطط",scheduled:"مجدول",in_progress:"جاري العلاج",completed:"مكتمل"})[item.status]||item.status}</td></tr>})}</tbody></table>{!valid.length&&<p>لم تُضف خطة علاج للمريض بعد. افتح مساحة العلاج لإضافة الإجراءات.</p>}</div>
+ </section>;
 }
