@@ -580,46 +580,37 @@ const doctor = useMemo(
      DRUG SEARCH
      ======================================================= */
 
-  const filteredDrugs = useMemo(
-    () => {
-      const query =
-        drugSearch
-          .trim()
-          .toLowerCase();
-
-      if (!query) {
-        return drugLibrary.slice(
-          0,
-          7
-        );
-      }
-
-      return drugLibrary
-        .filter((drug) => {
-          const name = String(
-            drug.name ||
-              drug.tradeName ||
-              ""
-          ).toLowerCase();
-
-          const generic = String(
-            drug.generic ||
-              drug.activeIngredient ||
-              ""
-          ).toLowerCase();
-
-          return (
-            name.includes(query) ||
-            generic.includes(query)
-          );
-        })
-        .slice(0, 10);
-    },
-    [
-      drugSearch,
-      drugLibrary,
-    ]
-  );
+  const specialtyDrugTags = {
+    general_practice:"باطنة",family_medicine:"باطنة",internal_medicine:"باطنة",
+    pediatrics:"أطفال",neonatology:"أطفال",pediatric_cardiology:"أطفال",pediatric_neurology:"أطفال",pediatric_gastroenterology:"أطفال",pediatric_surgery:"أطفال",
+    obstetrics_gynecology:"نساء وتوليد",fertility_ivf:"نساء وتوليد",maternal_fetal_medicine:"نساء وتوليد",
+    dermatology:"جلدية",dermatology_cosmetology:"جلدية",allergy_immunology:"جلدية",
+    orthopedics:"عظام",spine_surgery:"عظام",sports_medicine:"عظام",rheumatology:"روماتيزم",
+    cardiology:"قلب",cardiothoracic_surgery:"قلب",ent:"أنف وأذن وحنجرة",audiology:"أنف وأذن وحنجرة",
+    ophthalmology:"عيون",pulmonology:"صدرية",urology:"مسالك بولية",andrology:"مسالك بولية",
+    neurology:"مخ وأعصاب",neurosurgery:"مخ وأعصاب",psychiatry:"نفسية",child_psychiatry:"نفسية",
+    dentistry:"أسنان",orthodontics:"أسنان",endodontics:"أسنان",periodontics:"أسنان",prosthodontics:"أسنان",pediatric_dentistry:"أسنان",oral_maxillofacial_surgery:"أسنان",
+    general_surgery:"جراحة عامة",vascular_surgery:"جراحة عامة",plastic_surgery:"جراحة عامة",bariatric_surgery:"جراحة عامة",colorectal_surgery:"جراحة عامة",
+    endocrinology:"غدد صماء",
+  };
+  const currentDrugSpecialty = specialtyDrugTags[resolvedSpecialty] || "";
+  const [drugSpecialtyOnly, setDrugSpecialtyOnly] = useState(false);
+  const filteredDrugs = useMemo(() => {
+    const query = drugSearch.trim().toLowerCase();
+    return drugLibrary
+      .filter(drug => {
+        if (drugSpecialtyOnly && currentDrugSpecialty && !(drug.specialties || []).includes(currentDrugSpecialty)) return false;
+        if (!query) return true;
+        return [drug.name,drug.tradeName,drug.generic,drug.genericName,drug.activeIngredient,drug.strength].some(value => String(value || "").toLowerCase().includes(query));
+      })
+      .sort((a,b) => {
+        const aMatch = currentDrugSpecialty && (a.specialties || []).includes(currentDrugSpecialty) ? 1 : 0;
+        const bMatch = currentDrugSpecialty && (b.specialties || []).includes(currentDrugSpecialty) ? 1 : 0;
+        if (aMatch !== bMatch) return bMatch - aMatch;
+        return Number(b.usageCount || 0) - Number(a.usageCount || 0);
+      })
+      .slice(0,query ? 15 : 7);
+  }, [drugSearch,drugLibrary,currentDrugSpecialty,drugSpecialtyOnly]);
 
   const addMedicine = (
     drug
@@ -636,6 +627,7 @@ const doctor = useMemo(
 
       generic:
         drug.generic ||
+        drug.genericName ||
         drug.activeIngredient ||
         "",
 
@@ -650,14 +642,17 @@ const doctor = useMemo(
         "قرص واحد",
 
       frequency:
+        drug.frequency ||
         drug.defaultFrequency ||
         "مرتين يومياً",
 
       duration:
+        drug.duration ||
         drug.defaultDuration ||
         "5 أيام",
 
       instructions:
+        drug.instructions ||
         drug.defaultInstructions ||
         "بعد الأكل",
     };
