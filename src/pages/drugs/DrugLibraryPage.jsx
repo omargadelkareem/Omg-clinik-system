@@ -52,6 +52,7 @@ import {
 
 import "./DrugLibraryPage.css";
 import { STARTER_GENERIC_DRUGS } from "../../data/starterGenericDrugs";
+import { EGYPTIAN_BRAND_STARTER } from "../../data/egyptianBrandStarter";
 
 /* =========================================================
    EMPTY DRUG
@@ -208,6 +209,7 @@ export default function DrugLibraryPage() {
   const [importing, setImporting] =
     useState(false);
   const [starterLoading, setStarterLoading] = useState(false);
+  const [brandsLoading, setBrandsLoading] = useState(false);
 
   /* =======================================================
      GLOBAL MESSAGE
@@ -557,6 +559,17 @@ export default function DrugLibraryPage() {
   /* =======================================================
      OPEN ADD
   ======================================================= */
+
+  const addEgyptianBrands = async () => {
+    if (!clinicId || brandsLoading) return;
+    setBrandsLoading(true);
+    try {
+      const result = await importDrugs({clinicId,drugs:EGYPTIAN_BRAND_STARTER,createdBy:currentUserId});
+      showPageMessage("success", `تمت إضافة ${result.addedCount} اسم تجاري مصري للمراجعة، وتخطي ${result.duplicateCount} مكرر.`);
+    } catch(error) {
+      showPageMessage("error",error?.message || "تعذر إضافة الأسماء التجارية.");
+    } finally {setBrandsLoading(false);}
+  };
 
   const addStarterCatalog = async () => {
     if (!clinicId || starterLoading) return;
@@ -1188,6 +1201,7 @@ export default function DrugLibraryPage() {
         </div>
 
         <div className="drug-library-header-actions">
+          <button type="button" className="import-drugs-button" disabled={brandsLoading} onClick={addEgyptianBrands} title="أسماء تجارية شائعة في مصر، تتطلب مراجعة المستحضر والتركيز"><Pill size={17}/>{brandsLoading ? "جاري الإضافة..." : "إضافة 25 اسم تجاري مصري"}</button>
           <button type="button" className="import-drugs-button" disabled={starterLoading} onClick={addStarterCatalog} title="أسماء مواد فعالة فقط، تحتاج مراجعة صيدلي قبل استخدامها في الروشتة"><Pill size={17}/>{starterLoading ? "جاري الإضافة..." : "إضافة 50 مادة فعالة"}</button>
           <button
             className="import-drugs-button"
