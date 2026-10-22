@@ -1583,6 +1583,14 @@ export default function DrugLibraryPage() {
               )
             )}
           </div>
+          {hasMoreDrugs && (
+            <div className="drug-pagination">
+              <button type="button" onClick={loadMoreDrugs} disabled={loadingMoreDrugs}>
+                {loadingMoreDrugs ? "جاري تحميل المزيد..." : "تحميل 50 صنف إضافي"}
+              </button>
+            </div>
+          )}
+          <p className="drug-pagination-note">البحث والتصفية حاليًا على الأصناف المحمّلة فقط. حمّل المزيد لعرض باقي الأصناف.</p>
         </section>
 
         {/* =================================================
