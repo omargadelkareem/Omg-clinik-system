@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { BUILTIN_PROCEDURES, PROCEDURE_STATUSES, validateToothNumber } from "../../config/procedureCatalog";
-import { createPatientProcedure, subscribePatientProcedures, updatePatientProcedureStatus } from "../../services/procedureService";
+import { addProcedureSession, createPatientProcedure, subscribePatientProcedures, updatePatientProcedureStatus } from "../../services/procedureService";
 import "./PatientProceduresPage.css";
 
 const STATUS_LABELS = { planned: "مخطط", scheduled: "مجدول", in_progress: "جاري العلاج", completed: "مكتمل", cancelled: "ملغي" };
@@ -50,6 +50,15 @@ export default function PatientProceduresPage() {
     } catch (err) { setError(err.message || "تعذر حفظ الإجراء"); }
     finally { setBusy(false); }
   };
+  const addSession = async record => {
+    setBusy(true); setError(""); setSuccess("");
+    try {
+      await addProcedureSession({ clinicId, patientId, procedureId: record.id, actorId: firebaseUser.uid, notes: sessionNotes[record.id] || "" });
+      setSessionNotes(prev => ({ ...prev, [record.id]: "" }));
+      setSuccess("تم تسجيل الجلسة");
+    } catch (err) { setError(err.message || "تعذر تسجيل الجلسة"); }
+    finally { setBusy(false); }
+  };
   const changeStatus = async (record, status) => {
     setError(""); setSuccess(""); setBusy(true);
     try {
@@ -94,6 +103,8 @@ export default function PatientProceduresPage() {
           {selected?.requiresTooth && <label>رقم السن
             <input required inputMode="numeric" placeholder="اختار من المخطط أو اكتب رقم FDI" value={form.toothNumber} onChange={e => {setForm(prev => ({ ...prev, toothNumber: e.target.value })); setSelectedTooth(validateToothNumber(e.target.value) ? Number(e.target.value) : null);}}/>
           </label>}
+          {selected?.requiresTooth && <div className="surfaces-control"><strong>أسطح السن</strong><div className="surface-buttons">{["M","D","O","B","L"].map(surface => <button key={surface} type="button" className={form.surfaces.includes(surface) ? "active" : ""} aria-pressed={form.surfaces.includes(surface)} onClick={() => setForm(prev => ({...prev, surfaces: prev.surfaces.includes(surface) ? prev.surfaces.filter(x => x !== surface) : [...prev.surfaces, surface]}))}>{surface}</button>)}</div></div>}
+          {selected?.supportsSessions && <label>عدد الجلسات المخططة<input type="number" min="1" max="30" value={form.plannedSessions} onChange={e => setForm(prev => ({...prev, plannedSessions: e.target.value}))}/></label>}
           <label>التكلفة (جنيه مصري)
             <input required type="number" min="0" step="0.01" value={form.price} onChange={e => setForm(prev => ({ ...prev, price: e.target.value }))}/>
           </label>
@@ -110,6 +121,9 @@ export default function PatientProceduresPage() {
         <div className="procedures-records">{records.map(item => <article key={item.id} className="procedures-record">
           <div className="procedures-record-top"><strong>{item.name}</strong><span>{Number(item.price || 0).toLocaleString("ar-EG")} ج.م</span></div>
           <p>{item.toothNumber ? `السن: ${item.toothNumber} · ` : ""}{item.notes || "بدون ملاحظات"}</p>
+          {!!item.surfaces?.length && <p>أسطح السن: {item.surfaces.join(" · ")}</p>}
+          {item.plannedSessions > 1 && <p>الجلسات: {Object.keys(item.sessions || {}).length} / {item.plannedSessions}</p>}
+          {item.plannedSessions > 1 && item.status !== "completed" && item.status !== "cancelled" && <div className="session-entry"><input aria-label="ملاحظات الجلسة" placeholder="ملاحظات الجلسة الجديدة" value={sessionNotes[item.id] || ""} onChange={e => setSessionNotes(prev => ({...prev, [item.id]: e.target.value}))}/><button type="button" disabled={busy} onClick={() => addSession(item)}>+ تسجيل جلسة</button></div>}
           <div className="procedures-record-footer">
             <select aria-label="حالة الإجراء" disabled={busy} value={item.status} onChange={e => changeStatus(item, e.target.value)}>
               {PROCEDURE_STATUSES.map(value => <option key={value} value={value}>{STATUS_LABELS[value]}</option>)}
