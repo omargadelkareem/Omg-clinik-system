@@ -718,7 +718,6 @@ export function subscribeToDashboard(
 
       const appointmentsView =
         todayAppointments
-          .slice(0, 7)
           .map(
             (item) => {
               const name =
@@ -727,8 +726,18 @@ export function subscribeToDashboard(
                   patientsMap
                 );
 
+              const linkedInvoice = transactions.find(tx =>
+                tx.appointmentId === item.id && tx.status !== "cancelled"
+              );
+              const invoiceAmount = Number(linkedInvoice?.amount || 0);
+              const invoicePaid = Number(linkedInvoice?.paid || 0);
+              const invoiceRemaining = Number(linkedInvoice?.remaining ?? Math.max(0, invoiceAmount - invoicePaid));
+              const paymentStatus = linkedInvoice
+                ? (invoiceAmount > 0 && invoiceRemaining <= 0 ? "paid" : invoicePaid > 0 ? "partial" : "unpaid")
+                : (["paid", "partial", "unpaid"].includes(item.paymentStatus) ? item.paymentStatus : null);
               return {
                 ...item,
+                paymentStatus,
 
                 name,
 
