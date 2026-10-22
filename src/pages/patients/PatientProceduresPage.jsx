@@ -7,13 +7,14 @@ import "./PatientProceduresPage.css";
 
 const STATUS_LABELS = { planned: "مخطط", scheduled: "مجدول", in_progress: "جاري العلاج", completed: "مكتمل", cancelled: "ملغي" };
 const DENTAL_SPECIALTIES = ["dentistry", "orthodontics", "endodontics", "periodontics", "prosthodontics", "pediatric_dentistry", "oral_maxillofacial_surgery"];
-const emptyForm = { code: "", toothNumber: "", price: "", notes: "" };
+const emptyForm = { code: "", toothNumber: "", price: "", notes: "", surfaces: [], plannedSessions: 1 };
 
 export default function PatientProceduresPage() {
   const { patientId } = useParams();
   const { clinicId, firebaseUser, activeSpecialty, clinicSpecialty } = useAuth();
   const [selectedTooth, setSelectedTooth] = useState(null);
   const [search, setSearch] = useState("");
+  const [sessionNotes, setSessionNotes] = useState({});
   const [form, setForm] = useState(emptyForm);
   const [records, setRecords] = useState([]);
   const [busy, setBusy] = useState(false);
@@ -43,7 +44,7 @@ export default function PatientProceduresPage() {
     try {
       await createPatientProcedure({
         clinicId, patientId, actorId: firebaseUser.uid,
-        input: { code: selected.code, specialty: selected.specialty, toothNumber: (selected?.requiresTooth ? (selectedTooth || form.toothNumber) : null), price: form.price || 0, notes: form.notes },
+        input: { code: selected.code, specialty: selected.specialty, toothNumber: (selected?.requiresTooth ? (selectedTooth || form.toothNumber) : null), price: form.price || 0, notes: form.notes, surfaces: form.surfaces, plannedSessions: form.plannedSessions },
       });
       setForm(emptyForm); setSuccess("تمت إضافة الإجراء إلى ملف المريض");
     } catch (err) { setError(err.message || "تعذر حفظ الإجراء"); }
