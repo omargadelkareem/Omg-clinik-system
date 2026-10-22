@@ -11,6 +11,7 @@ import DashboardPage from "../pages/DashboardPage";
 import AppointmentsPage from "../pages/appointments/AppointmentsPage";
 import PatientsPage from "../pages/patients/PatientsPage";
 import PatientProfilePage from "../pages/patients/PatientProfilePage";
+import PatientProceduresPage from "../pages/patients/PatientProceduresPage";
 import NewVisitPage from "../pages/visits/NewVisitPage";
 import PrescriptionsPage from "../pages/prescriptions/PrescriptionsPage";
 import DrugLibraryPage from "../pages/drugs/DrugLibraryPage";
@@ -83,6 +84,15 @@ export default function AppRoutes() {
             element={
               <ProtectedRoute permissions={["visits"]}>
                 <RepresentativeVisitsPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="patients/:patientId/procedures"
+            element={
+              <ProtectedRoute permissions={["visits"]}>
+                <PatientProceduresPage />
               </ProtectedRoute>
             }
           />
