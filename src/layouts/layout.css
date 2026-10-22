@@ -1649,3 +1649,31 @@
 .main-header{background:#fff!important;border-bottom:1px solid #dce6ed!important;box-shadow:none!important}
 .app-content{background:#f3f6f9!important}
 @media(max-width:768px){.sidebar{box-shadow:-12px 0 28px rgba(0,0,0,.15)!important}}
+
+
+/* Reference 01 — exact design direction for shell and navigation */
+:root{--sidebar-width:208px;--sidebar-collapsed-width:64px;--header-height:58px;--sidebar-bg:#102d4a;--sidebar-bg-deep:#0b2742;--sidebar-accent:#1477c8;--background:#f6f8fc}
+.sidebar{background:#102d4a!important;border-left:1px solid #1b4264!important}
+.sidebar-brand{height:61px!important;flex-basis:61px!important;padding:0 13px!important}
+.sidebar-logo{width:28px!important;height:28px!important;border-radius:50%!important;background:#078be3!important}
+.sidebar-brand-name{font-size:15px!important;white-space:nowrap}
+.sidebar-brand-copy p{font-size:8px!important;letter-spacing:.4px!important}
+.sidebar-clinic{margin:9px 9px 5px!important;padding:8px!important;min-height:52px!important;background:#143956!important;border:1px solid #234e70!important}
+.sidebar-navigation{padding:4px 8px 10px!important}
+.nav-section{margin-bottom:7px!important}
+.nav-section-heading{padding:10px 10px 5px!important}
+.nav-section-title{font-size:9px!important;color:#8eafc6!important}
+.nav-item{min-height:37px!important;padding:0 10px!important;border-radius:4px!important;font-size:11px!important;gap:8px!important}
+.nav-icon{width:20px!important;height:20px!important;flex:0 0 20px!important}
+.nav-icon svg{width:15px!important;height:15px!important}
+.nav-item-active{background:#11588b!important;color:#fff!important}
+.nav-item-active .nav-icon{color:#fff!important}
+.nav-item-active .nav-active-line{background:#20a8e7!important}
+.sidebar-footer{padding:9px!important}
+.doctor-card{padding:5px!important;gap:8px!important}
+.doctor-avatar{width:34px!important;height:34px!important;flex:0 0 34px!important;border-radius:50%!important}
+.main-header{min-height:58px!important;height:58px!important;background:#fff!important;border-bottom:1px solid #e3eaf1!important}
+.global-search{border:1px solid #e3eaf1!important;background:#f8fafc!important;border-radius:5px!important}
+.header-profile-avatar{border-radius:50%!important}
+.app-content{background:#f6f8fc!important}
+@media(max-width:900px){.sidebar,.sidebar.sidebar-collapsed{width:208px!important}}
