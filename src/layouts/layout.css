@@ -1617,3 +1617,35 @@
 .nav-item-active{background:#204e69;color:#fff}
 .nav-item-active .nav-icon{color:#b7e4f1}
 .nav-item-active .nav-active-line{background:#2db9b6;box-shadow:none}
+
+
+/* OMG Clinic 2026 — approved clinical navy / blue / teal navigation */
+:root{--sidebar-width:258px;--sidebar-collapsed-width:72px;--sidebar-bg:#102b40;--sidebar-bg-deep:#0b2336;--sidebar-text:#d9e6ef;--sidebar-muted:#92a7b7;--sidebar-accent:#59c6d1;--sidebar-accent-soft:rgba(67,188,203,.13);--background:#f3f6f9;--primary:#156fbb}
+.sidebar{background:#102b40!important;box-shadow:none!important;border-left:1px solid #244258!important}
+.sidebar::before{display:none!important}
+.sidebar-brand{height:76px;flex-basis:76px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sidebar-logo{border-radius:7px!important;background:#1675b4!important;box-shadow:none!important}
+.sidebar-brand-name{font-weight:850;letter-spacing:-.5px}
+.sidebar-brand-copy p{font-size:9px!important;letter-spacing:1.6px;color:#9fb7c7!important}
+.sidebar-clinic{margin:14px 12px!important;border:1px solid #315168!important;background:#17384f!important;border-radius:5px!important;box-shadow:none!important}
+.sidebar-clinic .clinic-avatar{border-radius:4px!important;background:#24526b!important;color:#d2f4f5!important}
+.sidebar-navigation{padding:5px 10px 16px!important}
+.nav-section{margin-bottom:12px!important}
+.nav-section-heading{padding:13px 12px 7px!important}
+.nav-section-title{color:#8ea8b9!important;font-size:10px!important;font-weight:800!important;letter-spacing:.3px!important}
+.nav-section-line{opacity:.18}
+.nav-items{gap:2px!important}
+.nav-item{min-height:42px!important;margin:0!important;padding:0 11px!important;border-radius:4px!important;background:transparent!important;color:#c6d9e6!important;box-shadow:none!important;transition:background .14s,color .14s!important}
+.nav-item:hover{background:#1b425a!important;color:#fff!important}
+.nav-item-active{background:#20536c!important;color:#fff!important;font-weight:800!important}
+.nav-item-active .nav-icon{color:#65d6dc!important}
+.nav-item .nav-icon{color:#9ab6c8!important}
+.nav-active-line{width:3px!important;border-radius:0!important;background:#60cdd5!important}
+.sidebar-collapse-area{border-top:1px solid #29475b!important}
+.sidebar-collapse-button{border-radius:4px!important}
+.sidebar-footer{background:#0d2639!important;border-top:1px solid #29475b!important}
+.doctor-card{border-radius:4px!important;background:transparent!important;border:0!important;box-shadow:none!important}
+.doctor-avatar{border-radius:4px!important;background:#255a74!important;color:#fff!important}
+.main-header{background:#fff!important;border-bottom:1px solid #dce6ed!important;box-shadow:none!important}
+.app-content{background:#f3f6f9!important}
+@media(max-width:768px){.sidebar{box-shadow:-12px 0 28px rgba(0,0,0,.15)!important}}
