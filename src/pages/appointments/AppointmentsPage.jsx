@@ -205,30 +205,28 @@ export default function AppointmentsPage() {
       </div>
     </header>
 
-    <div className="today-clinical-workspace">
-      <aside className="today-status-rail">
-        <div className="rail-title"><span>LIVE DESK</span><strong>حالة العيادة</strong></div>
-        <div className="rail-metrics">
-          <button className={statusFilter==="all"?"active":""} onClick={()=>setStatusFilter("all")}><span>كل الحالات</span><strong>{stats.total}</strong></button>
-          <button className={statusFilter==="waiting"?"active warning":""} onClick={()=>setStatusFilter("waiting")}><span>الانتظار</span><strong>{stats.waiting}</strong></button>
-          <button className={statusFilter==="in-progress"?"active live":""} onClick={()=>setStatusFilter("in-progress")}><span>داخل الكشف</span><strong>{stats.current}</strong></button>
-          <button className={statusFilter==="completed"?"active done":""} onClick={()=>setStatusFilter("completed")}><span>تم الكشف</span><strong>{stats.completed}</strong></button>
+    <div className="today-clinical-workspace appointments-pro-workspace">
+      <section className="appointments-pro-overview" aria-label="ملخص المواعيد">
+        <button className={statusFilter==="all"?"pro-metric is-selected":"pro-metric"} onClick={()=>setStatusFilter("all")}><span className="pro-metric-icon"><Users size={20}/></span><span className="pro-metric-copy"><small>إجمالي الحالات</small><strong>{stats.total}</strong></span></button>
+        <button className={statusFilter==="waiting"?"pro-metric is-selected":"pro-metric"} onClick={()=>setStatusFilter("waiting")}><span className="pro-metric-icon waiting"><Clock3 size={20}/></span><span className="pro-metric-copy"><small>في الانتظار</small><strong>{stats.waiting}</strong></span></button>
+        <button className={statusFilter==="in-progress"?"pro-metric is-selected":"pro-metric"} onClick={()=>setStatusFilter("in-progress")}><span className="pro-metric-icon ongoing"><Stethoscope size={20}/></span><span className="pro-metric-copy"><small>داخل الكشف</small><strong>{stats.current}</strong></span></button>
+        <button className={statusFilter==="completed"?"pro-metric is-selected":"pro-metric"} onClick={()=>setStatusFilter("completed")}><span className="pro-metric-icon finished"><CheckCircle2 size={20}/></span><span className="pro-metric-copy"><small>تم الكشف</small><strong>{stats.completed}</strong></span></button>
+      </section>
+      <section className="today-main-workspace appointments-pro-main">
+        <div className="appointments-pro-section-heading">
+          <div><span className="appointments-pro-eyebrow">PATIENT SCHEDULE</span><h2>قائمة المواعيد</h2><p>متابعة المرضى وإدارة الحضور والكشف من شاشة واحدة</p></div>
+          <button className="appointments-pro-today" onClick={()=>{setSelectedDateKey(todayKey);setStatusFilter("active")}}>عرض عيادة اليوم</button>
         </div>
-        <button className={statusFilter==="active"?"rail-now active": "rail-now"} onClick={()=>setStatusFilter("active")}><i/> العيادة الآن</button>
-        <div className="rail-note"><Clock3 size={15}/><span>الحالات تتحدث مباشرة مع الاستقبال وغرفة الكشف.</span></div>
-      </aside>
-
-      <section className="today-main-workspace">
-        <section className="day-controlbar">
-          <div className="date-switcher"><button onClick={()=>shiftDay(-1)} aria-label="اليوم السابق">‹</button><button className="date-main" onClick={()=>setSelectedDateKey(todayKey)}><CalendarDays size={16}/><span>{selectedDateKey===todayKey?"اليوم":formatFullDate(selectedDate)}</span></button><button onClick={()=>shiftDay(1)} aria-label="اليوم التالي">›</button></div>
-          <label className="today-search"><Search size={16}/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="ابحث باسم المريض أو الهاتف أو رقم الملف"/>{search&&<button onClick={()=>setSearch("")}><X size={14}/></button>}</label>
-          <label className="doctor-select"><Stethoscope size={15}/><select value={doctorFilter} onChange={e=>setDoctorFilter(e.target.value)}><option value="all">كل الأطباء</option>{doctors.map(d=><option key={d.id} value={d.id}>{d.name || d.fullName || "طبيب"}</option>)}</select></label>
+        <section className="day-controlbar appointments-pro-toolbar">
+          <div className="date-switcher"><button type="button" onClick={()=>shiftDay(-1)} aria-label="اليوم السابق">‹</button><button type="button" className="date-main" onClick={()=>setSelectedDateKey(todayKey)}><CalendarDays size={16}/><span>{selectedDateKey===todayKey?"اليوم":formatFullDate(selectedDate)}</span></button><button type="button" onClick={()=>shiftDay(1)} aria-label="اليوم التالي">›</button></div>
+          <label className="today-search"><Search size={16}/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="بحث باسم المريض أو رقم الهاتف..."/>{search&&<button type="button" onClick={()=>setSearch("")}><X size={14}/></button>}</label>
+          <label className="doctor-select"><Stethoscope size={15}/><select value={doctorFilter} onChange={e=>setDoctorFilter(e.target.value)}><option value="all">جميع الأطباء</option>{doctors.map(d=><option key={d.id} value={d.id}>{d.name || d.fullName || "طبيب"}</option>)}</select></label>
+          <label className="appointments-pro-filter"><select value={statusFilter} onChange={e=>setStatusFilter(e.target.value)} aria-label="تصفية حسب الحالة"><option value="active">الحالات النشطة</option><option value="all">كل الحالات</option><option value="scheduled">مواعيد قادمة</option><option value="waiting">في الانتظار</option><option value="in-progress">داخل الكشف</option><option value="completed">تم الكشف</option><option value="cancelled">ملغي</option><option value="no-show">لم يحضر</option></select></label>
         </section>
-
         {error&&<div className="today-error"><CircleAlert size={16}/><span>{error}</span></div>}
 
-        <main className="today-board">
-      <div className="today-table-head"><span>الوقت</span><span>المريض</span><span>الطبيب</span><span>نوع الزيارة</span><span>الحالة</span><span>الإجراء</span></div>
+        <main className="today-board appointments-pro-board">
+      <div className="appointments-pro-list-header"><strong>المرضى <span>({rows.length})</span></strong><small>تحديث مباشر</small></div><div className="today-table-head"><span>الوقت</span><span>المريض</span><span>الطبيب</span><span>نوع الزيارة</span><span>الحالة</span><span>الإجراء</span></div>
       {rows.length===0 ? <div className="today-empty"><CalendarDays size={27}/><strong>لا توجد حالات مطابقة</strong><span>أضف المريض وحدد هل هو موجود الآن أم لديه موعد لاحق.</span></div> : rows.map(row=>{
         const meta=STATUS_META[row.status] || STATUS_META.scheduled;
         const busy=actionId===row.rowId;
