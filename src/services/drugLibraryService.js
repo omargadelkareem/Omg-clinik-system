@@ -37,6 +37,8 @@ function normalizeDrug(raw = {}, id = "") {
     instructions: cleanText(raw.instructions),
 
     specialties: Array.isArray(raw.specialties) ? raw.specialties.filter(x => typeof x === "string") : [],
+    reviewStatus: cleanText(raw.reviewStatus) || "reviewed",
+    source: cleanText(raw.source),
     favorite: Boolean(raw.favorite),
 
     usageCount: Number(raw.usageCount || 0),
@@ -233,6 +235,8 @@ export async function createDrug({
     instructions: cleanText(drug.instructions),
 
     specialties: Array.isArray(drug.specialties) ? [...new Set(drug.specialties.map(cleanText).filter(Boolean))] : [],
+    reviewStatus: cleanText(drug.reviewStatus) || "reviewed",
+    source: cleanText(drug.source),
     favorite: Boolean(drug.favorite),
 
     usageCount: Number(drug.usageCount || 0),
@@ -288,6 +292,8 @@ export async function updateDrug({
     instructions: cleanText(drug.instructions),
 
     specialties: Array.isArray(drug.specialties) ? [...new Set(drug.specialties.map(cleanText).filter(Boolean))] : [],
+    reviewStatus: cleanText(drug.reviewStatus) || "reviewed",
+    source: cleanText(drug.source),
     favorite: Boolean(drug.favorite),
 
     updatedAt: serverTimestamp(),
@@ -478,6 +484,8 @@ export async function importDrugs({
       instructions: cleanText(drug.instructions),
 
       specialties: Array.isArray(drug.specialties) ? [...new Set(drug.specialties.map(cleanText).filter(Boolean))] : [],
+    reviewStatus: cleanText(drug.reviewStatus) || "reviewed",
+    source: cleanText(drug.source),
     favorite: Boolean(drug.favorite),
 
       usageCount: Number(drug.usageCount || 0),
