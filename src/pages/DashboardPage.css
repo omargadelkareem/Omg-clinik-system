@@ -1068,3 +1068,13 @@
 .today-bookings-spin{animation:todayBookingsSpin 1s linear infinite}
 @keyframes todayBookingsSpin{to{transform:rotate(360deg)}}
 @media(max-width:640px){.today-bookings-page{padding:14px}.today-bookings-header{align-items:flex-start}.today-bookings-add{padding:9px 11px;font-size:11px}.today-bookings-title h1{font-size:21px}.today-bookings-board-header{padding:12px 14px}}
+
+
+.today-clinic-stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:0 0 16px}
+.today-clinic-stats>div{min-height:90px;display:flex;flex-direction:column;justify-content:center;gap:9px;padding:14px 17px;background:#fff;border:1px solid #e0e7ef;border-radius:6px}
+.today-clinic-stats span{font-size:12px;color:#71879b;font-weight:700}
+.today-clinic-stats strong{font-size:24px;color:#1c425f;font-weight:850;font-variant-numeric:tabular-nums}
+.today-bookings-notice{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;padding:12px 16px;background:#e7f7ee;color:#186b46;border:1px solid #bfe8d1;border-radius:5px;font-size:13px}
+.today-bookings-notice button{border:0;background:transparent;color:inherit;font:inherit;cursor:pointer}
+@media(max-width:950px){.today-clinic-stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:560px){.today-clinic-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.today-clinic-stats>div{min-height:74px}}
