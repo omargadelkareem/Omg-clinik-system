@@ -2,12 +2,25 @@ import { useEffect, useState } from "react";
 import { CalendarDays, Plus, LoaderCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { subscribeToDashboard } from "../services/dashboardService";
+import { subscribeAppointments, subscribeQueue } from "../services/appointmentService";
+import { subscribeFinanceTransactions } from "../services/financeService";
 import { subscribeAppointmentPatients, subscribeAppointmentDoctors } from "../services/appointmentService";
 import QuickReceptionModal from "./appointments/QuickReceptionModal";
 import "./DashboardPage.css";
 
-const empty = { appointments: [], totals: { appointments: 0 } };
+function dayKey(value) {
+  if (!value) return "";
+  if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return [date.getFullYear(), String(date.getMonth()+1).padStart(2,"0"), String(date.getDate()).padStart(2,"0")].join("-");
+}
+function showTime(value) {
+  if (!value) return "—";
+  if (typeof value === "string" && /^\d{1,2}:\d{2}/.test(value)) return value;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? "—" : date.toLocaleTimeString("ar-EG", {hour:"2-digit",minute:"2-digit"});
+}
 const appointmentLabels = {
   pending: "في الانتظار", confirmed: "مؤكد", arrived: "حضر",
   waiting: "ينتظر الكشف", in_progress: "داخل الكشف",
@@ -27,20 +40,22 @@ export default function DashboardPage() {
   const [patients, setPatients] = useState([]);
   const [doctors, setDoctors] = useState([]);
   const [notice, setNotice] = useState("");
-  const [data, setData] = useState(empty);
+  const [bookings, setBookings] = useState([]);
+  const [queue, setQueue] = useState([]);
+  const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   useEffect(() => {
     if (!clinicId) { setLoading(false); return undefined; }
     setLoading(true);
     setError("");
-    return subscribeToDashboard(clinicId, value => {
-      setData(value);
+    const stopBookings = subscribeAppointments(clinicId, rows => {
+      setBookings(rows);
       setLoading(false);
-    }, () => {
-      setError("تعذر تحميل حجوزات اليوم.");
-      setLoading(false);
-    });
+    }, () => { setError("تعذر تحميل المواعيد."); setLoading(false); });
+    const stopQueue = subscribeQueue(clinicId, setQueue, () => {}, {includeCompleted:true,includeCancelled:true});
+    const stopFinance = subscribeFinanceTransactions(clinicId, setTransactions, () => {});
+    return () => { stopBookings?.(); stopQueue?.(); stopFinance?.(); };
   }, [clinicId]);
   useEffect(() => {
     if (!clinicId) return undefined;
@@ -48,14 +63,24 @@ export default function DashboardPage() {
     const stopDoctors = subscribeAppointmentDoctors(clinicId, setDoctors);
     return () => { stopPatients?.(); stopDoctors?.(); };
   }, [clinicId]);
-  const appointments = data.appointments || [];
-  const totals = data.totals || {};
+  const todayKey = dayKey(new Date());
+  const todaysBookings = bookings.filter(item => dayKey(item.date || item.appointmentDate) === todayKey);
+  const scheduledIds = new Set(todaysBookings.map(item => item.id));
+  const walkIns = queue.filter(item => {
+    if (item.appointmentId && scheduledIds.has(item.appointmentId)) return false;
+    return (item.source === "walk-in" || item.source === "walkin") && dayKey(item.checkedInAt || item.createdAt) === todayKey;
+  });
+  const appointments = [...todaysBookings, ...walkIns].map(item => {
+    const invoice = transactions.find(tx => tx.status !== "cancelled" && (tx.appointmentId === item.id || (item.queueId && tx.queueId === item.queueId)));
+    const paidAmount = Number(invoice?.paid || 0);
+    const remaining = Number(invoice?.remaining ?? Math.max(0, Number(invoice?.amount || 0) - paidAmount));
+    const paymentStatus = invoice ? (Number(invoice.amount) > 0 && remaining <= 0 ? "paid" : paidAmount > 0 ? "partial" : "unpaid") : (item.paymentStatus || null);
+    return {...item, name:item.patientName || patients.find(p=>p.id===item.patientId)?.name || "مريض", phone:item.patientPhone || "", displayTime:showTime(item.time || item.checkedInAt), paymentStatus};
+  }).sort((a,b) => String(a.displayTime).localeCompare(String(b.displayTime), "ar"));
   const paid = appointments.filter(item => item.paymentStatus === "paid").length;
   const unpaid = appointments.filter(item => item.paymentStatus === "unpaid").length;
   const partial = appointments.filter(item => item.paymentStatus === "partial").length;
   const unknown = appointments.length - paid - unpaid - partial;
-  const today = new Date();
-  const todayKey = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`;
   return (
     <main className="today-bookings-page" dir="rtl">
       <header className="today-bookings-header">
