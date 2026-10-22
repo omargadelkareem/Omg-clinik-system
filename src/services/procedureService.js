@@ -28,6 +28,8 @@ function normalize(input) {
     code, name, specialty, category: String(input.category || definition?.category || "general"),
     status, toothNumber: input.toothNumber ? Number(input.toothNumber) : null,
     price, currency: String(input.currency || "EGP"),
+    surfaces: Array.isArray(input.surfaces) ? [...new Set(input.surfaces.filter(x => ["M","D","O","B","L"].includes(x)))] : [],
+    plannedSessions: definition?.supportsSessions ? Math.max(1, Math.min(30, Math.floor(Number(input.plannedSessions) || 1))) : 1,
     requiresConsent: Boolean(input.requiresConsent ?? definition?.requiresConsent),
     consentDocumentId: input.consentDocumentId || null,
     sessionIds: Array.isArray(input.sessionIds) ? input.sessionIds : [],
