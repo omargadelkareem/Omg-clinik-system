@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { X, Search, LoaderCircle } from "lucide-react";
 import { createAppointment, createPatientAndAppointment, checkInAppointment } from "../../services/appointmentService";
 import { createFinanceTransaction, collectFinancePayment } from "../../services/financeService";
-import "./QuickReceptionModal.css";
+
 
 const dateKey = () => { const d = new Date(); return [d.getFullYear(), String(d.getMonth()+1).padStart(2,"0"), String(d.getDate()).padStart(2,"0")].join("-"); };
 export default function QuickReceptionModal({ clinicId, patients, doctors, staffId, onClose, onSuccess }) {
