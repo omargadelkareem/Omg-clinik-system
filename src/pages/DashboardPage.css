@@ -1033,3 +1033,38 @@
 .ops-dashboard button{box-shadow:none!important}
 @media(max-width:1080px){.operations-layout{grid-template-columns:1fr}.command-strip{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:580px){.ops-dashboard{padding:12px}.command-strip{grid-template-columns:1fr 1fr;gap:7px}.ops-header{flex-wrap:wrap}}
+
+
+/* Simple reception dashboard: today's bookings only */
+.today-bookings-page{min-height:100%;padding:24px 28px 40px;background:#f6f8fc;color:#193650;direction:rtl;font-family:inherit}
+.today-bookings-header{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:20px}
+.today-bookings-title>span{font-size:10px;color:#718ba2;font-weight:800;letter-spacing:1px}
+.today-bookings-title h1{font-size:25px;font-weight:850;margin:5px 0;color:#183a58}
+.today-bookings-title p{font-size:12px;color:#7b8d9e;margin:0}
+.today-bookings-add{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:5px;background:#126bed;color:#fff;padding:11px 18px;font:inherit;font-size:13px;font-weight:800;cursor:pointer}
+.today-bookings-board{background:#fff;border:1px solid #e0e7ef;border-radius:7px;overflow:hidden}
+.today-bookings-board-header{min-height:59px;display:flex;align-items:center;justify-content:space-between;padding:13px 20px;background:#173b5a;color:#fff}
+.today-bookings-board-header>div{display:flex;align-items:center;gap:9px}
+.today-bookings-board-header strong{font-size:15px}
+.today-bookings-board-header>span{font-size:12px;color:#c6d9e8}
+.today-bookings-scroll{overflow-x:auto}
+.today-bookings-table{width:100%;min-width:720px;border-collapse:collapse;text-align:right;font-size:13px}
+.today-bookings-table th{padding:15px 18px;background:#f3f7fb;border-bottom:1px solid #e2eaf1;color:#61788c;font-size:12px;font-weight:800}
+.today-bookings-table td{padding:14px 18px;border-bottom:1px solid #edf1f5;vertical-align:middle}
+.today-bookings-table tbody tr:last-child td{border-bottom:0}
+.today-bookings-table tbody tr:hover{background:#f9fbfd}
+.today-bookings-table td strong{display:block;color:#233d54;font-size:13px}
+.today-bookings-table td small{display:block;color:#8a9cac;font-size:11px;margin-top:4px;direction:ltr;text-align:right}
+.today-bookings-time{font-weight:800;white-space:nowrap;font-variant-numeric:tabular-nums}
+.today-bookings-status,.today-bookings-payment{display:inline-flex;align-items:center;justify-content:center;padding:6px 9px;border-radius:4px;font-size:11px;font-weight:800;white-space:nowrap;background:#eaf3fa;color:#266486}
+.today-bookings-status.is-cancelled{background:#fff0f0;color:#b54747}
+.today-bookings-payment.paid{background:#e4f7ef;color:#167451}
+.today-bookings-payment.partial{background:#fff2dd;color:#996119}
+.today-bookings-payment.unpaid{background:#fff0ed;color:#b84d3c}
+.today-bookings-payment.unknown{background:#eef2f5;color:#677b8c}
+.today-bookings-open{font:inherit;background:#fff;color:#1468aa;border:1px solid #d7e5f0;padding:8px 11px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:750;white-space:nowrap}
+.today-bookings-open:hover{background:#eef7ff}
+.today-bookings-empty{display:flex;align-items:center;justify-content:center;gap:10px;min-height:220px;color:#73899b;font-size:13px}
+.today-bookings-spin{animation:todayBookingsSpin 1s linear infinite}
+@keyframes todayBookingsSpin{to{transform:rotate(360deg)}}
+@media(max-width:640px){.today-bookings-page{padding:14px}.today-bookings-header{align-items:flex-start}.today-bookings-add{padding:9px 11px;font-size:11px}.today-bookings-title h1{font-size:21px}.today-bookings-board-header{padding:12px 14px}}
