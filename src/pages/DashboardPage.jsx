@@ -382,7 +382,7 @@ export default function DashboardPage() {
       <header className="ops-header">
         <div>
           <span className="ops-eyebrow">
-            CLINIC OPERATIONS
+            OMG CLINIC / DAILY OVERVIEW
           </span>
 
           <h1>
@@ -425,92 +425,6 @@ export default function DashboardPage() {
       </header>
 
       {/* ===================================================
-          COMMAND STRIP
-      =================================================== */}
-
-      <section className="command-strip">
-
-        {/* APPOINTMENTS */}
-
-        <CommandMetric
-          label="مواعيد اليوم"
-          value={
-            dashboard
-              .totals
-              .appointments
-          }
-          note={`${dashboard.totals.confirmedAppointments} مؤكد`}
-          icon={
-            CalendarDays
-          }
-        />
-
-        {/* COMPLETED VISITS */}
-
-        <CommandMetric
-          label="زيارات اليوم"
-          value={
-            dashboard
-              .totals
-              .completedVisits
-          }
-          note={`${dashboard.totals.consultations} كشف · ${dashboard.totals.followups} إعادة`}
-          icon={
-            Stethoscope
-          }
-        />
-
-        {/* WAITING */}
-
-        <CommandMetric
-          label="بانتظار الكشف"
-          value={
-            dashboard
-              .totals
-              .waiting
-          }
-          note={
-            dashboard
-              .totals
-              .waiting
-              ? `متوسط ${dashboard.totals.averageWait} د`
-              : "لا يوجد انتظار"
-          }
-          icon={
-            Clock3
-          }
-          attention={
-            dashboard
-              .totals
-              .waiting >
-            0
-          }
-        />
-
-        {/* REVENUE */}
-
-        <CommandMetric
-          label="تحصيل اليوم"
-          value={
-            formatMoney(
-              dashboard
-                .totals
-                .revenue
-            )
-          }
-          suffix="ج.م"
-          note={`صافي ${formatMoney(
-            dashboard
-              .totals
-              .net
-          )} ج.م`}
-          icon={
-            Banknote
-          }
-        />
-      </section>
-
-      {/* ===================================================
           MAIN OPERATIONS
       =================================================== */}
 
@@ -525,7 +439,7 @@ export default function DashboardPage() {
           <div className="workspace-heading">
             <div>
               <span>
-                جدول التشغيل
+                APPOINTMENT DESK
               </span>
 
               <h2>
@@ -691,11 +605,11 @@ export default function DashboardPage() {
           <div className="live-panel-heading">
             <div>
               <span>
-                LIVE FLOOR
+                PATIENT QUEUE
               </span>
 
               <h2>
-                العيادة الآن
+                الطابور الحالي
               </h2>
             </div>
 
@@ -851,6 +765,93 @@ export default function DashboardPage() {
           </button>
         </aside>
       </section>
+
+      {/* ===================================================
+          COMMAND STRIP
+      =================================================== */}
+
+      <section className="command-strip">
+
+        {/* APPOINTMENTS */}
+
+        <CommandMetric
+          label="مواعيد اليوم"
+          value={
+            dashboard
+              .totals
+              .appointments
+          }
+          note={`${dashboard.totals.confirmedAppointments} مؤكد`}
+          icon={
+            CalendarDays
+          }
+        />
+
+        {/* COMPLETED VISITS */}
+
+        <CommandMetric
+          label="زيارات اليوم"
+          value={
+            dashboard
+              .totals
+              .completedVisits
+          }
+          note={`${dashboard.totals.consultations} كشف · ${dashboard.totals.followups} إعادة`}
+          icon={
+            Stethoscope
+          }
+        />
+
+        {/* WAITING */}
+
+        <CommandMetric
+          label="بانتظار الكشف"
+          value={
+            dashboard
+              .totals
+              .waiting
+          }
+          note={
+            dashboard
+              .totals
+              .waiting
+              ? `متوسط ${dashboard.totals.averageWait} د`
+              : "لا يوجد انتظار"
+          }
+          icon={
+            Clock3
+          }
+          attention={
+            dashboard
+              .totals
+              .waiting >
+            0
+          }
+        />
+
+        {/* REVENUE */}
+
+        <CommandMetric
+          label="تحصيل اليوم"
+          value={
+            formatMoney(
+              dashboard
+                .totals
+                .revenue
+            )
+          }
+          suffix="ج.م"
+          note={`صافي ${formatMoney(
+            dashboard
+              .totals
+              .net
+          )} ج.م`}
+          icon={
+            Banknote
+          }
+        />
+      </section>
+
 
       {/* ===================================================
           LOWER WORKSPACE
