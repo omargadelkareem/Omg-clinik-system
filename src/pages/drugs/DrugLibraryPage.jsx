@@ -56,7 +56,10 @@ import "./DrugLibraryPage.css";
    EMPTY DRUG
 ========================================================= */
 
+const SPECIALTIES = ["باطنة","أطفال","نساء وتوليد","جلدية","عظام","قلب","أنف وأذن وحنجرة","عيون","صدرية","مسالك بولية","مخ وأعصاب","نفسية","أسنان","جراحة عامة","غدد صماء","روماتيزم","أخرى"];
+
 const emptyDrug = {
+  specialties: [],
   tradeName: "",
   genericName: "",
   strength: "",
@@ -137,6 +140,7 @@ export default function DrugLibraryPage() {
   const [search, setSearch] = useState("");
   const [activeFilter, setActiveFilter] =
     useState("all");
+  const [specialtyFilter, setSpecialtyFilter] = useState("all");
 
   /* =======================================================
      SELECTION
@@ -441,6 +445,7 @@ export default function DrugLibraryPage() {
         if (!searchMatch) {
           return false;
         }
+        if (specialtyFilter !== "all" && !(drug.specialties || []).includes(specialtyFilter)) return false;
 
         if (
           activeFilter ===
@@ -507,6 +512,7 @@ export default function DrugLibraryPage() {
     drugs,
     search,
     activeFilter,
+    specialtyFilter,
   ]);
 
   /* =======================================================
@@ -572,6 +578,7 @@ export default function DrugLibraryPage() {
     setEditingDrug(drug);
 
     setDrugForm({
+      specialties: drug.specialties || [],
       tradeName:
         drug.tradeName || "",
 
@@ -1275,6 +1282,15 @@ export default function DrugLibraryPage() {
         </div>
       </section>
 
+      <section className="drug-specialty-selector" aria-label="تصفية الأدوية حسب التخصص">
+        <label htmlFor="drug-specialty-filter">التخصص الطبي</label>
+        <select id="drug-specialty-filter" value={specialtyFilter} onChange={event => setSpecialtyFilter(event.target.value)}>
+          <option value="all">كل التخصصات</option>
+          {SPECIALTIES.map(item => <option key={item} value={item}>{item}</option>)}
+        </select>
+        <small>تظهر الأدوية المصنفة للتخصص المختار. الأدوية القديمة تظل متاحة في «كل التخصصات» حتى يتم تصنيفها.</small>
+      </section>
+
       {/* ===================================================
           FILTERS
       =================================================== */}
@@ -1799,6 +1815,21 @@ export default function DrugLibraryPage() {
                 </div>
               </div>
 
+              <div className="drug-specialty-editor">
+                <strong>التخصصات المرتبطة بالدواء</strong>
+                <small>اختر تخصصًا أو أكثر. التصنيف لتنظيم المكتبة وليس توصية علاجية.</small>
+                <div className="drug-specialty-tags">
+                  {SPECIALTIES.map(item => <label key={item}>
+                    <input type="checkbox" checked={(drugForm.specialties || []).includes(item)} onChange={event => setDrugForm(previous => ({
+                      ...previous,
+                      specialties: event.target.checked
+                        ? [...(previous.specialties || []), item]
+                        : (previous.specialties || []).filter(value => value !== item),
+                    }))}/>
+                    {item}
+                  </label>)}
+                </div>
+              </div>
               <DrugField
                 label="الاسم التجاري"
                 required
@@ -2826,6 +2857,7 @@ function normalizeImportedDrug(
 
   return {
     importIndex: index,
+    specialties: getValue("Specialties","Specialty","التخصصات","التخصص").split(/[,،;|]/).map(value=>value.trim()).filter(Boolean),
 
     tradeName:
       getValue(
