@@ -3,6 +3,9 @@ import { CalendarDays, Plus, LoaderCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { subscribeToDashboard } from "../services/dashboardService";
+import { subscribeAppointmentPatients, subscribeAppointmentDoctors } from "../services/appointmentService";
+import { BookingModal } from "./appointments/AppointmentsPage";
+import "./appointments/AppointmentsPage.css";
 import "./DashboardPage.css";
 
 const empty = { appointments: [], totals: { appointments: 0 } };
@@ -20,7 +23,11 @@ function paymentLabel(item) {
 }
 export default function DashboardPage() {
   const navigate = useNavigate();
-  const { clinicId } = useAuth();
+  const { clinicId, staffId, profile } = useAuth();
+  const [bookingOpen, setBookingOpen] = useState(false);
+  const [patients, setPatients] = useState([]);
+  const [doctors, setDoctors] = useState([]);
+  const [notice, setNotice] = useState("");
   const [data, setData] = useState(empty);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -36,7 +43,20 @@ export default function DashboardPage() {
       setLoading(false);
     });
   }, [clinicId]);
+  useEffect(() => {
+    if (!clinicId) return undefined;
+    const stopPatients = subscribeAppointmentPatients(clinicId, setPatients);
+    const stopDoctors = subscribeAppointmentDoctors(clinicId, setDoctors);
+    return () => { stopPatients?.(); stopDoctors?.(); };
+  }, [clinicId]);
   const appointments = data.appointments || [];
+  const totals = data.totals || {};
+  const paid = appointments.filter(item => item.paymentStatus === "paid").length;
+  const unpaid = appointments.filter(item => item.paymentStatus === "unpaid").length;
+  const partial = appointments.filter(item => item.paymentStatus === "partial").length;
+  const unknown = appointments.length - paid - unpaid - partial;
+  const today = new Date();
+  const todayKey = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`;
   return (
     <main className="today-bookings-page" dir="rtl">
       <header className="today-bookings-header">
@@ -45,8 +65,15 @@ export default function DashboardPage() {
           <h1>حجوزات اليوم</h1>
           <p>{new Intl.DateTimeFormat("ar-EG", { weekday: "long", day: "numeric", month: "long", year: "numeric" }).format(new Date())}</p>
         </div>
-        <button className="today-bookings-add" onClick={() => navigate("/appointments")}><Plus size={17} /> حجز جديد</button>
+        <button className="today-bookings-add" onClick={() => setBookingOpen(true)}><Plus size={17} /> حجز جديد</button>
       </header>
+      <section className="today-clinic-stats" aria-label="إحصائيات العيادة اليوم">
+        <div><span>حجوزات اليوم</span><strong>{appointments.length}</strong></div>
+        <div><span>مدفوع</span><strong>{paid}</strong></div>
+        <div><span>غير مدفوع</span><strong>{unpaid}</strong></div>
+        <div><span>مدفوع جزئيًا</span><strong>{partial}</strong></div>
+        <div><span>حالة دفع غير محددة</span><strong>{unknown}</strong></div>
+      </section>
       <section className="today-bookings-board" aria-label="جدول حجوزات اليوم">
         <div className="today-bookings-board-header">
           <div><CalendarDays size={18} /><strong>جدول المواعيد</strong></div>
@@ -78,6 +105,8 @@ export default function DashboardPage() {
           </div>
         )}
       </section>
+      {notice && <div className="today-bookings-notice" role="status">{notice}<button type="button" onClick={() => setNotice("")}>إغلاق</button></div>}
+      {bookingOpen && <BookingModal clinicId={clinicId} patients={patients} doctors={doctors} selectedDateKey={todayKey} defaultTime="" staffId={staffId || profile?.staffId || ""} defaultArrivalMode="later" onClose={() => setBookingOpen(false)} onSuccess={message => { setBookingOpen(false); setNotice(message); }} />}
     </main>
   );
 }
