@@ -450,7 +450,7 @@ export default function DrugLibraryPage() {
         if (!searchMatch) {
           return false;
         }
-        if (specialtyFilter !== "all" && !(drug.specialties || []).includes(specialtyFilter)) return false;
+        if (specialtyFilter !== "all" && (drug.specialties || []).length && !(drug.specialties || []).includes(specialtyFilter)) return false;
 
         if (
           activeFilter ===
@@ -591,7 +591,7 @@ export default function DrugLibraryPage() {
         const name = String(row.commercial_name_en || "").trim();
         const generic = String(row.scientific_name || "").trim();
         const drugClass = String(row.drug_class || "").trim();
-        if (!name || !generic || !drugClass) continue;
+        if (!name) continue;
         const route = String(row.route || "").trim();
         const form = inferForm(name, route);
         const key = [name, form].join("|").toLowerCase();
@@ -611,26 +611,19 @@ export default function DrugLibraryPage() {
           reviewStatus: "pending",
           source: "karem505/egyptian-drug-database (CC0); class: " + drugClass,
         };
-        const group = groups.get(drugClass) || [];
+        const group = groups.get(drugClass || "غير مصنف") || [];
         group.push(item);
-        groups.set(drugClass, group);
+        groups.set(drugClass || "غير مصنف", group);
       }
-      const ordered = [...groups.values()].sort((a,b) => b.length - a.length);
-      const selected = [];
-      let cursor = 0;
-      while (selected.length < 1000 && ordered.some(group => cursor < group.length)) {
-        for (const group of ordered) {
-          if (cursor < group.length) selected.push(group[cursor]);
-          if (selected.length === 1000) break;
-        }
-        cursor++;
-      }
-      if (selected.length !== 1000) throw new Error("المصدر لا يحتوي على 1000 صنف صالح للاستيراد.");
+      const selected = [...groups.values()].flat();
+      if (!selected.length) throw new Error("لم يتم العثور على أصناف صالحة في المصدر.");
+      const confirmed = window.confirm(`سيتم استيراد ${selected.length.toLocaleString("ar-EG")} مستحضر إلى Firebase. قد يستغرق وقتًا ويستهلك قراءة وكتابة من قاعدة البيانات. هل تريد المتابعة؟`);
+      if (!confirmed) return;
       let added = 0, duplicates = 0;
-      for (let index = 0; index < selected.length; index += 100) {
+      for (let index = 0; index < selected.length; index += 250) {
         const result = await importDrugs({
           clinicId,
-          drugs: selected.slice(index, index + 100),
+          drugs: selected.slice(index, index + 250),
           createdBy: currentUserId,
         });
         added += result.addedCount;
@@ -1285,7 +1278,7 @@ export default function DrugLibraryPage() {
         </div>
 
         <div className="drug-library-header-actions">
-          <button type="button" className="import-drugs-button" disabled={thousandLoading} onClick={addThousandEgyptianDrugs} title="استيراد 1000 مستحضر من مصدر بيانات مصري CC0؛ يتطلب إنترنت ومراجعة صيدلي"><FileSpreadsheet size={17}/>{thousandLoading ? "جاري تحميل واستيراد 1000 صنف..." : "استيراد 1000 صنف مصري"}</button>
+          <button type="button" className="import-drugs-button" disabled={thousandLoading} onClick={addThousandEgyptianDrugs} title="استيراد 1000 مستحضر من مصدر بيانات مصري CC0؛ يتطلب إنترنت ومراجعة صيدلي"><FileSpreadsheet size={17}/>{thousandLoading ? "جاري استيراد قاعدة الأدوية..." : "استيراد قاعدة الأدوية المصرية كاملة"}</button>
           <button type="button" className="import-drugs-button" disabled={brandsLoading} onClick={addEgyptianBrands} title="أسماء تجارية شائعة في مصر، تتطلب مراجعة المستحضر والتركيز"><Pill size={17}/>{brandsLoading ? "جاري الإضافة..." : "إضافة 25 اسم تجاري مصري"}</button>
           <button type="button" className="import-drugs-button" disabled={starterLoading} onClick={addStarterCatalog} title="أسماء مواد فعالة فقط، تحتاج مراجعة صيدلي قبل استخدامها في الروشتة"><Pill size={17}/>{starterLoading ? "جاري الإضافة..." : "إضافة 50 مادة فعالة"}</button>
           <button
