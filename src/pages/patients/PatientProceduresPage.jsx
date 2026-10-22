@@ -5,6 +5,8 @@ import { BUILTIN_PROCEDURES, PROCEDURE_STATUSES, validateToothNumber } from "../
 import { addProcedureSession, createPatientProcedure, subscribePatientProcedures, updatePatientProcedureStatus } from "../../services/procedureService";
 import "./PatientProceduresPage.css";
 import DentalAnatomyChart from "./DentalAnatomyChart";
+import { subscribePatientFinance } from "../../services/patientFinanceService";
+import { createFinanceTransaction, collectFinancePayment, PAYMENT_METHODS } from "../../services/financeService";
 
 const STATUS_LABELS = { planned: "مخطط", scheduled: "مجدول", in_progress: "جاري العلاج", completed: "مكتمل", cancelled: "ملغي" };
 const DENTAL_SPECIALTIES = ["dentistry", "orthodontics", "endodontics", "periodontics", "prosthodontics", "pediatric_dentistry", "oral_maxillofacial_surgery"];
@@ -19,6 +21,11 @@ export default function PatientProceduresPage() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [dentition, setDentition] = useState("permanent");
   const [showCompleted, setShowCompleted] = useState(true);
+  const [activeTab, setActiveTab] = useState("plan");
+  const [sideTab, setSideTab] = useState("add");
+  const [finance, setFinance] = useState({transactions:[],payments:[],summary:{billed:0,paid:0,remaining:0}});
+  const [paymentAmounts, setPaymentAmounts] = useState({});
+  const [paymentMethod, setPaymentMethod] = useState("cash");
   const [form, setForm] = useState(emptyForm);
   const [records, setRecords] = useState([]);
   const [busy, setBusy] = useState(false);
@@ -37,10 +44,17 @@ export default function PatientProceduresPage() {
     if (!clinicId || !patientId) return undefined;
     return subscribePatientProcedures({ clinicId, patientId }, setRecords, err => setError(err.message || "تعذر تحميل الإجراءات"));
   }, [clinicId, patientId]);
+  useEffect(() => {
+    if (!clinicId || !patientId) return undefined;
+    return subscribePatientFinance(clinicId, patientId, setFinance, err => setError(err.message || "تعذر تحميل المدفوعات"));
+  }, [clinicId, patientId]);
   const options = useMemo(() => BUILTIN_PROCEDURES.filter(item => item.specialty === specialty && item.name.includes(search.trim()) && (activeCategory === "all" || item.category === activeCategory)), [specialty, search, activeCategory]);
   const categories = [...new Set(BUILTIN_PROCEDURES.filter(item => item.specialty === specialty).map(item => item.category))];
   const selected = BUILTIN_PROCEDURES.find(item => item.code === form.code && item.specialty === specialty);
-  const total = records.reduce((sum, item) => sum + Number(item.price || 0), 0);
+  const total = records.filter(item=>item.status!=="cancelled").reduce((sum, item) => sum + Number(item.price || 0), 0);
+  const paid = finance.summary.paid || 0;
+  const invoiced = finance.summary.billed || 0;
+  const outstanding = Math.max(0,total-paid);
   const create = async event => {
     event.preventDefault();
     setError(""); setSuccess("");
@@ -56,6 +70,21 @@ export default function PatientProceduresPage() {
       setForm(emptyForm); setSuccess("تمت إضافة الإجراء إلى ملف المريض");
     } catch (err) { setError(err.message || "تعذر حفظ الإجراء"); }
     finally { setBusy(false); }
+  };
+  const createInvoice = async record => {
+    setBusy(true); setError("");
+    try {
+      if (finance.transactions.some(tx => tx.visitId === `procedure:${record.id}` && tx.status !== "cancelled")) throw new Error("تم إصدار فاتورة لهذا الإجراء بالفعل");
+      await createFinanceTransaction({clinicId,patientId,visitId:`procedure:${record.id}`,serviceType:"إجراء طبي",serviceName:record.name,amount:Number(record.price),createdBy:firebaseUser.uid});
+      setSuccess("تم إصدار الفاتورة ويمكن تحصيلها على دفعات");setActiveTab("finance");
+    } catch(err){setError(err.message||"تعذر إصدار الفاتورة");}finally{setBusy(false);}
+  };
+  const collectPayment = async tx => {
+    setBusy(true);setError("");
+    try {
+      await collectFinancePayment({clinicId,transactionId:tx.id,amount:Number(paymentAmounts[tx.id]),method:paymentMethod,receivedBy:firebaseUser.uid});
+      setPaymentAmounts(prev=>({...prev,[tx.id]:""}));setSuccess("تم تسجيل الدفعة بنجاح");
+    }catch(err){setError(err.message||"تعذر تحصيل الدفعة");}finally{setBusy(false);}
   };
   const addSession = async record => {
     setBusy(true); setError(""); setSuccess("");
