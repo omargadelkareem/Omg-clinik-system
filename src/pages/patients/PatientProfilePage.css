@@ -1601,3 +1601,48 @@
 .patient-rail-quick{display:grid;gap:6px;margin-top:17px;padding:12px 7px 0;border-top:1px solid #e0e8e6}.patient-rail-quick>span{margin-bottom:2px;color:#8a9a9c;font-size:7px;font-weight:900}.patient-rail-quick button,.patient-rail-quick a{min-height:31px;display:flex;align-items:center;gap:6px;padding:0 8px;border:1px solid #d9e4e1;border-radius:4px;background:#fff;color:#456b6e;font:inherit;font-size:8px;font-weight:800;text-decoration:none;cursor:pointer}.patient-rail-quick button:first-of-type{border-color:#326d69;background:#326d69;color:#fff}
 .patient-chart-main{min-width:0;background:#fff}.patient-chart-main .chart-content{max-width:none;padding:18px 22px 45px}
 @media(max-width:900px){.patient-chart-workspace{grid-template-columns:1fr}.patient-chart-rail{position:static;width:100%;height:auto;padding:8px 14px;border-left:0;border-bottom:1px solid #dbe4e2}.patient-rail-title,.patient-rail-quick{display:none}.chart-tabs-rail{display:flex!important;overflow-x:auto!important}.chart-tabs-rail .chart-tab{white-space:nowrap!important}.patient-chart-main .chart-content{padding:14px}}
+
+
+/* Unified patient treatment overview */
+.unified-treatment{background:#fff;border:1px solid #e5eaf0;border-radius:10px;overflow:hidden;color:#1d3446}
+.ut-heading{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:22px;border-bottom:1px solid #e5eaf0}
+.ut-heading span{font-size:10px;letter-spacing:2px;font-weight:800;color:#168b9b}
+.ut-heading h2{margin:6px 0;font-size:20px;color:#18384e}
+.ut-heading p{margin:0;color:#718297;font-size:13px}
+.ut-heading button{background:#006bc3;border:0;color:#fff;padding:11px 17px;border-radius:6px;cursor:pointer;white-space:nowrap}
+.ut-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:18px;background:#f7fafc}
+.ut-metrics>div{display:grid;gap:8px;padding:14px;background:#fff;border:1px solid #e5eaf0;border-radius:7px}
+.ut-metrics small{color:#718297;font-size:12px}.ut-metrics strong{font-size:17px;color:#173c58}
+.ut-table{overflow-x:auto;padding:18px}.ut-table table{width:100%;border-collapse:collapse;min-width:650px}
+.ut-table th,.ut-table td{text-align:right;padding:13px 10px;border-bottom:1px solid #e9eef3;font-size:13px}
+.ut-table th{color:#718297;background:#f6f9fb}.ut-table p{color:#718297}
+@media(max-width:800px){.ut-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.ut-heading{align-items:flex-start;flex-direction:column}}
+
+
+/* Clinical record visual language — compact, editorial, data first */
+.patient-chart-page{background:#f3f5f7;color:#1c3346;padding:20px clamp(14px,2.5vw,38px) 46px}
+.chart-workspace-heading{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:16px}
+.chart-workspace-heading>span{font-size:11px;font-weight:800;letter-spacing:1.5px;color:#6c8291}
+.chart-workspace-actions{display:flex;gap:8px;flex-wrap:wrap}
+.chart-workspace-actions button{font:inherit;font-size:12px;font-weight:750;border-radius:4px;padding:10px 14px;cursor:pointer}
+.chart-workspace-secondary{border:1px solid #c9d7e1;background:#fff;color:#264b64}
+.chart-workspace-primary{border:1px solid #176d9d;background:#176d9d;color:#fff}
+.chart-patient-header{background:#fff;border:1px solid #dde5eb;border-bottom:0;border-radius:7px 7px 0 0;padding:20px 24px;min-height:96px}
+.chart-avatar{background:#e6f1f5;color:#195d78;border-radius:5px}
+.chart-name-row h1{font-size:23px;font-weight:800;letter-spacing:-.4px}
+.chart-file-code{background:#f4f7f9;border-color:#e0e8ed;border-radius:3px}
+.chart-start-visit{border-radius:4px!important}
+.chart-tabs-rail .chart-tab{border-radius:0!important}
+.chart-tabs-rail .chart-tab-active{color:#08749b!important}
+.unified-treatment{border-radius:5px;box-shadow:none}
+.ut-heading{background:#fff;padding:24px 26px}
+.ut-heading h2{font-size:21px;font-weight:800}
+.ut-heading button{background:#176d9d;border-radius:4px}
+.ut-metrics{gap:0;padding:0;border-block:1px solid #e2e9ed;background:#fff}
+.ut-metrics>div{border:0;border-inline-end:1px solid #e2e9ed;border-radius:0;padding:20px 24px}
+.ut-metrics strong{font-size:21px;font-weight:800;font-variant-numeric:tabular-nums}
+.ut-table{padding:0}
+.ut-table th{background:#f5f8fa;color:#49677b;font-weight:750;font-size:12px}
+.ut-table th,.ut-table td{padding:15px 20px}
+.ut-table tbody tr:hover{background:#f7fafb}
+@media(max-width:740px){.chart-workspace-heading{align-items:flex-start;flex-direction:column}.chart-patient-header{padding:16px}.ut-metrics{grid-template-columns:repeat(2,1fr)}.ut-metrics>div{border-bottom:1px solid #e2e9ed;padding:15px}.ut-table th,.ut-table td{padding:12px}}

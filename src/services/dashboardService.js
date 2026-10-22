@@ -413,27 +413,16 @@ export function subscribeToDashboard(
          TODAY APPOINTMENTS
       ===================================================== */
 
+      const todayKey = getLocalDateKey(now);
+      // Appointments store calendar dates as YYYY-MM-DD. Compare keys,
+      // never parse them as UTC timestamps (timezone shifts the day).
       const todayAppointments =
-        appointments
-          .filter(
-            (item) =>
-              isSameLocalDay(
-                appointmentDate(
-                  item
-                ),
-                now
-              )
-          )
-          .sort(
-            (a, b) =>
-              getAppointmentTime(
-                a
-              ).localeCompare(
-                getAppointmentTime(
-                  b
-                )
-              )
-          );
+        appointments.filter(item => {
+          const date = appointmentDate(item);
+          return typeof date === "string" && /^\\d{4}-\\d{2}-\\d{2}$/.test(date)
+            ? date === todayKey
+            : isSameLocalDay(date, now);
+        }).sort((a,b) => getAppointmentTime(a).localeCompare(getAppointmentTime(b)));
 
       const confirmedToday =
         todayAppointments.filter(
@@ -718,7 +707,6 @@ export function subscribeToDashboard(
 
       const appointmentsView =
         todayAppointments
-          .slice(0, 7)
           .map(
             (item) => {
               const name =
@@ -727,8 +715,18 @@ export function subscribeToDashboard(
                   patientsMap
                 );
 
+              const linkedInvoice = transactions.find(tx =>
+                tx.appointmentId === item.id && tx.status !== "cancelled"
+              );
+              const invoiceAmount = Number(linkedInvoice?.amount || 0);
+              const invoicePaid = Number(linkedInvoice?.paid || 0);
+              const invoiceRemaining = Number(linkedInvoice?.remaining ?? Math.max(0, invoiceAmount - invoicePaid));
+              const paymentStatus = linkedInvoice
+                ? (invoiceAmount > 0 && invoiceRemaining <= 0 ? "paid" : invoicePaid > 0 ? "partial" : "unpaid")
+                : (["paid", "partial", "unpaid"].includes(item.paymentStatus) ? item.paymentStatus : null);
               return {
                 ...item,
+                paymentStatus,
 
                 name,
 
@@ -765,6 +763,33 @@ export function subscribeToDashboard(
               };
             }
           );
+
+      // Reception also creates walk-ins directly in /queue, not /appointments.
+      // Include today's walk-ins in the same table, without double-counting
+      // queue entries already linked to a scheduled appointment.
+      const scheduledIds = new Set(todayAppointments.map(item => item.id));
+      const walkInsToday = queue.filter(item => {
+        if (item.appointmentId && scheduledIds.has(item.appointmentId)) return false;
+        if (item.source !== "walk-in" && item.source !== "walkin") return false;
+        return isSameLocalDay(item.checkedInAt || item.createdAt, now);
+      }).map(item => {
+        const name = getPatientName(item, patientsMap);
+        const timestamp = parseDate(item.checkedInAt || item.createdAt);
+        const linkedInvoice = transactions.find(tx => tx.queueId === item.id && tx.status !== "cancelled");
+        const amount = Number(linkedInvoice?.amount || 0);
+        const paid = Number(linkedInvoice?.paid || 0);
+        const remaining = Number(linkedInvoice?.remaining ?? Math.max(0, amount - paid));
+        return {
+          ...item, name, phone: getPatientPhone(item, patientsMap),
+          displayTime: timestamp ? formatTime(timestamp.getTime()) : "--:--",
+          type: item.type || "كشف",
+          paymentStatus: linkedInvoice
+            ? (amount > 0 && remaining <= 0 ? "paid" : paid > 0 ? "partial" : "unpaid")
+            : (["paid","partial","unpaid"].includes(item.paymentStatus) ? item.paymentStatus : null),
+        };
+      });
+      appointmentsView.push(...walkInsToday);
+      appointmentsView.sort((a,b) => String(a.displayTime).localeCompare(String(b.displayTime), "ar"));
 
       /* =====================================================
          QUEUE VIEW
@@ -918,7 +943,7 @@ export function subscribeToDashboard(
 
         totals: {
           appointments:
-            todayAppointments.length,
+            appointmentsView.length,
 
           confirmedAppointments:
             confirmedToday,

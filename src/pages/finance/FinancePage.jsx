@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import {
   useEffect,
   useMemo,
@@ -1122,6 +1123,7 @@ export default function FinancePage() {
 
   return (
     <div className="finance-page">
+      <div style={{padding:"12px 20px",background:"#eaf4ff",borderBottom:"1px solid #cce4f5"}}><Link to="/finance/overdue" style={{color:"#006bc3",fontWeight:700}}>عرض الأقساط المتأخرة ومتابعة التحصيل ←</Link></div>
       {/* ===================================================
           HEADER
       =================================================== */}

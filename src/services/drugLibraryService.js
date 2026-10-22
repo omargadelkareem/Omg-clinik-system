@@ -1,6 +1,10 @@
 import {
   get,
   onValue,
+  query,
+  orderByKey,
+  limitToFirst,
+  startAfter,
   push,
   ref,
   remove,
@@ -36,6 +40,9 @@ function normalizeDrug(raw = {}, id = "") {
     duration: cleanText(raw.duration),
     instructions: cleanText(raw.instructions),
 
+    specialties: Array.isArray(raw.specialties) ? raw.specialties.filter(x => typeof x === "string") : [],
+    reviewStatus: cleanText(raw.reviewStatus) || "reviewed",
+    source: cleanText(raw.source),
     favorite: Boolean(raw.favorite),
 
     usageCount: Number(raw.usageCount || 0),
@@ -231,6 +238,9 @@ export async function createDrug({
     duration: cleanText(drug.duration),
     instructions: cleanText(drug.instructions),
 
+    specialties: Array.isArray(drug.specialties) ? [...new Set(drug.specialties.map(cleanText).filter(Boolean))] : [],
+    reviewStatus: cleanText(drug.reviewStatus) || "reviewed",
+    source: cleanText(drug.source),
     favorite: Boolean(drug.favorite),
 
     usageCount: Number(drug.usageCount || 0),
@@ -285,6 +295,9 @@ export async function updateDrug({
     duration: cleanText(drug.duration),
     instructions: cleanText(drug.instructions),
 
+    specialties: Array.isArray(drug.specialties) ? [...new Set(drug.specialties.map(cleanText).filter(Boolean))] : [],
+    reviewStatus: cleanText(drug.reviewStatus) || "reviewed",
+    source: cleanText(drug.source),
     favorite: Boolean(drug.favorite),
 
     updatedAt: serverTimestamp(),
@@ -474,7 +487,10 @@ export async function importDrugs({
       duration: cleanText(drug.duration),
       instructions: cleanText(drug.instructions),
 
-      favorite: Boolean(drug.favorite),
+      specialties: Array.isArray(drug.specialties) ? [...new Set(drug.specialties.map(cleanText).filter(Boolean))] : [],
+    reviewStatus: cleanText(drug.reviewStatus) || "reviewed",
+    source: cleanText(drug.source),
+    favorite: Boolean(drug.favorite),
 
       usageCount: Number(drug.usageCount || 0),
 
@@ -537,4 +553,22 @@ export async function drugExists({
       ) === targetKey
     );
   });
+}
+/* Cursor-based Firebase pagination: only the requested batch is downloaded. */
+export async function getDrugLibraryPage(clinicId, { cursor = null, pageSize = 50 } = {}) {
+  validateClinicId(clinicId);
+  const batchSize = Math.max(1, Math.min(200, pageSize));
+  const base = ref(database, `clinics/${clinicId}/drugLibrary`);
+  const constraints = [orderByKey()];
+  if (cursor) constraints.push(startAfter(cursor));
+  constraints.push(limitToFirst(batchSize + 1));
+  const snapshot = await get(query(base, ...constraints));
+  const entries = Object.entries(snapshot.val() || {}).sort(([a],[b]) => a.localeCompare(b));
+  const hasMore = entries.length > batchSize;
+  const current = entries.slice(0, batchSize);
+  return {
+    items: current.map(([id, value]) => normalizeDrug(value, id)),
+    nextCursor: hasMore ? current[current.length - 1][0] : null,
+    hasMore,
+  };
 }

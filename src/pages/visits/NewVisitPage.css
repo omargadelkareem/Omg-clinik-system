@@ -2647,3 +2647,39 @@
 
 /* ===== OMG Clinical Workspace v2 / Consultation ===== */
 .doctor-visit-page{background:#f4f7f6;color:#23494f}.visit-topbar{min-height:64px;padding:9px 20px;border-color:#dbe4e2}.visit-back{width:30px;height:30px;border-color:#dbe4e2;border-radius:5px;color:#667f82}.visit-avatar{width:35px;height:35px;flex-basis:35px;border-radius:6px;background:#e4efed;color:#356467;font-size:10px}.visit-patient-name h1{color:#1f474d;font-size:15px}.visit-patient-name>span{padding:2px 6px;border-radius:4px;font-size:8px}.visit-patient p{font-size:9px}.visit-top-actions button{height:33px;border-radius:5px;font-size:9px}.visit-workspace,.clinical-workspace{border-color:#dbe5e3}.visit-section-title h2,.workspace-title h2{color:#285158}.doctor-visit-page input,.doctor-visit-page textarea,.doctor-visit-page select{border-radius:5px!important;border-color:#dbe4e2!important}.doctor-visit-page button{box-shadow:none!important}
+
+
+/* Clinical consultation workstation: functional density, no dashboard template */
+.doctor-visit-page{background:#f3f5f7;color:#1c3346}
+.visit-workspace-path{min-height:39px;display:flex;align-items:center;gap:9px;padding:8px 26px;color:#7a8d9c;font-size:11px;background:#f3f5f7}
+.visit-workspace-path button{border:0;background:none;padding:0;color:#35677f;cursor:pointer;font:inherit}
+.visit-workspace-path strong{color:#25465a;font-weight:750}
+.visit-path-separator{color:#bac5ce}
+.visit-topbar{min-height:76px;padding:12px 26px;border-top:1px solid #e3e9ed;border-bottom:1px solid #dbe4e9;background:#fff}
+.visit-avatar{background:#e6f0f4;color:#195f7e;border-radius:4px}
+.visit-patient-name h1{color:#193c53;font-size:18px}
+.visit-patient-name>span{background:#e8f5f0;color:#28785c;border-radius:3px;font-size:10px}
+.visit-top-actions button{height:36px;border-radius:4px;font-size:12px}
+.visit-top-actions .visit-patient-file-link,.visit-top-actions .visit-treatment-link{border:1px solid #d4e0e7;background:#fff;color:#2c5870}
+.visit-top-actions .visit-treatment-link{background:#f3f8fb;border-color:#d2e3ed;color:#166b95}
+.visit-top-actions .visit-finish-button{background:#146a98;border-color:#146a98}
+.visit-session-context{display:grid;grid-template-columns:1fr 1fr 1fr minmax(180px,1.5fr);background:#fff;border-bottom:1px solid #dce5eb;padding:0 26px}
+.visit-session-context>div{display:flex;flex-direction:column;gap:4px;padding:12px 17px;border-inline-end:1px solid #e8edf1}
+.visit-session-context>div:first-child{padding-inline-start:0}
+.visit-session-context span{font-size:10px;color:#8495a2;font-weight:700}
+.visit-session-context strong{font-size:12px;color:#1e435a}
+.visit-session-context .visit-context-note{justify-content:center;border:0;color:#718795;font-size:11px;line-height:1.7}
+.doctor-desk{gap:14px;padding:16px 26px 32px}
+.consultation-sheet{border-color:#dce5eb;box-shadow:0 1px 3px rgba(23,48,67,.03)}
+.consultation-heading{background:#fafcfd;min-height:63px}
+.consultation-heading h2{color:#193e57;font-size:17px}
+.consultation-heading>div:first-child>span{color:#6f8c9f}
+.doctor-visit-page input,.doctor-visit-page textarea,.doctor-visit-page select{border-color:#d8e3ea!important;border-radius:3px!important}
+.doctor-visit-page button{box-shadow:none!important}
+@media(max-width:1100px){.visit-session-context{grid-template-columns:repeat(3,1fr)}.visit-session-context .visit-context-note{grid-column:1/-1;border-top:1px solid #e8edf1;padding:8px 0}.visit-topbar{flex-wrap:wrap}}
+@media(max-width:720px){.visit-topbar,.visit-session-context,.visit-workspace-path{padding-inline:14px}.visit-top-actions{flex-wrap:wrap}.visit-session-context{grid-template-columns:1fr 1fr}.visit-session-context>div{padding:10px}.doctor-desk{padding:12px}}
+
+
+.visit-drug-specialty-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:9px;margin:0 0 12px;padding:10px 13px;border:1px solid #d9e8f4;border-radius:8px;background:#f2f8fd;color:#37647e;font-size:12px}
+.visit-drug-specialty-bar label{display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;font-weight:700}
+.visit-drug-specialty-bar input{accent-color:#1476b8;width:16px;height:16px}

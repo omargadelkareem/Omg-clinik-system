@@ -11,10 +11,12 @@ import DashboardPage from "../pages/DashboardPage";
 import AppointmentsPage from "../pages/appointments/AppointmentsPage";
 import PatientsPage from "../pages/patients/PatientsPage";
 import PatientProfilePage from "../pages/patients/PatientProfilePage";
+import PatientProceduresPage from "../pages/patients/PatientProceduresPage";
 import NewVisitPage from "../pages/visits/NewVisitPage";
 import PrescriptionsPage from "../pages/prescriptions/PrescriptionsPage";
 import DrugLibraryPage from "../pages/drugs/DrugLibraryPage";
 import FinancePage from "../pages/finance/FinancePage";
+import OverdueInstallmentsPage from "../pages/finance/OverdueInstallmentsPage";
 import ReportsPage from "../pages/reports/ReportsPage";
 import StaffPage from "../pages/staff/taffPage";
 import SettingsPage from "../pages/settings/SettingsPage";
@@ -88,6 +90,15 @@ export default function AppRoutes() {
           />
 
           <Route
+            path="patients/:patientId/procedures"
+            element={
+              <ProtectedRoute permissions={["visits"]}>
+                <PatientProceduresPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
             path="patients/:patientId/visit/new"
             element={
               <ProtectedRoute permissions={["visits"]}>
@@ -154,6 +165,8 @@ export default function AppRoutes() {
               </ProtectedRoute>
             }
           />
+
+          <Route path="finance/overdue" element={<ProtectedRoute permissions={["finance"]}><OverdueInstallmentsPage /></ProtectedRoute>} />
 
           <Route
             path="reports"

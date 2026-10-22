@@ -24,6 +24,7 @@ import {
   UserRoundCog,
   Users,
   WalletCards,
+  BadgeAlert,
 } from "lucide-react";
 
 import {
@@ -36,7 +37,7 @@ import {
 
 const navigation = [
   {
-    title: "إدارة العيادة",
+    title: "القائمة الرئيسية",
 
     items: [
       {
@@ -47,7 +48,7 @@ const navigation = [
       },
 
       {
-        label: "عيادة اليوم",
+        label: "المواعيد",
         icon: CalendarDays,
         path: "/appointments",
 
@@ -68,7 +69,7 @@ const navigation = [
       },
 
       {
-        label: "الزيارات",
+        label: "الكشف الطبي",
         icon: Stethoscope,
         path: "/visits",
 
@@ -92,7 +93,7 @@ const navigation = [
   },
 
   {
-    title: "الملف الطبي",
+    title: "الخدمات الطبية",
 
     items: [
       {
@@ -140,7 +141,7 @@ const navigation = [
   },
 
   {
-    title: "الإدارة",
+    title: "الإدارة والتقارير",
 
     items: [
       {
@@ -153,6 +154,13 @@ const navigation = [
           "payments",
           "receipts",
         ],
+      },
+
+      {
+        label: "الأقساط المتأخرة",
+        icon: BadgeAlert,
+        path: "/finance/overdue",
+        permissions: ["finance"],
       },
 
       {
@@ -330,7 +338,7 @@ export default function Sidebar({
             </div>
 
             <p>
-              Clinic OS
+              CLINIC MANAGEMENT
             </p>
           </div>
 
