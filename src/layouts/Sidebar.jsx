@@ -24,6 +24,7 @@ import {
   UserRoundCog,
   Users,
   WalletCards,
+  BadgeAlert,
 } from "lucide-react";
 
 import {
@@ -153,6 +154,13 @@ const navigation = [
           "payments",
           "receipts",
         ],
+      },
+
+      {
+        label: "الأقساط المتأخرة",
+        icon: BadgeAlert,
+        path: "/finance/overdue",
+        permissions: ["finance"],
       },
 
       {
@@ -330,7 +338,7 @@ export default function Sidebar({
             </div>
 
             <p>
-              Clinic OS
+              MEDICAL WORKSPACE
             </p>
           </div>
 
