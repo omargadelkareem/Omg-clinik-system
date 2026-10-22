@@ -4,8 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { subscribeToDashboard } from "../services/dashboardService";
 import { subscribeAppointmentPatients, subscribeAppointmentDoctors } from "../services/appointmentService";
-import { BookingModal } from "./appointments/AppointmentsPage";
-import "./appointments/AppointmentsPage.css";
+import QuickReceptionModal from "./appointments/QuickReceptionModal";
 import "./DashboardPage.css";
 
 const empty = { appointments: [], totals: { appointments: 0 } };
@@ -106,7 +105,7 @@ export default function DashboardPage() {
         )}
       </section>
       {notice && <div className="today-bookings-notice" role="status">{notice}<button type="button" onClick={() => setNotice("")}>إغلاق</button></div>}
-      {bookingOpen && <BookingModal clinicId={clinicId} patients={patients} doctors={doctors} selectedDateKey={todayKey} defaultTime="" staffId={staffId || profile?.staffId || ""} defaultArrivalMode="later" onClose={() => setBookingOpen(false)} onSuccess={message => { setBookingOpen(false); setNotice(message); }} />}
+      {bookingOpen && <QuickReceptionModal clinicId={clinicId} patients={patients} doctors={doctors} staffId={staffId || profile?.staffId || ""} onClose={() => setBookingOpen(false)} onSuccess={message => { setBookingOpen(false); setNotice(message); }} />}
     </main>
   );
 }
