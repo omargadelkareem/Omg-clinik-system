@@ -1,4 +1,4 @@
-import { get, push, ref, set, update, onValue } from "firebase/database";
+import { get, push, ref, set, update, onValue, runTransaction } from "firebase/database";
 import { database } from "../config/firebase";
 import { BUILTIN_PROCEDURES, PROCEDURE_STATUSES, validateToothNumber } from "../config/procedureCatalog";
 
@@ -74,11 +74,22 @@ export async function updatePatientProcedureStatus({ clinicId, patientId, proced
 export async function addProcedureSession({ clinicId, patientId, procedureId, actorId, notes }) {
   const author = requiredId(actorId, "actorId");
   const path = basePath(clinicId, patientId) + "/" + requiredId(procedureId, "procedureId");
-  const snapshot = await get(ref(database, path));
-  if (!snapshot.exists()) throw new Error("Procedure not found");
-  if (["completed", "cancelled"].includes(snapshot.val().status)) throw new Error("Procedure is closed");
-  const session = push(ref(database, path + "/sessions"));
-  await set(session, { id: session.key, notes: String(notes || "").slice(0, 2000), createdBy: author, createdAt: Date.now() });
-  await update(ref(database, path), { status: "in_progress", updatedBy: author, updatedAt: Date.now() });
-  return session.key;
+  const procedureRef = ref(database, path);
+  const sessionId = push(ref(database, path + "/sessions")).key;
+  const now = Date.now();
+  const result = await runTransaction(procedureRef, current => {
+    if (!current || ["completed", "cancelled"].includes(current.status)) return;
+    const planned = Math.max(1, Number(current.plannedSessions) || 1);
+    const completed = Object.keys(current.sessions || {}).length;
+    if (completed >= planned) return;
+    return {
+      ...current,
+      sessions: { ...(current.sessions || {}), [sessionId]: { id: sessionId, notes: String(notes || "").slice(0, 2000), createdBy: author, createdAt: now } },
+      status: "in_progress",
+      updatedBy: author,
+      updatedAt: now,
+    };
+  }, { applyLocally: false });
+  if (!result.committed) throw new Error("تم تسجيل جميع الجلسات المخططة أو الإجراء مغلق. لا يمكن إضافة جلسة أخرى.");
+  return sessionId;
 }
