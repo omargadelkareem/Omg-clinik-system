@@ -37,3 +37,41 @@
 .session-entry{display:flex;gap:8px;margin:12px 0}
 .session-entry input{flex:1;min-width:0}
 .session-entry button{white-space:nowrap;padding:8px 12px;font-size:12px}
+
+/* OMG Clinic dental workspace 2.0 */
+.procedures-v2{background:#eef3f5;min-height:100vh;padding:30px;--workspace-ink:#173a4b;--workspace-teal:#007d79}
+.procedures-v2 .procedures-header{background:#123849;color:#fff;padding:27px 30px;border-radius:20px;margin-bottom:18px;box-shadow:0 16px 35px #103d4c20}
+.procedures-v2 .procedures-header h1{font-size:30px;color:#fff}
+.procedures-v2 .procedures-header p{color:#b4cdd3}
+.procedures-v2 .procedures-header a{color:#9ae3d9}
+.procedures-v2 .procedures-total{background:#ffffff12;border-color:#ffffff25;color:#fff}
+.procedures-v2 .procedures-total small{color:#b3d0d6}
+.workspace-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px}
+.workspace-metrics>div{display:flex;flex-direction:column;gap:7px;background:#fff;border:1px solid #deeaed;border-radius:16px;padding:19px 22px;box-shadow:0 5px 20px #103d4c08}
+.workspace-metrics span{color:#718b99;font-size:12px;font-weight:700}
+.workspace-metrics strong{font-size:29px;color:#173a4b;font-weight:900;line-height:1.2}
+.workspace-metrics small{color:#9aabb2;font-size:11px}
+.procedures-v2 .procedures-card{border-radius:18px;box-shadow:0 8px 24px #103d4c08}
+.procedures-v2 .odontogram-panel{border-top:4px solid #008f86}
+.workspace-eyebrow{font-size:10px;letter-spacing:1.4px;color:#008e85;font-weight:900;display:block;margin-bottom:9px}
+.dentition-switch{display:flex;justify-content:center;gap:7px;margin:18px 0}
+.dentition-switch button,.procedure-categories button{background:#f2f7f8;border:1px solid #dce7e9;border-radius:999px;color:#53727f;padding:10px 16px;cursor:pointer;font:inherit;font-size:12px;font-weight:800}
+.dentition-switch button.active,.procedure-categories button.active{background:#087d79;border-color:#087d79;color:#fff}
+.procedures-v2 .odontogram-arches{background:linear-gradient(180deg,#f3f9f9,#f9fbfc);padding:28px 20px;border:1px solid #e4eeef}
+.procedures-v2 .odontogram-row{display:flex;justify-content:center;gap:7px;min-width:0}
+.procedures-v2 .odontogram-tooth{width:clamp(27px,4vw,56px);min-width:27px;min-height:79px;flex-shrink:0;border-radius:14px;border:1px solid #d5e5e7;box-shadow:0 3px 0 #d8e5e8;padding:9px 2px}
+.procedures-v2 .odontogram-tooth .tooth-shape{font-size:29px;color:#83a6af}
+.procedures-v2 .odontogram-tooth.selected .tooth-shape{color:#087d79}
+.procedures-v2 .odontogram-arch-divider{margin:23px 0}
+.procedures-v2 .procedures-grid{grid-template-columns:minmax(330px,0.85fr) minmax(0,1.15fr);gap:18px}
+.procedure-categories{display:flex;flex-wrap:wrap;gap:6px;margin-top:-4px}
+.procedure-categories button{padding:7px 12px;font-size:11px}
+.plan-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:18px}
+.plan-heading h2{margin:0}
+.plan-heading label{display:flex;align-items:center;gap:7px;color:#607b88;font-size:12px;white-space:nowrap}
+.plan-heading input{width:auto}
+.procedures-v2 .procedures-record{border-radius:13px;border-right:4px solid #0d8982;background:#fbfdfd}
+.procedures-v2 .procedures-record-top strong{font-size:15px}
+.procedures-v2 .procedures-record-top span{font-size:15px}
+@media(max-width:1050px){.workspace-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.procedures-v2 .procedures-grid{grid-template-columns:1fr}.procedures-v2 .odontogram-row{min-width:540px;justify-content:space-between}.procedures-v2 .odontogram-arches{overflow-x:auto}}
+@media(max-width:600px){.procedures-v2{padding:12px}.procedures-v2 .procedures-header{padding:20px}.procedures-v2 .procedures-header h1{font-size:23px}.workspace-metrics{gap:8px}.workspace-metrics>div{padding:13px}.workspace-metrics strong{font-size:23px}.procedures-v2 .odontogram-arches{padding:14px 8px}.dentition-switch{flex-wrap:wrap}}
