@@ -70,7 +70,7 @@ export default function QuickReceptionModal({ clinicId, patients, doctors, staff
         <div className="quick-reception-step"><b>1</b><strong>بيانات المريض</strong></div>
         <label>ابحث برقم الهاتف أو الاسم<div className="quick-reception-search"><Search size={17}/><input autoFocus value={phone} onChange={e=>{setPhone(e.target.value);setPatientId("");}} placeholder="رقم الهاتف أو اسم المريض"/></div></label>
         {filtered.length>0 && !selected && <div className="quick-reception-results">{filtered.map(p=><button type="button" key={p.id} onClick={()=>{setPatientId(p.id);setPhone(p.phone || "");setName(p.name || "");}}><strong>{p.name}</strong><span>{p.phone}</span></button>)}</div>}
-        {selected ? <div className="quick-reception-selected">✓ مريض مسجل: {selected.name} <button type="button" onClick={()=>{setPatientId("");setName("");setPhone("");}}>تغيير</button></div> : <label>اسم المريض الجديد<input value={name} onChange={e=>setName(e.target.value)} placeholder="اسم المريض بالكامل" required/></label>}
+        {selected ? <div className="quick-reception-selected">✓ مريض مسجل: {selected.name} <button type="button" onClick={()=>{setPatientId("");setName("");setPhone("");}}>تغيير</button></div> : <><label>اسم المريض الجديد<input value={name} onChange={e=>setName(e.target.value)} placeholder="اسم المريض بالكامل" required/></label><label>رقم هاتف المريض<input type="tel" value={phone} onChange={e=>setPhone(e.target.value)} placeholder="01xxxxxxxxx" required/></label></>}
         <div className="quick-reception-step"><b>2</b><strong>الكشف والدفع</strong></div>
         <div className="quick-reception-grid">
           <label>الطبيب<select value={doctorId} onChange={e=>setDoctorId(e.target.value)}><option value="">اختر الطبيب</option>{doctors.map(d=><option key={d.id} value={d.id}>{d.name}</option>)}</select></label>
@@ -83,7 +83,7 @@ export default function QuickReceptionModal({ clinicId, patients, doctors, staff
         <div className="quick-reception-price">سعر الكشف <strong>{price > 0 ? price.toLocaleString("ar-EG") + " ج.م" : "غير محدد"}</strong></div>
         <div className="quick-reception-choices">{[{id:"none",label:"غير مدفوع"},{id:"full",label:"مدفوع بالكامل"},{id:"partial",label:"دفع جزء"}].map(o=><button type="button" key={o.id} className={paid===o.id?"active":""} onClick={()=>setPaid(o.id)}>{o.label}</button>)}</div>
         {paid==="partial" && <label>المبلغ المدفوع<input type="number" min="1" max={Math.max(1,price-0.01)} step="0.01" value={partialAmount} onChange={e=>setPartialAmount(e.target.value)} placeholder="المبلغ بالجنيه" required/></label>}
-        {paid!=="none" && <label>طريقة الدفع<select value={method} onChange={e=>setMethod(e.target.value)}><option value="cash">نقدي</option><option value="vodafone_cash">فودافون كاش</option><option value="instapay">إنستاباي</option></select></label>}
+        {paid!=="none" && <label>طريقة الدفع<select value={method} onChange={e=>setMethod(e.target.value)}><option value="cash">نقدي</option><option value="wallet">محفظة إلكترونية</option><option value="transfer">تحويل بنكي / إنستاباي</option><option value="card">بطاقة</option></select></label>}
         <div className="quick-reception-step"><b>3</b><strong>تأكيد الاستقبال</strong></div>
         <label className="quick-reception-present"><input type="checkbox" checked={present} disabled={date!==dateKey()} onChange={e=>setPresent(e.target.checked)}/><span>المريض حاضر الآن — أضفه لانتظار الطبيب</span></label>
         {error && <div className="quick-reception-error" role="alert">{error}</div>}
