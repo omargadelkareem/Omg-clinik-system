@@ -1080,6 +1080,7 @@ const doctor = useMemo(
 
   return (
     <div className="doctor-visit-page">
+      <div className="visit-workspace-path"><span>الملفات الطبية</span><span className="visit-path-separator">/</span><button type="button" onClick={()=>navigate(`/patients/${patient.id}`)}>{patient.name}</button><span className="visit-path-separator">/</span><strong>جلسة الكشف</strong></div>
       {/* ===================================================
           TOP BAR
           =================================================== */}
@@ -1135,6 +1136,8 @@ const doctor = useMemo(
         </div>
 
         <div className="visit-top-actions">
+          <button type="button" className="visit-patient-file-link" onClick={()=>navigate(`/patients/${patient.id}`)}>ملف المريض</button>
+          <button type="button" className="visit-treatment-link" onClick={()=>navigate(`/patients/${patient.id}/procedures`)}>خطة العلاج</button>
           <button
             className="visit-draft-button"
             disabled={saving}
@@ -1246,6 +1249,7 @@ const doctor = useMemo(
           DESK
           =================================================== */}
 
+      <div className="visit-session-context"><div><span>جلسة الكشف الحالية</span><strong>{profile?.name || "الطبيب المعالج"}</strong></div><div><span>المريض</span><strong>{patient.name}</strong></div><div><span>الملف الطبي</span><strong>{patient.patientCode || "غير محدد"}</strong></div><div className="visit-context-note">التشخيص والروشتة والطلبات الطبية في مساحة عمل واحدة</div></div>
       <div className="doctor-desk">
         {/* =================================================
             CONSULTATION
