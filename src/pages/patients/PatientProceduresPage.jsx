@@ -22,7 +22,7 @@ export default function PatientProceduresPage() {
   // Doctor's assigned specialty takes precedence; the clinic specialty is fallback.
   // No arbitrary specialty switching from the patient chart.
   const resolvedSpecialty = activeSpecialty || clinicSpecialty || "general_practice";
-  const specialty = DENTAL_SPECIALTIES.includes(resolvedSpecialty) ? "dentistry" : resolvedSpecialty;
+  const specialty = DENTAL_SPECIALTIES.includes(resolvedSpecialty) ? "dentistry" : (resolvedSpecialty === "obstetrics_gynecology" ? "gynecology" : resolvedSpecialty);
   const isDental = specialty === "dentistry";
   const specialtyLabel = isDental ? "طب الأسنان" : ({"general_surgery":"الجراحة العامة","obstetrics_gynecology":"النساء والتوليد","gynecology":"النساء والتوليد","orthopedics":"العظام","ent":"الأنف والأذن","ophthalmology":"العيون","dermatology":"الجلدية","urology":"المسالك البولية"}[specialty] || "التخصص الطبي");
   const teeth = [18,17,16,15,14,13,12,11,21,22,23,24,25,26,27,28,48,47,46,45,44,43,42,41,31,32,33,34,35,36,37,38];
