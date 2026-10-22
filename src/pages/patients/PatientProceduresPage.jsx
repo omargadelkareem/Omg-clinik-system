@@ -79,67 +79,23 @@ export default function PatientProceduresPage() {
   const visibleRecords = records.filter(item => showCompleted || item.status !== "completed");
   const activeCount = records.filter(item => !["completed","cancelled"].includes(item.status)).length;
   const completedCount = records.filter(item => item.status === "completed").length;
-  return <main className="procedures-page procedures-v2 procedures-v3" dir="rtl">
-    <header className="procedures-header">
-      <div><Link to={`/patients/${patientId}`}>← الرجوع لملف المريض</Link><h1>{isDental ? "مخطط الأسنان وخطة العلاج" : "الإجراءات وخطة العلاج"}</h1><p>{specialtyLabel} · ملف المريض · إدارة العلاج من مكان واحد</p></div>
-      <div className="procedures-total"><small>إجمالي الإجراءات المسجلة (ليس فاتورة)</small><strong>{total.toLocaleString("ar-EG")} ج.م</strong></div>
-    </header>
-    {error && <p className="procedures-alert error" role="alert">{error}</p>}
-    {success && <p className="procedures-alert success" role="status">{success}</p>}
-    <div className="workspace-metrics"><div><span>الخطة العلاجية</span><strong>{records.length}</strong><small>إجراء مسجل</small></div><div><span>تحت العلاج</span><strong>{activeCount}</strong><small>إجراء نشط</small></div><div><span>تم الانتهاء</span><strong>{completedCount}</strong><small>إجراء مكتمل</small></div><div><span>المريض</span><strong>#{patientId?.slice(-6)}</strong><small>رقم الملف</small></div></div>
-    {isDental && <section className="procedures-card odontogram-panel">
-      <div className="odontogram-heading"><div><span className="workspace-eyebrow">DENTAL WORKSPACE / OMG CLINIC</span><h2>خريطة الأسنان التفاعلية</h2><p>اختار السن ثم الإجراء — كل خطوة بتتسجل في خطة العلاج</p></div><span className="odontogram-selection">{selectedTooth ? `السن المختار: ${selectedTooth}` : "اختر سنًا"}</span></div>
-      <div className="dentition-switch"><button type="button" className={dentition === "permanent" ? "active" : ""} onClick={() => {setDentition("permanent");setSelectedTooth(null);setForm(prev=>({...prev,toothNumber:""}));}}>الأسنان الدائمة (32)</button><button type="button" className={dentition === "primary" ? "active" : ""} onClick={() => {setDentition("primary");setSelectedTooth(null);setForm(prev=>({...prev,toothNumber:""}));}}>الأسنان اللبنية (20)</button></div>
-      <div className="odontogram-legend"><span><i className="tooth-indicator planned"/>مخطط</span><span><i className="tooth-indicator in_progress"/>جاري العلاج</span><span><i className="tooth-indicator completed"/>مكتمل</span></div>
-      <DentalAnatomyChart teeth={teeth} selectedTooth={selectedTooth} statuses={toothStatuses} onSelect={tooth => {setSelectedTooth(tooth);setForm(prev=>({...prev,toothNumber:String(tooth)}));}}/>
-      <p className="odontogram-note">ترقيم FDI للأسنان الدائمة واللبنية. ألوان الأسنان تعكس آخر حالة مسجلة؛ التمثيل التشريحي الدقيق للأسطح ما زال قيد التطوير.</p>
-    </section>}
-    <div className="procedures-grid">
-      <section className="procedures-card">
-        <h2>{isDental ? "إضافة علاج للسن" : "إضافة إجراء طبي"}</h2>
-        <form onSubmit={create}>
-          <div className="procedures-specialty-pill">{specialtyLabel} <small>محدد من حساب الطبيب</small></div>
-          <label>ابحث عن الإجراء
-            <input placeholder="بحث سريع..." value={search} onChange={e => setSearch(e.target.value)}/>
-          </label>
-          <div className="procedure-categories"><button type="button" className={activeCategory === "all" ? "active" : ""} onClick={() => setActiveCategory("all")}>الكل</button>{categories.map(cat => <button type="button" key={cat} className={activeCategory === cat ? "active" : ""} onClick={() => setActiveCategory(cat)}>{({"restorative":"الحشوات","endodontics":"العصب","surgery":"الجراحة","implants":"الزراعة","prosthodontics":"التركيبات","periodontics":"اللثة","orthodontics":"التقويم","preventive":"الوقاية","imaging":"الأشعة"})[cat] || cat}</button>)}</div>
-          <div className="procedure-picks" role="group" aria-label="اختيار الإجراء">
-            {options.map(item => <button type="button" key={item.code} aria-pressed={form.code === item.code} className={form.code === item.code ? "active" : ""} onClick={() => setForm(prev => ({...prev, code:item.code}))}>{item.name}</button>)}
-            {!options.length && <p>لا توجد إجراءات معرفة لهذا التخصص حاليًا.</p>}
-          </div>
-          {selected?.requiresTooth && <label>رقم السن
-            <input required inputMode="numeric" placeholder="اختار من المخطط أو اكتب رقم FDI" value={form.toothNumber} onChange={e => {setForm(prev => ({ ...prev, toothNumber: e.target.value })); setSelectedTooth(validateToothNumber(e.target.value) ? Number(e.target.value) : null);}}/>
-          </label>}
-          {selected?.requiresTooth && <div className="surfaces-control"><strong>أسطح السن</strong><div className="surface-buttons">{["M","D","O","B","L"].map(surface => <button key={surface} type="button" className={form.surfaces.includes(surface) ? "active" : ""} aria-pressed={form.surfaces.includes(surface)} onClick={() => setForm(prev => ({...prev, surfaces: prev.surfaces.includes(surface) ? prev.surfaces.filter(x => x !== surface) : [...prev.surfaces, surface]}))}>{surface}</button>)}</div></div>}
-          {selected?.supportsSessions && <label>عدد الجلسات المخططة<input type="number" min="1" max="30" value={form.plannedSessions} onChange={e => setForm(prev => ({...prev, plannedSessions: e.target.value}))}/></label>}
-          <label>التكلفة (جنيه مصري)
-            <input required type="number" min="0" step="0.01" value={form.price} onChange={e => setForm(prev => ({ ...prev, price: e.target.value }))}/>
-          </label>
-          <label>ملاحظات الطبيب
-            <textarea rows="3" placeholder="تفاصيل الحالة أو الخطة..." value={form.notes} onChange={e => setForm(prev => ({ ...prev, notes: e.target.value }))}/>
-          </label>
-          {selected?.requiresConsent && <p className="procedures-hint">هذا الإجراء يحتاج توثيق موافقة المريض قبل تسجيله كمكتمل.</p>}
-          <button type="submit" disabled={busy || !clinicId || !selected}>+ إضافة إلى خطة العلاج</button>
-        </form>
-      </section>
-      <section className="procedures-card">
-        <div className="plan-heading"><h2>خطة العلاج <span>({records.length})</span></h2><label><input type="checkbox" checked={showCompleted} onChange={e=>setShowCompleted(e.target.checked)}/> إظهار المكتمل</label></div>
-        {!records.length && <p className="procedures-empty">ابدأ باختيار {isDental ? "سن وإجراء" : "إجراء"} لإضافة أول خطوة علاجية.</p>}
-        <div className="procedures-records">{visibleRecords.map(item => <article key={item.id} className="procedures-record">
-          <div className="procedures-record-top"><strong>{item.name}</strong><span>{Number(item.price || 0).toLocaleString("ar-EG")} ج.م</span></div>
-          <p>{item.toothNumber ? `السن: ${item.toothNumber} · ` : ""}{item.notes || "بدون ملاحظات"}</p>
-          {!!item.surfaces?.length && <p>أسطح السن: {item.surfaces.join(" · ")}</p>}
-          {item.plannedSessions > 1 && <p>الجلسات: {Object.keys(item.sessions || {}).length} / {item.plannedSessions}</p>}
-          {item.plannedSessions > 1 && item.status !== "completed" && item.status !== "cancelled" && <div className="session-entry"><input aria-label="ملاحظات الجلسة" placeholder="ملاحظات الجلسة الجديدة" value={sessionNotes[item.id] || ""} onChange={e => setSessionNotes(prev => ({...prev, [item.id]: e.target.value}))}/><button type="button" disabled={busy} onClick={() => addSession(item)}>+ تسجيل جلسة</button></div>}
-          <div className="procedures-record-footer">
-            <select aria-label="حالة الإجراء" disabled={busy} value={item.status} onChange={e => changeStatus(item, e.target.value)}>
-              {PROCEDURE_STATUSES.map(value => <option key={value} value={value}>{STATUS_LABELS[value]}</option>)}
-            </select>
-            <small>{item.createdAt ? new Date(item.createdAt).toLocaleDateString("ar-EG") : ""}</small>
-          </div>
-          {item.requiresConsent && !item.consentDocumentId && <p className="procedures-hint">الموافقة الطبية غير موثقة — لا يمكن إكمال الإجراء.</p>}
-        </article>)}</div>
-      </section>
-    </div>
+  const chooseTooth = tooth => { setSelectedTooth(tooth); setForm(prev => ({ ...prev, toothNumber: String(tooth) })); };
+  return <main className="dentolize-workspace" dir="rtl">
+    <div className="dw-patient-bar"><Link to={`/patients/${patientId}`}>← العودة للمرضى</Link><div className="dw-avatar">✚</div><div><h2>ملف المريض <small>#{patientId?.slice(-7)}</small></h2><p>{specialtyLabel} · خطة العلاج</p></div><span className="dw-active">● مريض نشط</span></div>
+    <nav className="dw-tabs"><span>الملف الشخصي</span><span>التاريخ الطبي</span><span>الكشف</span><strong>خطة العلاج</strong><span>الأشعة</span><span>الفواتير</span></nav>
+    {error && <p role="alert" className="dw-alert">{error}</p>}{success && <p role="status" className="dw-alert">{success}</p>}
+    <div className="dw-columns"><div className="dw-main">
+      {isDental && <section className="dw-chart"><div className="dw-title"><h3>مخطط الأسنان</h3><div className="dw-switch"><button className={dentition==="permanent"?"on":""} onClick={()=>setDentition("permanent")}>الأسنان الدائمة</button><button className={dentition==="primary"?"on":""} onClick={()=>setDentition("primary")}>الأسنان اللبنية</button></div></div>
+      <DentalAnatomyChart teeth={teeth} selectedTooth={selectedTooth} onSelect={chooseTooth} statuses={toothStatuses}/>
+      <div className="dw-legend"><span>🟠 مخطط</span><span>🔵 جاري العلاج</span><span>🟢 مكتمل</span></div>
+      <div className="dw-surface-panel"><h3>السن <b>{selectedTooth || "—"}</b></h3><p>اختار السن ثم حدد أسطح العلاج</p><div className="dw-surfaces">{["O","M","D","B","L"].map(surface=><button key={surface} className={form.surfaces.includes(surface)?"on":""} onClick={()=>setForm(prev=>({...prev,surfaces:prev.surfaces.includes(surface)?prev.surfaces.filter(x=>x!==surface):[...prev.surfaces,surface]}))}><b>{surface}</b><small>{({O:"إطباقي",M:"أنسي",D:"بعيد",B:"دهليزي",L:"لساني"})[surface]}</small></button>)}</div></div>
+      </section>}
+      <section className="dw-plan"><div className="dw-title"><h3>خطة العلاج ({records.length} إجراءات)</h3><label><input type="checkbox" checked={showCompleted} onChange={e=>setShowCompleted(e.target.checked)}/> إظهار المكتمل</label></div><div className="dw-table-wrap"><table><thead><tr><th>السن</th><th>الإجراء</th><th>الأسطح</th><th>الجلسات</th><th>التكلفة</th><th>الحالة</th></tr></thead><tbody>{visibleRecords.map(item=><tr key={item.id}><td>{item.toothNumber||"—"}</td><td>{item.name}</td><td>{item.surfaces?.join(", ")||"—"}</td><td>{Object.keys(item.sessions||{}).length}/{item.plannedSessions||1}{item.plannedSessions>1&&!["completed","cancelled"].includes(item.status)&&<button type="button" className="dw-session" disabled={busy} onClick={()=>addSession(item)}>+ جلسة</button>}</td><td>{Number(item.price||0).toLocaleString("ar-EG")} ج.م</td><td><select disabled={busy} value={item.status} onChange={e=>changeStatus(item,e.target.value)}>{PROCEDURE_STATUSES.map(status=><option key={status} value={status}>{STATUS_LABELS[status]}</option>)}</select></td></tr>)}</tbody></table>{!visibleRecords.length&&<p className="dw-empty">لا توجد إجراءات في خطة العلاج حتى الآن.</p>}</div><div className="dw-total">إجمالي خطة العلاج <strong>{total.toLocaleString("ar-EG")} ج.م</strong></div></section>
+    </div><aside className="dw-side"><div className="dw-side-tabs"><strong>إضافة إجراء</strong><span>الإجراءات الحالية</span><span>الجلسات</span></div><form onSubmit={create}>
+    <div className="dw-field"><h4>1. السن والأسطح</h4>{isDental&&<><label>رقم السن<input value={form.toothNumber} placeholder="اختار من خريطة الأسنان" onChange={e=>{setForm(prev=>({...prev,toothNumber:e.target.value}));setSelectedTooth(validateToothNumber(e.target.value)?Number(e.target.value):null);}}/></label><div className="dw-surface-buttons">{["O","M","D","B","L"].map(x=><button type="button" key={x} className={form.surfaces.includes(x)?"on":""} onClick={()=>setForm(prev=>({...prev,surfaces:prev.surfaces.includes(x)?prev.surfaces.filter(y=>y!==x):[...prev.surfaces,x]}))}>{x}</button>)}</div></>}</div>
+    <div className="dw-field"><h4>2. نوع الإجراء</h4><input placeholder="ابحث عن إجراء..." value={search} onChange={e=>setSearch(e.target.value)}/><div className="dw-category-grid">{categories.map(category=><button type="button" key={category} className={activeCategory===category?"on":""} onClick={()=>setActiveCategory(activeCategory===category?"all":category)}>{({"restorative":"حشوات","endodontics":"علاج عصب","prosthodontics":"تركيبات","implants":"زراعة","surgery":"جراحة","orthodontics":"تقويم","imaging":"أشعة","periodontics":"لثة"})[category]||category}</button>)}</div><select value={form.code} required onChange={e=>setForm(prev=>({...prev,code:e.target.value}))}><option value="">اختر الإجراء</option>{options.map(item=><option key={item.code} value={item.code}>{item.name}</option>)}{selected&&!options.some(item=>item.code===selected.code)&&<option value={selected.code}>{selected.name}</option>}</select></div>
+    <div className="dw-field"><h4>3. تفاصيل الإجراء</h4><label>التكلفة المتوقعة<input type="number" min="0" step="0.01" required value={form.price} onChange={e=>setForm(prev=>({...prev,price:e.target.value}))}/></label>{selected?.supportsSessions&&<label>عدد الجلسات<input type="number" min="1" max="30" value={form.plannedSessions} onChange={e=>setForm(prev=>({...prev,plannedSessions:e.target.value}))}/></label>}<label>ملاحظات<textarea rows="3" value={form.notes} onChange={e=>setForm(prev=>({...prev,notes:e.target.value}))}/></label>{selected?.requiresConsent&&<small>يلزم توثيق موافقة المريض قبل الإكمال.</small>}</div>
+    <button type="submit" className="dw-save" disabled={busy||!clinicId||!selected}>{busy?"جاري الحفظ...":"+ إضافة إلى خطة العلاج"}</button>
+    </form></aside></div>
   </main>;
 }
