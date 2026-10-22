@@ -109,3 +109,52 @@
 .procedures-v3 .procedure-picks button{border-radius:5px!important}
 .procedures-v3 .procedures-record{border-radius:5px;border-right:3px solid #087d79}
 @media(max-width:900px){.procedures-v3 .procedures-grid{grid-template-columns:1fr}}
+
+
+.dentolize-workspace{direction:rtl;background:#f4f6f8;min-height:100vh;color:#1d3446;font-family:inherit;font-size:13px}
+.dw-patient-bar{height:95px;background:#fff;border-bottom:1px solid #e8edf1;display:flex;align-items:center;gap:16px;padding:12px 26px}
+.dw-patient-bar>a{color:#006ab4;text-decoration:none;margin-left:18px;font-weight:700}
+.dw-avatar{width:52px;height:52px;border-radius:50%;background:#e3edf5;display:grid;place-items:center;font-size:26px;color:#2377a7}
+.dw-patient-bar h2{font-size:20px;margin:0 0 6px}.dw-patient-bar h2 small{font-size:12px;color:#74879b;margin-right:8px}
+.dw-patient-bar p{color:#788b9c;margin:0}.dw-active{margin-right:auto;color:#148c69;background:#e4f7f1;border-radius:8px;padding:9px 13px}
+.dw-tabs{height:49px;background:#fff;border-bottom:1px solid #e5e9ee;display:flex;align-items:stretch;gap:34px;padding:0 30px;color:#718297;white-space:nowrap;overflow-x:auto}
+.dw-tabs span,.dw-tabs strong{display:flex;align-items:center}.dw-tabs strong{color:#056ac5;border-bottom:2px solid #0876d6}
+.dw-columns{display:grid;grid-template-columns:minmax(0,1fr) 385px;gap:12px;padding:13px 15px;align-items:start}
+.dw-main{display:grid;gap:12px;min-width:0}
+.dw-chart,.dw-plan,.dw-side{background:#fff;border:1px solid #e5eaf0;border-radius:10px;box-shadow:0 3px 14px #102b4510;overflow:hidden}
+.dw-chart{padding:18px}.dw-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:15px}
+.dw-title h3{margin:0;font-size:17px}.dw-title label{color:#73849a;font-size:12px;display:flex;align-items:center;gap:6px}
+.dw-switch{display:flex;background:#f1f5f8;border-radius:6px;padding:3px;gap:3px}
+.dw-switch button{border:0;background:transparent;color:#52697f;padding:9px 13px;border-radius:5px;font:inherit;cursor:pointer}
+.dw-switch button.on{background:#007da5;color:white;font-weight:800}
+.dw-chart .anatomy-chart{min-height:260px;display:flex;flex-direction:column;justify-content:center;background:#fcfdff;border:0}
+.dw-chart .anatomy-tooth{height:102px;width:clamp(30px,4.1vw,56px)}
+.dw-chart .anatomy-tooth svg{height:70px;max-width:56px}
+.dw-chart .anatomy-tooth-row{gap:1px}
+.dw-legend{display:flex;justify-content:center;gap:22px;color:#607488;padding:10px 0;font-size:12px}
+.dw-surface-panel{border-top:1px solid #e8edf1;margin:12px -18px -18px;padding:16px 20px;background:#fcfdff}
+.dw-surface-panel h3{font-size:17px;margin:0}.dw-surface-panel h3 b{color:#066ebd}.dw-surface-panel p{color:#8696a6;font-size:12px;margin:5px 0 12px}
+.dw-surfaces{display:flex;gap:9px;justify-content:space-between}
+.dw-surfaces button{flex:1;min-height:67px;background:#fff;border:1px solid #e1e8ef;border-radius:7px;display:grid;place-content:center;gap:5px;cursor:pointer;color:#607489;font:inherit}
+.dw-surfaces button b{font-size:19px}.dw-surfaces button small{font-size:11px}.dw-surfaces button.on{background:#eaf4ff;border-color:#0b77da;color:#096bd0}
+.dw-plan{padding:16px}.dw-table-wrap{overflow-x:auto}.dw-plan table{border-collapse:collapse;width:100%;min-width:610px;text-align:right;font-size:12px}
+.dw-plan th{background:#f1f5f8;color:#334b61;padding:13px 10px}.dw-plan td{padding:13px 10px;border-bottom:1px solid #edf0f3}
+.dw-plan td select{max-width:130px;background:#f1f6fa;border:1px solid #e2eaf0;border-radius:5px;padding:6px;color:#30516d}
+.dw-session{display:block;border:0;background:#e7f2ff;color:#006bb7;border-radius:4px;cursor:pointer;margin-top:4px}
+.dw-total{display:flex;justify-content:space-between;padding:15px 4px 2px;color:#6c7e8d}.dw-total strong{color:#133f59;font-size:17px}
+.dw-side{position:sticky;top:10px}.dw-side-tabs{display:flex;gap:5px;padding:11px;border-bottom:1px solid #e8edf2;justify-content:space-between;align-items:center}
+.dw-side-tabs strong{background:#006bc3;color:#fff;padding:12px 14px;border-radius:5px}.dw-side-tabs span{color:#667c91;font-size:11px}
+.dw-side form{padding:16px}.dw-field{margin-bottom:22px}.dw-field h4{font-size:14px;margin:0 0 13px;color:#203e52}
+.dw-field label{display:grid;gap:7px;margin-bottom:10px;color:#71849a;font-size:12px}
+.dw-field input,.dw-field select,.dw-field textarea{width:100%;box-sizing:border-box;border:1px solid #dbe3ec;border-radius:6px;padding:12px;color:#2b475e;background:#fff;font:inherit}
+.dw-field>input{margin-bottom:10px}.dw-surface-buttons{display:flex;gap:8px}
+.dw-surface-buttons button{flex:1;border:1px solid #d9e4ee;border-radius:6px;padding:12px 0;background:#f7f9fb;color:#526b81;cursor:pointer}
+.dw-surface-buttons button.on{background:#e8f3ff;border-color:#0874d1;color:#0669bd}
+.dw-category-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:11px 0}
+.dw-category-grid button{border:1px solid #e1e7ef;background:#fff;border-radius:7px;padding:14px 2px;min-height:55px;color:#3d566b;cursor:pointer;font:inherit;font-size:11px}
+.dw-category-grid button.on{background:#eaf4ff;border-color:#1477e2;color:#056cc5;font-weight:800}
+.dw-save{width:100%;border:0;background:#0069c4;color:#fff;border-radius:7px;padding:14px;font:inherit;font-weight:800;cursor:pointer}
+.dw-save:disabled{opacity:.55;cursor:not-allowed}
+.dw-empty{color:#8496a7;text-align:center;padding:25px}.dw-alert{margin:10px 16px;background:#eaf4ff;padding:12px;border-radius:7px}
+@media(max-width:1100px){.dw-columns{grid-template-columns:1fr}.dw-side{position:static}.dw-chart .anatomy-tooth-row{overflow-x:auto}}
+@media(max-width:620px){.dw-patient-bar{padding:12px;height:auto;flex-wrap:wrap}.dw-tabs{gap:20px;padding:0 14px}.dw-columns{padding:8px}.dw-chart{padding:12px}.dw-surfaces{gap:4px}.dw-surfaces button{min-width:0}}
