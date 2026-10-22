@@ -999,3 +999,37 @@
 .ops-eyebrow{color:#16839d}
 .ops-dashboard button{border-radius:4px!important;box-shadow:none!important}
 .ops-dashboard input,.ops-dashboard select{border-radius:4px!important;border-color:#d8e3ea!important}
+
+
+/* Reference 01: classic clinical dashboard — structure and hierarchy */
+.ops-dashboard{--ink:#1c3550;--muted:#718497;--line:#dce5ef;--soft-line:#eaf0f5;--canvas:#f6f8fc;--navy:#123453;--blue:#1268ed;background:#f6f8fc;padding:18px 20px 34px}
+.ops-header{min-height:64px;padding-bottom:14px;border-bottom:0}
+.ops-header h1{font-size:21px;color:#173b59}
+.ops-eyebrow{font-size:9px;color:#7990a4}
+.ops-header p{font-size:11px}
+.ops-header-actions .primary-operation{background:#146cf0!important;border:1px solid #146cf0!important;border-radius:5px!important;box-shadow:none!important}
+.operations-layout{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(270px,.85fr);align-items:stretch;gap:12px;margin-top:0}
+.schedule-workspace,.clinic-live-panel{background:#fff;border:1px solid #dce5ef;border-radius:6px;box-shadow:0 2px 10px rgba(24,54,88,.035);overflow:hidden}
+.workspace-heading,.live-panel-heading{min-height:57px;background:#163b5a!important;color:#fff!important;padding:12px 16px}
+.workspace-heading h2,.live-panel-heading h2,.workspace-heading span,.live-panel-heading span{color:#fff!important}
+.workspace-heading button{background:#126bf0!important;color:#fff!important;border:1px solid #126bf0!important;border-radius:4px!important;padding:7px 10px}
+.schedule-list{padding:0 12px}
+.schedule-line{border-radius:0!important;border-bottom:1px solid #e9eff4!important;background:#fff!important;box-shadow:none!important;min-height:61px}
+.schedule-line:hover{background:#f5f9fd!important}
+.schedule-time strong{color:#274c69}
+.schedule-patient strong{color:#213c53}
+.patient-mark{background:#e9f2fa!important;color:#2871a2!important;border-radius:50%!important}
+.ops-status{border-radius:4px!important}
+.schedule-add-line{color:#126bf0!important;border-radius:4px!important}
+.clinic-live-panel{display:flex;flex-direction:column}
+.exam-room{margin:12px;border-radius:5px!important;box-shadow:none!important}
+.waiting-head{padding:12px 15px}
+.live-queue{padding:0 12px}
+.live-queue-line{border-bottom:1px solid #edf1f5;border-radius:0!important}
+.manage-floor{margin:12px;background:#126bf0!important;border:1px solid #126bf0!important;color:#fff!important;border-radius:4px!important;min-height:42px}
+.command-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0 0;background:transparent!important;border:0!important;padding:0!important}
+.command-strip>div{background:#fff!important;border:1px solid #e0e8f1!important;border-radius:6px!important;box-shadow:0 1px 4px rgba(19,55,88,.025)!important}
+.lower-operations{margin-top:12px}
+.ops-dashboard button{box-shadow:none!important}
+@media(max-width:1080px){.operations-layout{grid-template-columns:1fr}.command-strip{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:580px){.ops-dashboard{padding:12px}.command-strip{grid-template-columns:1fr 1fr;gap:7px}.ops-header{flex-wrap:wrap}}
