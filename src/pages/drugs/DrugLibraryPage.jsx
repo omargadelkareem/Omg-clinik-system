@@ -46,7 +46,7 @@ import {
   drugExists,
   importDrugs,
   setDrugFavorite,
-  subscribeDrugLibrary,
+  getDrugLibraryPage,
   updateDrug,
 } from "../../services/drugLibraryService";
 
@@ -319,68 +319,39 @@ export default function DrugLibraryPage() {
     return () => unsubscribe();
   }, []);
 
-  /* =======================================================
-     REALTIME DRUG LIBRARY
-  ======================================================= */
-
+  /* Cursor pagination: Firebase reads 50 records per request. */
+  const [nextDrugCursor, setNextDrugCursor] = useState(null);
+  const [hasMoreDrugs, setHasMoreDrugs] = useState(false);
+  const [loadingMoreDrugs, setLoadingMoreDrugs] = useState(false);
+  const loadMoreDrugs = async () => {
+    if (!clinicId || !hasMoreDrugs || loadingMoreDrugs) return;
+    setLoadingMoreDrugs(true);
+    try {
+      const page = await getDrugLibraryPage(clinicId,{cursor:nextDrugCursor,pageSize:50});
+      setDrugs(current => [...current,...page.items.filter(item => !current.some(existing => existing.id === item.id))]);
+      setNextDrugCursor(page.nextCursor);
+      setHasMoreDrugs(page.hasMore);
+    } catch(error) {setLoadError(error?.message || "تعذر تحميل المزيد من الأدوية.");}
+    finally {setLoadingMoreDrugs(false);}
+  };
   useEffect(() => {
-    if (!clinicId) {
-      setDrugs([]);
-      setDrugsLoading(false);
-      return undefined;
-    }
-
+    let cancelled = false;
+    setDrugs([]);
+    setNextDrugCursor(null);
+    setHasMoreDrugs(false);
+    if (!clinicId) {setDrugsLoading(false);return () => {cancelled = true;};}
     setDrugsLoading(true);
     setLoadError("");
-
-    let unsubscribe;
-
-    try {
-      unsubscribe =
-        subscribeDrugLibrary(
-          clinicId,
-
-          (items) => {
-            setDrugs(items);
-            setDrugsLoading(false);
-          },
-
-          (error) => {
-            console.error(
-              "Drug library realtime error:",
-              error
-            );
-
-            setLoadError(
-              "تعذر تحميل مكتبة الأدوية."
-            );
-
-            setDrugsLoading(false);
-          }
-        );
-    } catch (error) {
-      console.error(
-        "Drug subscription error:",
-        error
-      );
-
-      setLoadError(
-        error?.message ||
-          "تعذر تحميل مكتبة الأدوية."
-      );
-
-      setDrugsLoading(false);
-    }
-
-    return () => {
-      if (
-        typeof unsubscribe ===
-        "function"
-      ) {
-        unsubscribe();
-      }
-    };
-  }, [clinicId]);
+    getDrugLibraryPage(clinicId,{pageSize:50}).then(page => {
+      if (cancelled) return;
+      setDrugs(page.items);
+      setNextDrugCursor(page.nextCursor);
+      setHasMoreDrugs(page.hasMore);
+    }).catch(error => {
+      if (!cancelled) setLoadError(error?.message || "تعذر تحميل مكتبة الأدوية.");
+    }).finally(() => {if (!cancelled) setDrugsLoading(false);});
+    return () => {cancelled = true;};
+  },[clinicId]);
 
   /* =======================================================
      KEEP SELECTED DRUG VALID
@@ -1492,7 +1463,7 @@ export default function DrugLibraryPage() {
             <strong>
               {drugsLoading
                 ? "جاري التحميل..."
-                : `${filteredDrugs.length} نتيجة`}
+                : `${filteredDrugs.length} نتيجة من ${drugs.length} صنف محمّل`}
             </strong>
           </div>
 
