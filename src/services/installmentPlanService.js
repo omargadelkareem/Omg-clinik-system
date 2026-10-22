@@ -1,4 +1,4 @@
-import { get, onValue, ref, runTransaction, set } from "firebase/database";
+import { onValue, ref, runTransaction } from "firebase/database";
 import { database } from "../config/firebase";
 
 const money = value => Math.round((Number(value) + Number.EPSILON) * 100) / 100;
@@ -20,7 +20,10 @@ export async function saveInstallmentPlan({clinicId,patientId,transaction,deposi
   if (!/^\d{4}-\d{2}-\d{2}$/.test(firstDueDate)||!Number.isFinite(Date.parse(firstDueDate+"T12:00:00"))) throw new Error("حدد تاريخ أول قسط");
   const base=money((amount-initial)/n);
   const installments=Array.from({length:n},(_,i)=>{
-    const due=new Date(firstDueDate+"T12:00:00");due.setMonth(due.getMonth()+i);
+    const first=new Date(firstDueDate+"T12:00:00");
+    const due=new Date(first.getFullYear(),first.getMonth()+i,1,12);
+    const lastDay=new Date(due.getFullYear(),due.getMonth()+1,0).getDate();
+    due.setDate(Math.min(first.getDate(),lastDay));
     const sum=i===n-1?money(amount-initial-base*(n-1)):base;
     return {index:i+1,dueDate:[due.getFullYear(),String(due.getMonth()+1).padStart(2,"0"),String(due.getDate()).padStart(2,"0")].join("-"),amount:sum};
   });
