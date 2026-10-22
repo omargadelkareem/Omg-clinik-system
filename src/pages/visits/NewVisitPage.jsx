@@ -598,6 +598,7 @@ const doctor = useMemo(
   const filteredDrugs = useMemo(() => {
     const query = drugSearch.trim().toLowerCase();
     return drugLibrary
+      .filter(drug => drug.reviewStatus !== "pending")
       .filter(drug => {
         if (drugSpecialtyOnly && currentDrugSpecialty && !(drug.specialties || []).includes(currentDrugSpecialty)) return false;
         if (!query) return true;
