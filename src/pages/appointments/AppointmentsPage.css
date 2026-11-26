@@ -34,3 +34,66 @@
 .rail-note{display:flex;align-items:flex-start;gap:7px;margin-top:16px;padding:10px 7px;border-top:1px solid #e1e8e6;color:#849496}.rail-note span{font-size:8px;line-height:1.7}
 .today-main-workspace{min-width:0;background:#fff}.today-main-workspace .day-controlbar{margin:0;padding:10px 14px;background:#fff}.today-main-workspace .today-board{margin:0;border-width:1px 0 0;border-radius:0}.today-main-workspace .today-table-head,.today-main-workspace .today-row{grid-template-columns:72px minmax(200px,1.5fr) minmax(120px,.9fr) 82px 120px 190px}
 @media(max-width:980px){.today-clinical-workspace{grid-template-columns:1fr}.today-status-rail{display:none}.today-main-workspace .today-board{overflow-x:auto}.today-main-workspace .today-table-head,.today-main-workspace .today-row{min-width:900px}}
+
+
+/* Unified front-desk visual system */
+.today-clinic-page{background:#f3f6f9;color:#1c3449}
+.today-header{min-height:86px;padding:18px 26px;background:#fff;border-color:#dfe7ed}
+.today-heading>span{color:#287e99;font-size:10px;letter-spacing:1.2px}
+.today-heading h1{color:#163a55;font-size:25px}
+.today-heading p{color:#7a8d9c}
+.today-header .primary-action,.today-clinic-page .primary-action{background:#176eb5;border-color:#176eb5;border-radius:4px;box-shadow:none}
+.day-controlbar{background:#fff;border-color:#dfe7ed;padding:12px 26px}
+.date-switcher,.today-search,.doctor-select{border-color:#d8e3ea;border-radius:4px;box-shadow:none}
+.today-board{background:#fff;border:1px solid #dfe7ed;border-radius:5px;box-shadow:none}
+.today-table-head{background:#f4f8fa;color:#537083;border-bottom:1px solid #dfe7ed}
+.today-clinic-page .main-row-action{border-radius:4px;box-shadow:none}
+.today-clinic-page .patient-avatar{border-radius:4px;background:#e5f1f6;color:#1e688b}
+.today-clinic-page .today-status-rail{background:#fff;border:1px solid #dfe7ed;border-radius:5px;box-shadow:none}
+.today-clinic-page .rail-metrics{background:transparent}
+.today-clinic-page input,.today-clinic-page select,.today-clinic-page textarea{border-radius:4px!important}
+@media(max-width:760px){.today-header{padding:16px}.day-controlbar{padding:12px}}
+
+
+/* Professional reception schedule */
+.today-clinic-page{background:#f5f7fb;color:#203247;min-height:100%;padding:26px 30px}
+.today-header{background:transparent;border:0;padding:0 0 24px;display:flex;justify-content:space-between;align-items:center;gap:18px}
+.today-heading>span,.appointments-pro-eyebrow{color:#8a9bab;font-size:10px;font-weight:800;letter-spacing:1.6px}
+.today-heading h1{font-size:29px;font-weight:800;letter-spacing:-.5px;color:#1d3449;margin:5px 0}
+.today-heading p{color:#8292a2;font-size:13px}
+.today-header .primary-action{background:#1476b8;border-radius:9px;padding:12px 21px;box-shadow:0 5px 13px rgba(20,118,184,.15);min-height:45px}
+.appointments-pro-workspace{display:flex;flex-direction:column;gap:20px;min-width:0}
+.appointments-pro-overview{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.pro-metric{display:flex;align-items:center;gap:14px;text-align:right;background:#fff;border:1px solid #e9eef4;border-radius:12px;padding:20px 17px;cursor:pointer;min-width:0;box-shadow:0 3px 12px rgba(30,60,90,.025);transition:transform .15s,border-color .15s}
+.pro-metric:hover{transform:translateY(-2px);border-color:#b5d7ee}
+.pro-metric.is-selected{border-color:#2385c4;box-shadow:0 0 0 2px rgba(35,133,196,.09)}
+.pro-metric-icon{width:47px;height:47px;flex:none;display:grid;place-items:center;background:#eaf3fc;color:#247cba;border-radius:11px}
+.pro-metric-icon.waiting{background:#fff3e5;color:#d89231}
+.pro-metric-icon.ongoing{background:#eaf1ff;color:#5e79d3}
+.pro-metric-icon.finished{background:#e6f6ef;color:#31986a}
+.pro-metric-copy{display:flex;flex-direction:column;gap:5px}
+.pro-metric-copy small{font-size:12px;color:#8a9bab;font-weight:600}
+.pro-metric-copy strong{font-size:26px;color:#263d51;font-weight:800;line-height:1.1}
+.appointments-pro-main{background:#fff;border:1px solid #e9eef4;border-radius:13px;overflow:hidden;box-shadow:0 4px 22px rgba(30,60,90,.025);min-width:0}
+.appointments-pro-section-heading{padding:22px 23px 17px;display:flex;justify-content:space-between;align-items:center;gap:15px}
+.appointments-pro-section-heading h2{font-size:19px;font-weight:800;margin:5px 0;color:#20374d}
+.appointments-pro-section-heading p{font-size:12px;color:#8c9baa;margin:0}
+.appointments-pro-today{border:1px solid #dceaf5;background:#f5faff;color:#2675aa;border-radius:8px;padding:10px 14px;cursor:pointer;font-weight:700}
+.appointments-pro-toolbar{padding:14px 22px 18px;display:flex;flex-wrap:wrap;gap:10px;background:white;border-bottom:1px solid #e9eef4}
+.appointments-pro-toolbar .today-search{flex:1 1 230px;min-width:190px}
+.appointments-pro-toolbar .date-switcher,.appointments-pro-toolbar .today-search,.appointments-pro-toolbar .doctor-select,.appointments-pro-filter{border:1px solid #e1e8f0;border-radius:8px;background:#fff;min-height:43px}
+.appointments-pro-filter select{border:0;background:transparent;padding:0 13px;min-height:41px;color:#456174;font:inherit;font-size:12px;outline:0;cursor:pointer}
+.appointments-pro-board{border:0;border-radius:0;box-shadow:none;background:#fff;overflow-x:auto}
+.appointments-pro-list-header{display:flex;justify-content:space-between;align-items:center;padding:17px 22px;border-bottom:1px solid #eef2f6}
+.appointments-pro-list-header strong{font-size:14px;color:#273f52}
+.appointments-pro-list-header strong span{color:#8a9bac;font-weight:500}
+.appointments-pro-list-header small{font-size:11px;color:#45a17a}
+.appointments-pro-list-header small:before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#40b58a;margin-left:6px}
+.appointments-pro-board .today-table-head{background:#f8fafc;color:#8093a4;font-weight:700;font-size:11px}
+.appointments-pro-board .today-row{background:#fff;border-bottom:1px solid #edf1f5;transition:background .15s}
+.appointments-pro-board .today-row:hover{background:#f8fbfe}
+.appointments-pro-board .patient-avatar{border-radius:10px}
+.appointments-pro-board .main-row-action{border-radius:7px;min-height:34px}
+.today-footer{margin-top:15px}
+@media(max-width:1100px){.appointments-pro-overview{grid-template-columns:repeat(2,minmax(0,1fr))}.today-clinic-page{padding:20px}}
+@media(max-width:600px){.today-clinic-page{padding:13px}.today-header{align-items:flex-start}.today-heading h1{font-size:23px}.appointments-pro-overview{gap:8px}.pro-metric{padding:12px 10px;gap:8px}.pro-metric-icon{width:36px;height:36px}.pro-metric-copy strong{font-size:21px}.pro-metric-copy small{font-size:10px}.appointments-pro-section-heading{padding:16px}.appointments-pro-toolbar{padding:12px}.appointments-pro-list-header{padding:14px}.appointments-pro-board .today-row,.appointments-pro-board .today-table-head{min-width:790px}}

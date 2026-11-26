@@ -744,7 +744,7 @@ export function AuthProvider({
           staff
         ) ||
         firebaseUser?.email ||
-        "مستخدم OMG Clinic",
+        "مستخدم Clinova",
       [
         profile,
         staff,

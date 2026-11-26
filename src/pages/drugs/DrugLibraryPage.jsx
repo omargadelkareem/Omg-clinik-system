@@ -46,17 +46,22 @@ import {
   drugExists,
   importDrugs,
   setDrugFavorite,
-  subscribeDrugLibrary,
+  getDrugLibraryPage,
   updateDrug,
 } from "../../services/drugLibraryService";
 
 import "./DrugLibraryPage.css";
+import { STARTER_GENERIC_DRUGS } from "../../data/starterGenericDrugs";
+import { EGYPTIAN_BRAND_STARTER } from "../../data/egyptianBrandStarter";
 
 /* =========================================================
    EMPTY DRUG
 ========================================================= */
 
+const SPECIALTIES = ["باطنة","أطفال","نساء وتوليد","جلدية","عظام","قلب","أنف وأذن وحنجرة","عيون","صدرية","مسالك بولية","مخ وأعصاب","نفسية","أسنان","جراحة عامة","غدد صماء","روماتيزم","أخرى"];
+
 const emptyDrug = {
+  specialties: [],
   tradeName: "",
   genericName: "",
   strength: "",
@@ -137,6 +142,7 @@ export default function DrugLibraryPage() {
   const [search, setSearch] = useState("");
   const [activeFilter, setActiveFilter] =
     useState("all");
+  const [specialtyFilter, setSpecialtyFilter] = useState("all");
 
   /* =======================================================
      SELECTION
@@ -202,6 +208,9 @@ export default function DrugLibraryPage() {
 
   const [importing, setImporting] =
     useState(false);
+  const [starterLoading, setStarterLoading] = useState(false);
+  const [brandsLoading, setBrandsLoading] = useState(false);
+  const [thousandLoading, setThousandLoading] = useState(false);
 
   /* =======================================================
      GLOBAL MESSAGE
@@ -310,68 +319,39 @@ export default function DrugLibraryPage() {
     return () => unsubscribe();
   }, []);
 
-  /* =======================================================
-     REALTIME DRUG LIBRARY
-  ======================================================= */
-
+  /* Cursor pagination: Firebase reads 50 records per request. */
+  const [nextDrugCursor, setNextDrugCursor] = useState(null);
+  const [hasMoreDrugs, setHasMoreDrugs] = useState(false);
+  const [loadingMoreDrugs, setLoadingMoreDrugs] = useState(false);
+  const loadMoreDrugs = async () => {
+    if (!clinicId || !hasMoreDrugs || loadingMoreDrugs) return;
+    setLoadingMoreDrugs(true);
+    try {
+      const page = await getDrugLibraryPage(clinicId,{cursor:nextDrugCursor,pageSize:50});
+      setDrugs(current => [...current,...page.items.filter(item => !current.some(existing => existing.id === item.id))]);
+      setNextDrugCursor(page.nextCursor);
+      setHasMoreDrugs(page.hasMore);
+    } catch(error) {setLoadError(error?.message || "تعذر تحميل المزيد من الأدوية.");}
+    finally {setLoadingMoreDrugs(false);}
+  };
   useEffect(() => {
-    if (!clinicId) {
-      setDrugs([]);
-      setDrugsLoading(false);
-      return undefined;
-    }
-
+    let cancelled = false;
+    setDrugs([]);
+    setNextDrugCursor(null);
+    setHasMoreDrugs(false);
+    if (!clinicId) {setDrugsLoading(false);return () => {cancelled = true;};}
     setDrugsLoading(true);
     setLoadError("");
-
-    let unsubscribe;
-
-    try {
-      unsubscribe =
-        subscribeDrugLibrary(
-          clinicId,
-
-          (items) => {
-            setDrugs(items);
-            setDrugsLoading(false);
-          },
-
-          (error) => {
-            console.error(
-              "Drug library realtime error:",
-              error
-            );
-
-            setLoadError(
-              "تعذر تحميل مكتبة الأدوية."
-            );
-
-            setDrugsLoading(false);
-          }
-        );
-    } catch (error) {
-      console.error(
-        "Drug subscription error:",
-        error
-      );
-
-      setLoadError(
-        error?.message ||
-          "تعذر تحميل مكتبة الأدوية."
-      );
-
-      setDrugsLoading(false);
-    }
-
-    return () => {
-      if (
-        typeof unsubscribe ===
-        "function"
-      ) {
-        unsubscribe();
-      }
-    };
-  }, [clinicId]);
+    getDrugLibraryPage(clinicId,{pageSize:50}).then(page => {
+      if (cancelled) return;
+      setDrugs(page.items);
+      setNextDrugCursor(page.nextCursor);
+      setHasMoreDrugs(page.hasMore);
+    }).catch(error => {
+      if (!cancelled) setLoadError(error?.message || "تعذر تحميل مكتبة الأدوية.");
+    }).finally(() => {if (!cancelled) setDrugsLoading(false);});
+    return () => {cancelled = true;};
+  },[clinicId]);
 
   /* =======================================================
      KEEP SELECTED DRUG VALID
@@ -441,6 +421,7 @@ export default function DrugLibraryPage() {
         if (!searchMatch) {
           return false;
         }
+        if (specialtyFilter !== "all" && (drug.specialties || []).length && !(drug.specialties || []).includes(specialtyFilter)) return false;
 
         if (
           activeFilter ===
@@ -507,6 +488,7 @@ export default function DrugLibraryPage() {
     drugs,
     search,
     activeFilter,
+    specialtyFilter,
   ]);
 
   /* =======================================================
@@ -550,6 +532,104 @@ export default function DrugLibraryPage() {
      OPEN ADD
   ======================================================= */
 
+  const addThousandEgyptianDrugs = async () => {
+    if (!clinicId || thousandLoading) return;
+    setThousandLoading(true);
+    try {
+      const url = "https://raw.githubusercontent.com/karem505/egyptian-drug-database/main/data/egyptian-drugs.csv";
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("تعذر تحميل قاعدة الأدوية المصرية. حاول مرة أخرى.");
+      const csv = await response.text();
+      const workbook = XLSX.read(csv, { type: "string" });
+      const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { defval: "" });
+      const groups = new Map();
+      const unique = new Set();
+      const inferForm = (name, route) => {
+        const value = (name + " " + route).toLowerCase();
+        if (/syrup|suspension|oral.liquid/.test(value)) return "Syrup";
+        if (/caps|capsule/.test(value)) return "Capsule";
+        if (/cream/.test(value)) return "Cream";
+        if (/ointment/.test(value)) return "Ointment";
+        if (/drop/.test(value)) return "Drops";
+        if (/injection|ampoule|vial|i\\.v\\.|i\\.m\\./.test(value)) return "Injection";
+        if (/inhal/.test(value)) return "Inhaler";
+        if (/suppositor/.test(value)) return "Suppository";
+        if (/sachet/.test(value)) return "Sachet";
+        if (/tablet|tabs|oral.solid|f\\.c\\./.test(value)) return "Tablet";
+        return "Other";
+      };
+      for (const row of rows) {
+        const name = String(row.commercial_name_en || "").trim();
+        const generic = String(row.scientific_name || "").trim();
+        const drugClass = String(row.drug_class || "").trim();
+        if (!name) continue;
+        const route = String(row.route || "").trim();
+        const form = inferForm(name, route);
+        const key = [name, form].join("|").toLowerCase();
+        if (unique.has(key)) continue;
+        unique.add(key);
+        const item = {
+          tradeName: name,
+          genericName: generic,
+          strength: "",
+          form,
+          route: route || "Other",
+          specialties: [],
+          defaultDose: "",
+          frequency: "",
+          duration: "",
+          instructions: "",
+          reviewStatus: "pending",
+          source: "karem505/egyptian-drug-database (CC0); class: " + drugClass,
+        };
+        const group = groups.get(drugClass || "غير مصنف") || [];
+        group.push(item);
+        groups.set(drugClass || "غير مصنف", group);
+      }
+      const selected = [...groups.values()].flat();
+      if (!selected.length) throw new Error("لم يتم العثور على أصناف صالحة في المصدر.");
+      const confirmed = window.confirm(`سيتم استيراد ${selected.length.toLocaleString("ar-EG")} مستحضر إلى Firebase. قد يستغرق وقتًا ويستهلك قراءة وكتابة من قاعدة البيانات. هل تريد المتابعة؟`);
+      if (!confirmed) return;
+      let added = 0, duplicates = 0;
+      for (let index = 0; index < selected.length; index += 250) {
+        const result = await importDrugs({
+          clinicId,
+          drugs: selected.slice(index, index + 250),
+          createdBy: currentUserId,
+        });
+        added += result.addedCount;
+        duplicates += result.duplicateCount;
+      }
+      showPageMessage("success", `اكتمل الاستيراد: ${added} صنف جديد، و${duplicates} مكرر. الأصناف قيد المراجعة قبل وصفها.`);
+    } catch (error) {
+      showPageMessage("error", error?.message || "تعذر استيراد الأدوية.");
+    } finally {
+      setThousandLoading(false);
+    }
+  };
+
+  const addEgyptianBrands = async () => {
+    if (!clinicId || brandsLoading) return;
+    setBrandsLoading(true);
+    try {
+      const result = await importDrugs({clinicId,drugs:EGYPTIAN_BRAND_STARTER,createdBy:currentUserId});
+      showPageMessage("success", `تمت إضافة ${result.addedCount} اسم تجاري مصري للمراجعة، وتخطي ${result.duplicateCount} مكرر.`);
+    } catch(error) {
+      showPageMessage("error",error?.message || "تعذر إضافة الأسماء التجارية.");
+    } finally {setBrandsLoading(false);}
+  };
+
+  const addStarterCatalog = async () => {
+    if (!clinicId || starterLoading) return;
+    setStarterLoading(true);
+    try {
+      const result = await importDrugs({clinicId,drugs:STARTER_GENERIC_DRUGS,createdBy:currentUserId});
+      showPageMessage("success", `تمت إضافة ${result.addedCount} مادة فعالة للمراجعة. تم تخطي ${result.duplicateCount} مكرر.`);
+    } catch (error) {
+      showPageMessage("error",error?.message || "تعذر إضافة المكتبة المبدئية.");
+    } finally {setStarterLoading(false);}
+  };
+
   const openAddDrug = () => {
     setEditingDrug(null);
 
@@ -572,6 +652,9 @@ export default function DrugLibraryPage() {
     setEditingDrug(drug);
 
     setDrugForm({
+      specialties: drug.specialties || [],
+      reviewStatus: drug.reviewStatus || "reviewed",
+      source: drug.source || "",
       tradeName:
         drug.tradeName || "",
 
@@ -676,6 +759,7 @@ export default function DrugLibraryPage() {
 
           drug: {
             ...drugForm,
+            reviewStatus: "reviewed",
 
             usageCount:
               editingDrug.usageCount ||
@@ -698,6 +782,7 @@ export default function DrugLibraryPage() {
 
             drug: {
               ...drugForm,
+              reviewStatus: "reviewed",
 
               usageCount: 0,
             },
@@ -1164,6 +1249,9 @@ export default function DrugLibraryPage() {
         </div>
 
         <div className="drug-library-header-actions">
+          <button type="button" className="import-drugs-button" disabled={thousandLoading} onClick={addThousandEgyptianDrugs} title="استيراد 1000 مستحضر من مصدر بيانات مصري CC0؛ يتطلب إنترنت ومراجعة صيدلي"><FileSpreadsheet size={17}/>{thousandLoading ? "جاري استيراد قاعدة الأدوية..." : "استيراد قاعدة الأدوية المصرية كاملة"}</button>
+          <button type="button" className="import-drugs-button" disabled={brandsLoading} onClick={addEgyptianBrands} title="أسماء تجارية شائعة في مصر، تتطلب مراجعة المستحضر والتركيز"><Pill size={17}/>{brandsLoading ? "جاري الإضافة..." : "إضافة 25 اسم تجاري مصري"}</button>
+          <button type="button" className="import-drugs-button" disabled={starterLoading} onClick={addStarterCatalog} title="أسماء مواد فعالة فقط، تحتاج مراجعة صيدلي قبل استخدامها في الروشتة"><Pill size={17}/>{starterLoading ? "جاري الإضافة..." : "إضافة 50 مادة فعالة"}</button>
           <button
             className="import-drugs-button"
             onClick={() => {
@@ -1275,6 +1363,15 @@ export default function DrugLibraryPage() {
         </div>
       </section>
 
+      <section className="drug-specialty-selector" aria-label="تصفية الأدوية حسب التخصص">
+        <label htmlFor="drug-specialty-filter">التخصص الطبي</label>
+        <select id="drug-specialty-filter" value={specialtyFilter} onChange={event => setSpecialtyFilter(event.target.value)}>
+          <option value="all">كل التخصصات</option>
+          {SPECIALTIES.map(item => <option key={item} value={item}>{item}</option>)}
+        </select>
+        <small>تظهر الأدوية المصنفة للتخصص المختار. الأدوية القديمة تظل متاحة في «كل التخصصات» حتى يتم تصنيفها.</small>
+      </section>
+
       {/* ===================================================
           FILTERS
       =================================================== */}
@@ -1366,7 +1463,7 @@ export default function DrugLibraryPage() {
             <strong>
               {drugsLoading
                 ? "جاري التحميل..."
-                : `${filteredDrugs.length} نتيجة`}
+                : `${filteredDrugs.length} نتيجة من ${drugs.length} صنف محمّل`}
             </strong>
           </div>
 
@@ -1486,6 +1583,14 @@ export default function DrugLibraryPage() {
               )
             )}
           </div>
+          {hasMoreDrugs && (
+            <div className="drug-pagination">
+              <button type="button" onClick={loadMoreDrugs} disabled={loadingMoreDrugs}>
+                {loadingMoreDrugs ? "جاري تحميل المزيد..." : "تحميل 50 صنف إضافي"}
+              </button>
+            </div>
+          )}
+          <p className="drug-pagination-note">البحث والتصفية حاليًا على الأصناف المحمّلة فقط. حمّل المزيد لعرض باقي الأصناف.</p>
         </section>
 
         {/* =================================================
@@ -1799,6 +1904,22 @@ export default function DrugLibraryPage() {
                 </div>
               </div>
 
+              {editingDrug?.reviewStatus === "pending" && <div className="import-message error">هذه مادة فعالة مبدئية غير مراجعة. تحقق من الاسم والشكل والتركيز ثم اعتمدها قبل استخدامها في الروشتة.</div>}
+              <div className="drug-specialty-editor">
+                <strong>التخصصات المرتبطة بالدواء</strong>
+                <small>اختر تخصصًا أو أكثر. التصنيف لتنظيم المكتبة وليس توصية علاجية.</small>
+                <div className="drug-specialty-tags">
+                  {SPECIALTIES.map(item => <label key={item}>
+                    <input type="checkbox" checked={(drugForm.specialties || []).includes(item)} onChange={event => setDrugForm(previous => ({
+                      ...previous,
+                      specialties: event.target.checked
+                        ? [...(previous.specialties || []), item]
+                        : (previous.specialties || []).filter(value => value !== item),
+                    }))}/>
+                    {item}
+                  </label>)}
+                </div>
+              </div>
               <DrugField
                 label="الاسم التجاري"
                 required
@@ -2826,6 +2947,7 @@ function normalizeImportedDrug(
 
   return {
     importIndex: index,
+    specialties: getValue("Specialties","Specialty","التخصصات","التخصص").split(/[,،;|]/).map(value=>value.trim()).filter(Boolean),
 
     tradeName:
       getValue(

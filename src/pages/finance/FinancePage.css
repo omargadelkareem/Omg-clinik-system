@@ -2512,3 +2512,15 @@
 }
 /* ===== OMG Clinical Workspace v2 / Finance ===== */
 .finance-page{background:#f4f7f6;color:#23494f;font-size:12px}.finance-header{min-height:80px;padding:15px 26px;border-color:#dbe4e2}.finance-eyebrow{color:#71888a;font-size:8px;letter-spacing:.12em}.finance-header h1{color:#1b444a;font-size:23px}.finance-header p{font-size:10px}.finance-header-actions button{min-height:35px;padding:0 12px;border-radius:5px;font-size:9px}.finance-page input,.finance-page select,.finance-page textarea{border-radius:5px!important;border-color:#dbe4e2!important}.finance-page button{box-shadow:none!important}.finance-summary-card,.finance-panel,.finance-table-wrap{border-color:#dbe5e3!important;box-shadow:none!important}
+
+/* Clinical UI alignment */
+
+.finance-page{background:#f3f6f9;color:#1b374b}
+.finance-header{background:#fff;border-bottom:1px solid #dce6ed}
+.finance-header h1{color:#173c55}
+.finance-page button{box-shadow:none!important;border-radius:4px!important}
+.finance-page input,.finance-page select,.finance-page textarea{border-color:#d9e4ec!important;border-radius:4px!important}
+.finance-page table{border-collapse:collapse}
+.finance-page th{background:#f4f8fa;color:#567187}
+.finance-page td{border-bottom-color:#e4ebf0}
+.finance-page .finance-eyebrow{color:#16839d}

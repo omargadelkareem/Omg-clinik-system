@@ -312,7 +312,7 @@ export default function Header({
                 userData.fullName ||
                 user.displayName
             ) ||
-            "مستخدم OMG",
+            "مستخدم Clinova",
 
           email:
             clean(
@@ -326,7 +326,7 @@ export default function Header({
               clinicData.name ||
                 clinicData.clinicName
             ) ||
-            "OMG Clinic",
+            "Clinova",
         });
       } catch (error) {
         console.error(
@@ -346,13 +346,13 @@ export default function Header({
 
             name:
               user.displayName ||
-              "مستخدم OMG",
+              "مستخدم Clinova",
 
             email:
               user.email || "",
 
             clinicName:
-              "OMG Clinic",
+              "Clinova",
           });
         }
       } finally {

@@ -921,7 +921,7 @@ export default function SetupClinicPage() {
 
           <div>
             <strong>
-              OMG Clinic
+              Clinova
             </strong>
 
             <span>
@@ -950,7 +950,7 @@ export default function SetupClinicPage() {
           <p>
             إنشاء العيادة وتحديد
             نوع المنشأة والتخصص الطبي
-            الذي سيعمل عليه OMG Clinic.
+            الذي سيعمل عليه Clinova.
           </p>
         </div>
 
@@ -985,7 +985,7 @@ export default function SetupClinicPage() {
         <div className="setup-form-container">
           <header className="setup-heading">
             <span>
-              OMG INTERNAL TOOL
+              CLINOVA INTERNAL TOOL
             </span>
 
             <h2>
@@ -1028,7 +1028,7 @@ export default function SetupClinicPage() {
                     </strong>
 
                     <span>
-                      خاص بإدارة OMG
+                      خاص بإدارة Clinova
                     </span>
                   </div>
                 </div>
@@ -1804,7 +1804,7 @@ function SuccessResult({
 
       <p>
         الحساب جاهز الآن وتم
-        تجهيز OMG Clinic بالتخصص
+        تجهيز Clinova بالتخصص
         الطبي المحدد.
       </p>
 

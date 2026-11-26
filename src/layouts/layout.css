@@ -1608,3 +1608,72 @@
 .main-header{height:var(--header-height);padding:0 20px;border-bottom:1px solid #dce5e3;background:#fff;backdrop-filter:none}.global-search{width:min(460px,36vw);height:35px;padding:0 10px;border-color:#dbe4e2;border-radius:5px;background:#f8faf9}.global-search:focus-within{border-color:#8badab;box-shadow:0 0 0 3px rgba(63,111,108,.06)}.global-search input{font-size:9px}.global-search span{border-radius:3px;font-size:7px}.header-actions{gap:6px}.new-appointment-button{height:34px;padding:0 12px;border-radius:5px;background:#245b61;font-size:9px;font-weight:800;box-shadow:none}.new-appointment-button:hover{background:#1d4e53}.header-icon-button,.mobile-menu-button{width:34px;height:34px;border-color:#dfe7e5;border-radius:5px;color:#647d80}.header-icon-button:hover{color:#245b61;background:#f6f9f8}.header-profile{gap:7px}.header-profile-avatar{width:31px;height:31px;border-radius:6px;background:#e5efed;color:#315f61;font-size:9px}.header-profile-info strong{font-size:8px;color:#31545a}.header-profile-info span{font-size:7px}.app-content{padding:0;background:#f4f7f6}
 .app-shell-sidebar-collapsed .sidebar{width:var(--sidebar-collapsed-width)}.sidebar-collapsed .nav-item{width:42px;height:36px}.sidebar-collapsed .nav-icon{width:30px;height:30px;flex-basis:30px}.sidebar-collapsed .sidebar-clinic,.sidebar-collapsed .doctor-card{width:42px;height:42px;min-height:42px}
 @media(max-width:900px){.sidebar,.sidebar.sidebar-collapsed{width:248px}.app-content{padding:0}.main-header{padding:0 13px}}
+
+
+/* Consistent navigation with the approved dental workspace */
+:root{--primary:#006bc3;--primary-light:#eaf4ff;--text-main:#1d3446;--text-secondary:#718297;--border:#e5eaf0;--background:#f4f6f8;--sidebar-bg:#172d40;--sidebar-bg-deep:#102638;--sidebar-accent:#29b4b0}
+.app-shell{background:#f4f6f8}
+.sidebar{background:linear-gradient(180deg,#1b3347 0%,#132b3e 100%);box-shadow:none}
+.nav-item-active{background:#204e69;color:#fff}
+.nav-item-active .nav-icon{color:#b7e4f1}
+.nav-item-active .nav-active-line{background:#2db9b6;box-shadow:none}
+
+
+/* OMG Clinic 2026 — approved clinical navy / blue / teal navigation */
+:root{--sidebar-width:258px;--sidebar-collapsed-width:72px;--sidebar-bg:#102b40;--sidebar-bg-deep:#0b2336;--sidebar-text:#d9e6ef;--sidebar-muted:#92a7b7;--sidebar-accent:#59c6d1;--sidebar-accent-soft:rgba(67,188,203,.13);--background:#f3f6f9;--primary:#156fbb}
+.sidebar{background:#102b40!important;box-shadow:none!important;border-left:1px solid #244258!important}
+.sidebar::before{display:none!important}
+.sidebar-brand{height:76px;flex-basis:76px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sidebar-logo{border-radius:7px!important;background:#1675b4!important;box-shadow:none!important}
+.sidebar-brand-name{font-weight:850;letter-spacing:-.5px}
+.sidebar-brand-copy p{font-size:9px!important;letter-spacing:1.6px;color:#9fb7c7!important}
+.sidebar-clinic{margin:14px 12px!important;border:1px solid #315168!important;background:#17384f!important;border-radius:5px!important;box-shadow:none!important}
+.sidebar-clinic .clinic-avatar{border-radius:4px!important;background:#24526b!important;color:#d2f4f5!important}
+.sidebar-navigation{padding:5px 10px 16px!important}
+.nav-section{margin-bottom:12px!important}
+.nav-section-heading{padding:13px 12px 7px!important}
+.nav-section-title{color:#8ea8b9!important;font-size:10px!important;font-weight:800!important;letter-spacing:.3px!important}
+.nav-section-line{opacity:.18}
+.nav-items{gap:2px!important}
+.nav-item{min-height:42px!important;margin:0!important;padding:0 11px!important;border-radius:4px!important;background:transparent!important;color:#c6d9e6!important;box-shadow:none!important;transition:background .14s,color .14s!important}
+.nav-item:hover{background:#1b425a!important;color:#fff!important}
+.nav-item-active{background:#20536c!important;color:#fff!important;font-weight:800!important}
+.nav-item-active .nav-icon{color:#65d6dc!important}
+.nav-item .nav-icon{color:#9ab6c8!important}
+.nav-active-line{width:3px!important;border-radius:0!important;background:#60cdd5!important}
+.sidebar-collapse-area{border-top:1px solid #29475b!important}
+.sidebar-collapse-button{border-radius:4px!important}
+.sidebar-footer{background:#0d2639!important;border-top:1px solid #29475b!important}
+.doctor-card{border-radius:4px!important;background:transparent!important;border:0!important;box-shadow:none!important}
+.doctor-avatar{border-radius:4px!important;background:#255a74!important;color:#fff!important}
+.main-header{background:#fff!important;border-bottom:1px solid #dce6ed!important;box-shadow:none!important}
+.app-content{background:#f3f6f9!important}
+@media(max-width:768px){.sidebar{box-shadow:-12px 0 28px rgba(0,0,0,.15)!important}}
+
+
+/* Reference 01 — exact design direction for shell and navigation */
+:root{--sidebar-width:208px;--sidebar-collapsed-width:64px;--header-height:58px;--sidebar-bg:#102d4a;--sidebar-bg-deep:#0b2742;--sidebar-accent:#1477c8;--background:#f6f8fc}
+.sidebar{background:#102d4a!important;border-left:1px solid #1b4264!important}
+.sidebar-brand{height:61px!important;flex-basis:61px!important;padding:0 13px!important}
+.sidebar-logo{width:28px!important;height:28px!important;border-radius:50%!important;background:#078be3!important}
+.sidebar-brand-name{font-size:15px!important;white-space:nowrap}
+.sidebar-brand-copy p{font-size:8px!important;letter-spacing:.4px!important}
+.sidebar-clinic{margin:9px 9px 5px!important;padding:8px!important;min-height:52px!important;background:#143956!important;border:1px solid #234e70!important}
+.sidebar-navigation{padding:4px 8px 10px!important}
+.nav-section{margin-bottom:7px!important}
+.nav-section-heading{padding:10px 10px 5px!important}
+.nav-section-title{font-size:9px!important;color:#8eafc6!important}
+.nav-item{min-height:37px!important;padding:0 10px!important;border-radius:4px!important;font-size:11px!important;gap:8px!important}
+.nav-icon{width:20px!important;height:20px!important;flex:0 0 20px!important}
+.nav-icon svg{width:15px!important;height:15px!important}
+.nav-item-active{background:#11588b!important;color:#fff!important}
+.nav-item-active .nav-icon{color:#fff!important}
+.nav-item-active .nav-active-line{background:#20a8e7!important}
+.sidebar-footer{padding:9px!important}
+.doctor-card{padding:5px!important;gap:8px!important}
+.doctor-avatar{width:34px!important;height:34px!important;flex:0 0 34px!important;border-radius:50%!important}
+.main-header{min-height:58px!important;height:58px!important;background:#fff!important;border-bottom:1px solid #e3eaf1!important}
+.global-search{border:1px solid #e3eaf1!important;background:#f8fafc!important;border-radius:5px!important}
+.header-profile-avatar{border-radius:50%!important}
+.app-content{background:#f6f8fc!important}
+@media(max-width:900px){.sidebar,.sidebar.sidebar-collapsed{width:208px!important}}
