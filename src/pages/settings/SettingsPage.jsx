@@ -748,7 +748,7 @@ export default function SettingsPage() {
           </h1>
 
           <p>
-            اضبط العيادة مرة واحدة وسيستخدم OMG Clinic هذه البيانات في كل أجزاء النظام
+            اضبط العيادة مرة واحدة وسيستخدم Clinova هذه البيانات في كل أجزاء النظام
           </p>
         </div>
 
@@ -1631,7 +1631,7 @@ function PrescriptionMiniPreview({
             </div>
           ) : (
             <div className="mini-logo">
-              OMG
+              Clinova
             </div>
           )}
 
@@ -1715,7 +1715,7 @@ function PricingSettings({
       <SectionHeading
         eyebrow="PRICING RULES"
         title="أسعار الكشف والإعادة"
-        text="هذه الأسعار ستصبح المصدر الرسمي الذي يعتمد عليه OMG Clinic في تحديد قيمة زيارة المريض والفاتورة."
+        text="هذه الأسعار ستصبح المصدر الرسمي الذي يعتمد عليه Clinova في تحديد قيمة زيارة المريض والفاتورة."
       />
 
       <div className="pricing-sheet">
