@@ -85,7 +85,7 @@ export default function DashboardPage() {
     <main className="today-bookings-page" dir="rtl">
       <header className="today-bookings-header">
         <div className="today-bookings-title">
-          <span>OMG CLINIC</span>
+          <span>CLINOVA</span>
           <h1>حجوزات اليوم</h1>
           <p>{new Intl.DateTimeFormat("ar-EG", { weekday: "long", day: "numeric", month: "long", year: "numeric" }).format(new Date())}</p>
         </div>
