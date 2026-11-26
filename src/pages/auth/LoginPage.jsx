@@ -165,7 +165,7 @@ export default function LoginPage() {
               color: "#fff",
             }}
           >
-            <Stethoscope size={27} />
+            <img src="/clinova-logo.svg" alt="Clinova" style={{width:36,height:36}} />
           </div>
 
           <strong
@@ -174,7 +174,7 @@ export default function LoginPage() {
               fontSize: "17px",
             }}
           >
-            OMG Clinic
+            Clinova
           </strong>
 
           <span
@@ -200,12 +200,12 @@ export default function LoginPage() {
         <div className="brand-content">
           <div className="brand-logo">
             <div className="brand-logo-icon">
-              <Stethoscope size={27} />
+              <img src="/clinova-logo.svg" alt="Clinova" style={{width:36,height:36}} />
             </div>
 
             <div>
               <div className="brand-name">
-                OMG <span>Clinic</span>
+                Clinova
               </div>
 
               <p>Smart Clinic Management</p>
@@ -248,8 +248,8 @@ export default function LoginPage() {
             <div className="stat-divider" />
 
             <div>
-              <strong>OMG</strong>
-              <span>Clinic Cloud</span>
+              <strong>Clinova</strong>
+              <span>Medical Cloud</span>
             </div>
           </div>
         </div>
@@ -268,10 +268,10 @@ export default function LoginPage() {
       >
         <div className="mobile-brand">
           <div className="brand-logo-icon">
-            <Stethoscope size={23} />
+            <img src="/clinova-logo.svg" alt="Clinova" style={{width:30,height:30}} />
           </div>
 
-          <strong>OMG Clinic</strong>
+          <strong>Clinova</strong>
         </div>
 
         <div className="login-container">
@@ -320,7 +320,7 @@ export default function LoginPage() {
                       setError("");
                     }
                   }}
-                  placeholder="doctor@omgclinic.com"
+                  placeholder="doctor@example.com"
                   autoComplete="email"
                   disabled={loading}
                   required
@@ -436,7 +436,7 @@ export default function LoginPage() {
               </button>
             </p>
 
-            <span>OMG Clinic © 2026</span>
+            <span>Clinova © 2026</span>
           </div>
         </div>
       </section>
