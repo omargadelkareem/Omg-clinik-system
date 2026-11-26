@@ -4178,7 +4178,7 @@ function InvoiceDrawer({
               {clinic?.name ||
                 clinic?.profile
                   ?.name ||
-                "OMG Clinic"}
+                "Clinova"}
             </strong>
 
             <span>
