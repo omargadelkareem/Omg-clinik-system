@@ -1419,7 +1419,7 @@ export default function ReportsPage() {
     () => {
       const rows = [
         [
-          "تقرير OMG Clinic",
+          "تقرير Clinova",
         ],
         [
           "الفترة",
@@ -1571,7 +1571,7 @@ export default function ReportsPage() {
   const clinicName =
     clinic?.profile?.name ||
     clinic?.name ||
-    "OMG Clinic";
+    "Clinova";
 
   const summary =
     finance.summary || {};
@@ -2487,7 +2487,7 @@ export default function ReportsPage() {
 
       <footer className="reports-print-footer">
         <span>
-          تم إنشاء التقرير من نظام OMG Clinic
+          تم إنشاء التقرير من نظام Clinova
         </span>
 
         <span>
