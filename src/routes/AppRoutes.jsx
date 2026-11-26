@@ -5,6 +5,7 @@ import {
   Routes,
 } from "react-router-dom";
 import LoginPage from "../pages/auth/LoginPage";
+import SuperAdminPage from "../pages/admin/SuperAdminPage";
 import ProtectedRoute from "./ProtectedRoute";
 import MainLayout from "../layouts/MainLayout";
 import DashboardPage from "../pages/DashboardPage";
@@ -40,6 +41,8 @@ export default function AppRoutes() {
   path="/setup-clinic"
   element={<SetupClinicPage />}
 />
+
+        <Route path="/super-admin" element={<ProtectedRoute><SuperAdminPage /></ProtectedRoute>} />
 
         <Route
           element={
