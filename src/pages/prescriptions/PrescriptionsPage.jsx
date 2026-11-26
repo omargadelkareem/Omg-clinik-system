@@ -376,7 +376,7 @@ export default function PrescriptionsPage() {
           clinic?.name ||
           clinic?.clinicName ||
           clinic?.profile?.name ||
-          "OMG Clinic",
+          "Clinova",
 
         doctorName:
           current.doctorName ||
@@ -1445,7 +1445,7 @@ function PrescriptionPaper({
 
           <h1>
             {settings.clinicName ||
-              "OMG Clinic"}
+              "Clinova"}
           </h1>
 
           <span>
