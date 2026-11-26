@@ -260,7 +260,7 @@ export default function Sidebar({
     clinic?.clinicNameAr ||
     clinic?.name ||
     clinic?.clinicName ||
-    "عيادة OMG";
+    "عيادتي";
 
   const branchName =
     clinic?.branchName ||
