@@ -598,7 +598,6 @@ const doctor = useMemo(
   const filteredDrugs = useMemo(() => {
     const query = drugSearch.trim().toLowerCase();
     return drugLibrary
-      .filter(drug => drug.reviewStatus !== "pending")
       .filter(drug => {
         if (drugSpecialtyOnly && currentDrugSpecialty && !(drug.specialties || []).includes(currentDrugSpecialty)) return false;
         if (!query) return true;
@@ -640,22 +639,22 @@ const doctor = useMemo(
 
       dose:
         drug.defaultDose ||
-        "قرص واحد",
+        "",
 
       frequency:
         drug.frequency ||
         drug.defaultFrequency ||
-        "مرتين يومياً",
+        "",
 
       duration:
         drug.duration ||
         drug.defaultDuration ||
-        "5 أيام",
+        "",
 
       instructions:
         drug.instructions ||
         drug.defaultInstructions ||
-        "بعد الأكل",
+        "",
     };
 
     setVisit((current) => ({
@@ -1614,9 +1613,11 @@ const doctor = useMemo(
                                 {drug.name ||
                                   drug.tradeName}
                               </strong>
+                              {drug.reviewStatus === "pending" && <small title="بيانات الدواء تحتاج مراجعة قبل الوصف" style={{color:"#a36b12",fontWeight:600}}>غير مُراجع — تحقق من الاسم والتركيز</small>}
 
                               <span>
                                 {drug.generic ||
+                                  drug.genericName ||
                                   drug.activeIngredient}
                               </span>
                             </div>
