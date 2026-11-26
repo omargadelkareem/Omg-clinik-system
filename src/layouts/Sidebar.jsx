@@ -325,20 +325,16 @@ export default function Sidebar({
 
         <div className="sidebar-brand">
           <div className="sidebar-logo">
-            <span>O</span>
-            <i />
+            <img src="/clinova-logo.svg" alt="Clinova" style={{width:"100%",height:"100%",objectFit:"contain"}} />
           </div>
 
           <div className="sidebar-brand-copy">
             <div className="sidebar-brand-name">
-              OMG
-              <span>
-                Clinic
-              </span>
+              Clinova
             </div>
 
             <p>
-              CLINIC MANAGEMENT
+              نظام إدارة العيادات الطبية
             </p>
           </div>
 
