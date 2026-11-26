@@ -27,12 +27,10 @@ export default function ProtectedRoute({
   if (loading) {
     return (
       <div className="auth-loading-screen">
-        <div className="auth-loading-logo">
-          OMG
-        </div>
+        <div className="auth-loading-logo"><img src="/clinova-logo.svg" alt="Clinova" style={{width:58,height:58}} /></div>
 
         <strong>
-          OMG Clinic
+          Clinova
         </strong>
 
         <span>
