@@ -3459,7 +3459,7 @@ function PrescriptionPaper({
           </strong>
 
           <span>
-            OMG Clinic
+            Clinova
           </span>
         </section>
       </header>
